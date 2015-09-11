@@ -3,9 +3,9 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Text.RegularExpressions;
 using System.Diagnostics;
-using AgentSafeX.Client.Utility.Hooks.Library;
+using EventHook.Client.Utility.Hooks.Library;
 
-namespace AgentSafeX.Client.Utility.Hooks
+namespace EventHook.Client.Utility.Hooks
 {
     public class ClipBoardHook : Form
     {

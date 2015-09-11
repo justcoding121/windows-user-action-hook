@@ -1,5 +1,5 @@
 ﻿
-namespace AgentSafeX.Client.Utility.Hooks.Library
+namespace EventHook.Client.Utility.Hooks.Library
 {
     /// <summary>
     /// Windows Event Messages sent to the WindowProc

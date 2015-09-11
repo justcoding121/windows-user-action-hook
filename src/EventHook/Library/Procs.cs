@@ -29,7 +29,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
-namespace AgentSafeX.Client.Utility.Hooks.Library
+namespace EventHook.Client.Utility.Hooks.Library
 {
    
     public delegate IntPtr WndProc(IntPtr hWnd, uint message, IntPtr wParam, IntPtr lParam);

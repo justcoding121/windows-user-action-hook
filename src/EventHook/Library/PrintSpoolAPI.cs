@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 using System;
 using System.Globalization;
 
-namespace AgentSafeX.Client.Utility.Hooks.Library
+namespace EventHook.Client.Utility.Hooks.Library
 {
   
 

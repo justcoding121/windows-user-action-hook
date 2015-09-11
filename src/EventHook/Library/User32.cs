@@ -4,7 +4,7 @@ using System.Text;
 using System.Runtime.InteropServices;
 
 
-namespace AgentSafeX.Client.Utility.Hooks.Library
+namespace EventHook.Client.Utility.Hooks.Library
 {
  
 
