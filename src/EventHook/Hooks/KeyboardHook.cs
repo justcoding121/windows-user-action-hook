@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace AgentSafeX.Client.Utility.Hooks
+namespace EventHook.Client.Utility.Hooks
 {
 
     public  class KeyboardHook

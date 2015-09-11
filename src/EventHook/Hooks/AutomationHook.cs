@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Automation;
 
-namespace AgentSafeX.Client.Utility.Hooks
+namespace EventHook.Client.Utility.Hooks
 {
     public class AutomationHook
     {

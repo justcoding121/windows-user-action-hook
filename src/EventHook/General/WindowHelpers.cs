@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 using System.Diagnostics;
-using AgentSafeX.Client.Utility.Hooks.Library;
+using EventHook.Client.Utility.Hooks.Library;
 
 namespace EventHook.Helpers
 {

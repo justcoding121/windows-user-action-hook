@@ -6,10 +6,10 @@ using System.Printing;
 using System.Runtime.InteropServices;
 using System.Threading;
 using Microsoft.Win32.SafeHandles;
-using AgentSafeX.Client.Utility.Hooks.Library;
+using EventHook.Client.Utility.Hooks.Library;
 
 
-namespace AgentSafeX.Client.Utility.Hooks
+namespace EventHook.Client.Utility.Hooks
 {
 
     public class PrintJobChangeEventArgs : EventArgs

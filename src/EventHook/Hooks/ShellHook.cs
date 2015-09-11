@@ -1,11 +1,11 @@
 ﻿
 using System;
 using System.Windows.Forms;
-using AgentSafeX.Client.Utility.Hooks.Library;
-using AgentSafeX.Client.Utility.Library;
+using EventHook.Client.Utility.Hooks.Library;
+using EventHook.Client.Utility.Library;
 
 
-namespace AgentSafeX.Client.Utility.Hooks
+namespace EventHook.Client.Utility.Hooks
 {
     public delegate void GeneralShellHookEventHandler(ShellHook sender, IntPtr hWnd);
   

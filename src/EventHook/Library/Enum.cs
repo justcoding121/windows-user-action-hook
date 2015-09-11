@@ -1,6 +1,6 @@
 ﻿
 
-namespace AgentSafeX.Client.Utility.Library
+namespace EventHook.Client.Utility.Library
 {
     
 
