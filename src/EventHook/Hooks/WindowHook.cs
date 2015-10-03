@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Interop;
 
-namespace EventHook.Common
+namespace EventHook.Hooks
 {   
     ///<summary>One window event to many application wide listeners</summary>
     public static class WindowHook
