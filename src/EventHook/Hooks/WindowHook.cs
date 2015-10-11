@@ -1,68 +1,67 @@
-﻿using EventHook.Client.Utility.Hooks;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Windows;
 using System.Windows.Interop;
 
 namespace EventHook.Hooks
-{   
-    ///<summary>One window event to many application wide listeners</summary>
+{
+    /// <summary>One window event to many application wide listeners</summary>
     public static class WindowHook
     {
+        private static readonly Window F;
+
+        static WindowHook()
+        {
+            if (F == null)
+            {
+                F = new Window();
+                F.Visibility = Visibility.Hidden;
+                F.WindowState = WindowState.Minimized;
+                F.Show();
+                F.Hide();
+
+                var sh = new ShellHook(new WindowInteropHelper(F).Handle);
+                sh.WindowCreated += WindowCreatedEvent;
+                sh.WindowDestroyed += WindowDestroyedEvent;
+                sh.WindowActivated += WindowActivatedEvent;
+            }
+        }
+
         /// <summary>
-        /// A top-level, unowned window has been created. The window exists when the system calls this hook.
+        ///     A top-level, unowned window has been created. The window exists when the system calls this hook.
         /// </summary>
         public static event GeneralShellHookEventHandler WindowCreated;
+
         /// <summary>
-        /// A top-level, unowned window is about to be destroyed. The window still exists when the system calls this hook.
+        ///     A top-level, unowned window is about to be destroyed. The window still exists when the system calls this hook.
         /// </summary>
         public static event GeneralShellHookEventHandler WindowDestroyed;
 
         /// <summary>
-        /// The activation has changed to a different top-level, unowned window. 
+        ///     The activation has changed to a different top-level, unowned window.
         /// </summary>
         public static event GeneralShellHookEventHandler WindowActivated;
-        private static Window f;
-        private static ShellHook sh;
-        static WindowHook()
-        {
-            if (f == null)
-            {
-                f = new Window();
-                f.Visibility = Visibility.Hidden;
-                f.WindowState = WindowState.Minimized;
-                f.Show();
-                f.Hide();
 
-                sh = new ShellHook(new WindowInteropHelper(f).Handle);
-                sh.WindowCreated += new GeneralShellHookEventHandler(WindowCreatedEvent);
-                sh.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyedEvent);
-                sh.WindowActivated += new GeneralShellHookEventHandler(WindowActivatedEvent);
-            }
-
-        }
-        private static void WindowCreatedEvent(ShellHook ShellObject, IntPtr hWnd)
+        private static void WindowCreatedEvent(ShellHook shellObject, IntPtr hWnd)
         {
             if (WindowCreated != null)
             {
-                WindowCreated(ShellObject, hWnd);
+                WindowCreated(shellObject, hWnd);
             }
-
         }
-        private static void WindowDestroyedEvent(ShellHook ShellObject, IntPtr hWnd)
+
+        private static void WindowDestroyedEvent(ShellHook shellObject, IntPtr hWnd)
         {
             if (WindowDestroyed != null)
             {
-                WindowDestroyed(ShellObject, hWnd);
+                WindowDestroyed(shellObject, hWnd);
             }
         }
-        private static void WindowActivatedEvent(ShellHook ShellObject, IntPtr hWnd)
+
+        private static void WindowActivatedEvent(ShellHook shellObject, IntPtr hWnd)
         {
             if (WindowActivated != null)
             {
-                WindowActivated(ShellObject, hWnd);
+                WindowActivated(shellObject, hWnd);
             }
         }
     }

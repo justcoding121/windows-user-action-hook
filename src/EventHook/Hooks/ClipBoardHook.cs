@@ -1,90 +1,38 @@
 ﻿using System;
-using System.Windows.Forms;
 using System.Collections;
-using System.Text.RegularExpressions;
-using System.Diagnostics;
-using EventHook.Client.Utility.Hooks.Library;
+using System.Windows.Forms;
+using EventHook.Hooks.Library;
 
-namespace EventHook.Client.Utility.Hooks
+namespace EventHook.Hooks
 {
     public class ClipBoardHook : Form
     {
-        
+        private IntPtr _clipboardViewerNext;
+        private Queue _hyperlink = new Queue();
+
 
         public event EventHandler ClipBoardChanged = delegate { };
 
-        string[] formatsAll = new string[] 
-		{
-			DataFormats.Bitmap,
-			DataFormats.CommaSeparatedValue,
-			DataFormats.Dib,
-			DataFormats.Dif,
-			DataFormats.EnhancedMetafile,
-			DataFormats.FileDrop,
-			DataFormats.Html,
-			DataFormats.Locale,
-			DataFormats.MetafilePict,
-			DataFormats.OemText,
-			DataFormats.Palette,
-			DataFormats.PenData,
-			DataFormats.Riff,
-			DataFormats.Rtf,
-			DataFormats.Serializable,
-			DataFormats.StringFormat,
-			DataFormats.SymbolicLink,
-			DataFormats.Text,
-			DataFormats.Tiff,
-			DataFormats.UnicodeText,
-			DataFormats.WaveAudio
-		};
-
-        string[] formatsAllDesc = new String[] 
-		{
-			"Bitmap",
-			"CommaSeparatedValue",
-			"Dib",
-			"Dif",
-			"EnhancedMetafile",
-			"FileDrop",
-			"Html",
-			"Locale",
-			"MetafilePict",
-			"OemText",
-			"Palette",
-			"PenData",
-			"Riff",
-			"Rtf",
-			"Serializable",
-			"StringFormat",
-			"SymbolicLink",
-			"Text",
-			"Tiff",
-			"UnicodeText",
-			"WaveAudio"
-		};
-        IntPtr _ClipboardViewerNext;
-        Queue _hyperlink = new Queue();
-
         /// <summary>
-        /// Register this form as a Clipboard Viewer application
+        ///     Register this form as a Clipboard Viewer application
         /// </summary>
         public void RegisterClipboardViewer()
         {
-            _ClipboardViewerNext = User32.SetClipboardViewer(this.Handle);
+            _clipboardViewerNext = User32.SetClipboardViewer(Handle);
         }
 
         /// <summary>
-        /// Remove this form from the Clipboard Viewer list
+        ///     Remove this form from the Clipboard Viewer list
         /// </summary>
         public void UnregisterClipboardViewer()
         {
-            User32.ChangeClipboardChain(this.Handle, _ClipboardViewerNext);
+            User32.ChangeClipboardChain(Handle, _clipboardViewerNext);
         }
 
 
         /// <summary>
-        /// Show the clipboard contents in the window 
-        /// and show the notification balloon if a link is found
+        ///     Show the clipboard contents in the window
+        ///     and show the notification balloon if a link is found
         /// </summary>
         private void GetClipboardData()
         {
@@ -92,30 +40,21 @@ namespace EventHook.Client.Utility.Hooks
             // Data on the clipboard uses the 
             // IDataObject interface
             //
-            IDataObject iData = new DataObject();
-
-
             try
             {
-                iData = Clipboard.GetDataObject();
+                var iData = Clipboard.GetDataObject();
                 ClipBoardChanged(iData, new EventArgs());
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
-                return;
             }
-
         }
-
-
-
-
 
 
         protected override void WndProc(ref Message m)
         {
-            switch ((Msgs)m.Msg)
+            switch ((Msgs) m.Msg)
             {
                 //
                 // The WM_DRAWCLIPBOARD message is sent to the first window 
@@ -125,7 +64,6 @@ namespace EventHook.Client.Utility.Hooks
                 //
                 case Msgs.WM_DRAWCLIPBOARD:
 
-                 
 
                     GetClipboardData();
 
@@ -134,7 +72,7 @@ namespace EventHook.Client.Utility.Hooks
                     // must call the SendMessage function to pass the message 
                     // on to the next window in the clipboard viewer chain.
                     //
-                    User32.SendMessage(_ClipboardViewerNext, m.Msg, m.WParam, m.LParam);
+                    User32.SendMessage(_clipboardViewerNext, m.Msg, m.WParam, m.LParam);
                     break;
 
 
@@ -144,7 +82,7 @@ namespace EventHook.Client.Utility.Hooks
                 // removed from the chain. 
                 //
                 case Msgs.WM_CHANGECBCHAIN:
-           
+
 
                     // When a clipboard viewer window receives the WM_CHANGECBCHAIN message, 
                     // it should call the SendMessage function to pass the message to the 
@@ -157,18 +95,18 @@ namespace EventHook.Client.Utility.Hooks
                     // the clipboard viewer chain 
                     // lParam is the Handle to the next window in the chain 
                     // following the window being removed. 
-                    if (m.WParam == _ClipboardViewerNext)
+                    if (m.WParam == _clipboardViewerNext)
                     {
                         //
                         // If wParam is the next clipboard viewer then it
                         // is being removed so update pointer to the next
                         // window in the clipboard chain
                         //
-                        _ClipboardViewerNext = m.LParam;
+                        _clipboardViewerNext = m.LParam;
                     }
                     else
                     {
-                        User32.SendMessage(_ClipboardViewerNext, m.Msg, m.WParam, m.LParam);
+                        User32.SendMessage(_clipboardViewerNext, m.Msg, m.WParam, m.LParam);
                     }
                     break;
 
@@ -179,29 +117,7 @@ namespace EventHook.Client.Utility.Hooks
                     //
                     base.WndProc(ref m);
                     break;
-
             }
-
         }
-
-        private void InitializeComponent()
-        {
-            this.SuspendLayout();
-
-
-            this.Name = "ClipBoard";
-            this.Load += new System.EventHandler(this.ClipBoard_Load);
-            this.ResumeLayout(false);
-
-        }
-
-        private void ClipBoard_Load(object sender, EventArgs e)
-        {
-
-        }
-
     }
-   
-
 }
-

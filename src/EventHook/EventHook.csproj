@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Office.Interop.Outlook, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -50,8 +53,15 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApplicationWatcher.cs" />
+    <Compile Include="ClipboardWatcher.cs" />
+    <Compile Include="EmailClientWatcher.cs" />
+    <Compile Include="FileSystemWatcher.cs" />
+    <Compile Include="KeyLogger.cs" />
+    <Compile Include="PrintWatcher.cs" />
+    <Compile Include="WebWatcher.cs" />
     <Compile Include="Hooks\WindowHook.cs" />
-    <Compile Include="Hooks\Helpers\WindowHelpers.cs" />
+    <Compile Include="Hooks\Helpers\WindowHelper.cs" />
     <Compile Include="Hooks\AutomationHook.cs" />
     <Compile Include="Hooks\ClipBoardHook.cs">
       <SubType>Form</SubType>

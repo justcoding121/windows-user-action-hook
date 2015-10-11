@@ -1,70 +1,86 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace EventHook.Client.Utility.Hooks
+namespace EventHook.Hooks
 {
-
-    public  class KeyboardHook
+    public class KeyboardHook
     {
-        private  KeyboardListener listener;
-        public  event RawKeyEventHandler KeyDown = delegate { };
-        public  event RawKeyEventHandler KeyUp = delegate { };
-        public  void Start()
+        private KeyboardListener _listener;
+        public event RawKeyEventHandler KeyDown = delegate { };
+        public event RawKeyEventHandler KeyUp = delegate { };
+
+        public void Start()
         {
-          
-                listener = new KeyboardListener();
-                listener.KeyDown += new RawKeyEventHandler(KListener_KeyDown);
-                listener.KeyUp += new RawKeyEventHandler(KListener_KeyUp);
-            
+            _listener = new KeyboardListener();
+            _listener.KeyDown += KListener_KeyDown;
+            _listener.KeyUp += KListener_KeyUp;
         }
-        public void stop()
+
+        public void Stop()
         {
-            if (listener != null)
+            if (_listener != null)
             {
-                listener.KeyDown -= new RawKeyEventHandler(KListener_KeyDown);
-                listener.KeyUp -= new RawKeyEventHandler(KListener_KeyUp);
-                listener.Dispose();
+                _listener.KeyDown -= KListener_KeyDown;
+                _listener.KeyUp -= KListener_KeyUp;
+                _listener.Dispose();
             }
         }
 
 
-          void KListener_KeyDown(object sender, RawKeyEventArgs args)
-         { 
-              KeyDown(sender, args);
-         }
-          void KListener_KeyUp(object sender, RawKeyEventArgs args)
-         {
-             KeyUp(sender, args);
-         }
+        private void KListener_KeyDown(object sender, RawKeyEventArgs args)
+        {
+            KeyDown(sender, args);
+        }
+
+        private void KListener_KeyUp(object sender, RawKeyEventArgs args)
+        {
+            KeyUp(sender, args);
+        }
     }
+
     public class KeyboardListener : IDisposable
     {
+        private readonly Dispatcher _dispatcher;
+
+        //http://stackoverflow.com/questions/6193711/call-has-been-made-on-garbage-collected-delegate-in-c
+        private readonly InterceptKeys.LowLevelKeyboardProc _hookProcDelegateToAvoidGC;
         /// <summary>
-        /// Creates global keyboard listener.
+        ///     Creates global keyboard listener.
         /// </summary>
         public KeyboardListener()
         {
             // Dispatcher thread handling the KeyDown/KeyUp events.
-            this.dispatcher = Dispatcher.CurrentDispatcher;
+            _dispatcher = Dispatcher.CurrentDispatcher;
 
             // We have to store the LowLevelKeyboardProc, so that it is not garbage collected runtime
-            hookedLowLevelKeyboardProc = (InterceptKeys.LowLevelKeyboardProc)LowLevelKeyboardProc;
-
+            _hookProcDelegateToAvoidGC = LowLevelKeyboardProc;
             // Set the hook
-            hookId = InterceptKeys.SetHook(hookedLowLevelKeyboardProc);
+            _hookId = InterceptKeys.SetHook(_hookProcDelegateToAvoidGC);
 
             // Assign the asynchronous callback event
-            hookedKeyboardCallbackAsync = new KeyboardCallbackAsync(KeyboardListener_KeyboardCallbackAsync);
+            _hookedKeyboardCallbackAsync = KeyboardListener_KeyboardCallbackAsync;
         }
 
-        private Dispatcher dispatcher;
+        #region IDisposable Members
 
         /// <summary>
-        /// Destroys global keyboard listener.
+        ///     Disposes the hook.
+        ///     <remarks>This call is required as it calls the UnhookWindowsHookEx.</remarks>
+        /// </summary>
+        public void Dispose()
+        {
+            InterceptKeys.UnhookWindowsHookEx(_hookId);
+        }
+
+        #endregion
+
+        /// <summary>
+        ///     Destroys global keyboard listener.
         /// </summary>
         ~KeyboardListener()
         {
@@ -72,24 +88,24 @@ namespace EventHook.Client.Utility.Hooks
         }
 
         /// <summary>
-        /// Fired when any of the keys is pressed down.
+        ///     Fired when any of the keys is pressed down.
         /// </summary>
         public event RawKeyEventHandler KeyDown;
 
         /// <summary>
-        /// Fired when any of the keys is released.
+        ///     Fired when any of the keys is released.
         /// </summary>
         public event RawKeyEventHandler KeyUp;
 
         #region Inner workings
 
         /// <summary>
-        /// Hook ID
+        ///     Hook ID
         /// </summary>
-        private IntPtr hookId = IntPtr.Zero;
+        private readonly IntPtr _hookId;
 
         /// <summary>
-        /// Asynchronous callback hook.
+        ///     Asynchronous callback hook.
         /// </summary>
         /// <param name="character">Character</param>
         /// <param name="keyEvent">Keyboard event</param>
@@ -97,9 +113,8 @@ namespace EventHook.Client.Utility.Hooks
         private delegate void KeyboardCallbackAsync(InterceptKeys.KeyEvent keyEvent, int vkCode, string character);
 
         /// <summary>
-        /// Actual callback hook.
-        /// 
-        /// <remarks>Calls asynchronously the asyncCallback.</remarks>
+        ///     Actual callback hook.
+        ///     <remarks>Calls asynchronously the asyncCallback.</remarks>
         /// </summary>
         /// <param name="nCode"></param>
         /// <param name="wParam"></param>
@@ -108,188 +123,174 @@ namespace EventHook.Client.Utility.Hooks
         [MethodImpl(MethodImplOptions.NoInlining)]
         private IntPtr LowLevelKeyboardProc(int nCode, UIntPtr wParam, IntPtr lParam)
         {
-            string chars = String.Empty;
-
             if (nCode >= 0)
-                if (wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_KEYDOWN ||
-                    wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_KEYUP ||
-                    wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_SYSKEYDOWN ||
-                    wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_SYSKEYUP)
+                if (wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_KEYDOWN ||
+                    wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_KEYUP ||
+                    wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_SYSKEYDOWN ||
+                    wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_SYSKEYUP)
                 {
                     // Captures the character(s) pressed only on WM_KEYDOWN
-                    chars = InterceptKeys.VKCodeToString((uint)Marshal.ReadInt32(lParam),
-                        (wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_KEYDOWN ||
-                        wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_SYSKEYDOWN));
+                    var chars = InterceptKeys.VkCodeToString((uint) Marshal.ReadInt32(lParam),
+                        (wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_KEYDOWN ||
+                         wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_SYSKEYDOWN));
 
-                    hookedKeyboardCallbackAsync.BeginInvoke((InterceptKeys.KeyEvent)wParam.ToUInt32(), Marshal.ReadInt32(lParam), chars, null, null);
+                    _hookedKeyboardCallbackAsync.BeginInvoke((InterceptKeys.KeyEvent) wParam.ToUInt32(),
+                        Marshal.ReadInt32(lParam), chars, null, null);
                 }
 
-            return InterceptKeys.CallNextHookEx(hookId, nCode, wParam, lParam);
+            return InterceptKeys.CallNextHookEx(_hookId, nCode, wParam, lParam);
         }
 
         /// <summary>
-        /// Event to be invoked asynchronously (BeginInvoke) each time key is pressed.
+        ///     Event to be invoked asynchronously (BeginInvoke) each time key is pressed.
         /// </summary>
-        private KeyboardCallbackAsync hookedKeyboardCallbackAsync;
+        private readonly KeyboardCallbackAsync _hookedKeyboardCallbackAsync;
 
         /// <summary>
-        /// Contains the hooked callback in runtime.
-        /// </summary>
-        private InterceptKeys.LowLevelKeyboardProc hookedLowLevelKeyboardProc;
-
-        /// <summary>
-        /// HookCallbackAsync procedure that calls accordingly the KeyDown or KeyUp events.
+        ///     HookCallbackAsync procedure that calls accordingly the KeyDown or KeyUp events.
         /// </summary>
         /// <param name="keyEvent">Keyboard event</param>
         /// <param name="vkCode">VKCode</param>
         /// <param name="character">Character as string.</param>
-        void KeyboardListener_KeyboardCallbackAsync(InterceptKeys.KeyEvent keyEvent, int vkCode, string character)
+        private void KeyboardListener_KeyboardCallbackAsync(InterceptKeys.KeyEvent keyEvent, int vkCode,
+            string character)
         {
             switch (keyEvent)
             {
                 // KeyDown events
                 case InterceptKeys.KeyEvent.WM_KEYDOWN:
                     if (KeyDown != null)
-                        dispatcher.BeginInvoke(new RawKeyEventHandler(KeyDown), this, new RawKeyEventArgs(vkCode, false, character,0));
+                        _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyDown), this,
+                            new RawKeyEventArgs(vkCode, false, character, 0));
                     break;
                 case InterceptKeys.KeyEvent.WM_SYSKEYDOWN:
                     if (KeyDown != null)
-                        dispatcher.BeginInvoke(new RawKeyEventHandler(KeyDown), this, new RawKeyEventArgs(vkCode, true, character,0));
+                        _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyDown), this,
+                            new RawKeyEventArgs(vkCode, true, character, 0));
                     break;
 
                 // KeyUp events
                 case InterceptKeys.KeyEvent.WM_KEYUP:
                     if (KeyUp != null)
-                        dispatcher.BeginInvoke(new RawKeyEventHandler(KeyUp), this, new RawKeyEventArgs(vkCode, false, character,1));
+                        _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyUp), this,
+                            new RawKeyEventArgs(vkCode, false, character, 1));
                     break;
                 case InterceptKeys.KeyEvent.WM_SYSKEYUP:
                     if (KeyUp != null)
-                        dispatcher.BeginInvoke(new RawKeyEventHandler(KeyUp), this, new RawKeyEventArgs(vkCode, true, character,1));
-                    break;
-
-                default:
+                        _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyUp), this,
+                            new RawKeyEventArgs(vkCode, true, character, 1));
                     break;
             }
-        }
-
-        #endregion
-
-        #region IDisposable Members
-
-        /// <summary>
-        /// Disposes the hook.
-        /// <remarks>This call is required as it calls the UnhookWindowsHookEx.</remarks>
-        /// </summary>
-        public void Dispose()
-        {
-            InterceptKeys.UnhookWindowsHookEx(hookId);
         }
 
         #endregion
     }
 
     /// <summary>
-    /// Raw KeyEvent arguments.
+    ///     Raw KeyEvent arguments.
     /// </summary>
     public class RawKeyEventArgs : EventArgs
     {
         /// <summary>
-        /// VKCode of the key.
+        ///     Unicode character of key pressed.
         /// </summary>
-        public int VKCode;
+        public string Character;
 
         /// <summary>
-        /// Up(1) or Down(0)
+        ///     Up(1) or Down(0)
         /// </summary>
         public int EventType;
-        /// <summary>
-        /// WPF Key of the key.
-        /// </summary>
-        public Key Key;
 
         /// <summary>
-        /// Is the hitted key system key.
+        ///     Is the hitted key system key.
         /// </summary>
         public bool IsSysKey;
 
         /// <summary>
-        /// Convert to string.
+        ///     WPF Key of the key.
+        /// </summary>
+        public Key Key;
+
+        /// <summary>
+        ///     VKCode of the key.
+        /// </summary>
+        public int VkCode;
+
+
+        /// <summary>
+        ///     Create raw keyevent arguments.
+        /// </summary>
+        /// <param name="vkCode"></param>
+        /// <param name="isSysKey"></param>
+        /// <param name="character">Character</param>
+        /// <param name="type"></param>
+        public RawKeyEventArgs(int vkCode, bool isSysKey, string character, int type)
+        {
+            VkCode = vkCode;
+            IsSysKey = isSysKey;
+            Character = character;
+            Key = KeyInterop.KeyFromVirtualKey(vkCode);
+            EventType = type;
+        }
+
+        /// <summary>
+        ///     Convert to string.
         /// </summary>
         /// <returns>Returns string representation of this key, if not possible empty string is returned.</returns>
         public override string ToString()
         {
             return Character;
         }
-
-        /// <summary>
-        /// Unicode character of key pressed.
-        /// </summary>
-        public string Character;
-
-       
-        /// <summary>
-        /// Create raw keyevent arguments.
-        /// </summary>
-        /// <param name="VKCode"></param>
-        /// <param name="isSysKey"></param>
-        /// <param name="Character">Character</param>
-        public RawKeyEventArgs(int VKCode, bool isSysKey, string Character, int Type)
-        {
-            this.VKCode = VKCode;
-            this.IsSysKey = isSysKey;
-            this.Character = Character;
-            this.Key = System.Windows.Input.KeyInterop.KeyFromVirtualKey(VKCode);
-            this.EventType = Type;
-        }
-
     }
 
     /// <summary>
-    /// Raw keyevent handler.
+    ///     Raw keyevent handler.
     /// </summary>
     /// <param name="sender">sender</param>
     /// <param name="args">raw keyevent arguments</param>
     public delegate void RawKeyEventHandler(object sender, RawKeyEventArgs args);
 
     #region WINAPI Helper class
+
     /// <summary>
-    /// Winapi Key interception helper class.
+    ///     Winapi Key interception helper class.
     /// </summary>
     internal static class InterceptKeys
     {
         public delegate IntPtr LowLevelKeyboardProc(int nCode, UIntPtr wParam, IntPtr lParam);
-        public static int WH_KEYBOARD_LL = 13;
 
         /// <summary>
-        /// Key event
+        ///     Key event
         /// </summary>
-        public enum KeyEvent : int
+        public enum KeyEvent
         {
             /// <summary>
-            /// Key down
+            ///     Key down
             /// </summary>
             WM_KEYDOWN = 256,
 
             /// <summary>
-            /// Key up
+            ///     Key up
             /// </summary>
             WM_KEYUP = 257,
 
             /// <summary>
-            /// System key up
+            ///     System key up
             /// </summary>
             WM_SYSKEYUP = 261,
 
             /// <summary>
-            /// System key down
+            ///     System key down
             /// </summary>
             WM_SYSKEYDOWN = 260
         }
 
+        public static int WH_KEYBOARD_LL = 13;
+
         public static IntPtr SetHook(LowLevelKeyboardProc proc)
         {
-            using (Process curProcess = Process.GetCurrentProcess())
-            using (ProcessModule curModule = curProcess.MainModule)
+            using (var curProcess = Process.GetCurrentProcess())
+            using (var curModule = curProcess.MainModule)
             {
                 return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
             }
@@ -309,12 +310,14 @@ namespace EventHook.Client.Utility.Hooks
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
         #region Convert VKCode to string
+
         // Note: Sometimes single VKCode represents multiple chars, thus string. 
         // E.g. typing "^1" (notice that when pressing 1 the both characters appear, 
         // because of this behavior, "^" is called dead key)
 
         [DllImport("user32.dll")]
-        private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState, [Out, MarshalAs(UnmanagedType.LPWStr)] System.Text.StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
+        private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState,
+            [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
 
         [DllImport("user32.dll")]
         private static extern bool GetKeyboardState(byte[] lpKeyState);
@@ -337,43 +340,43 @@ namespace EventHook.Client.Utility.Hooks
         [DllImport("kernel32.dll")]
         private static extern uint GetCurrentThreadId();
 
-        private static uint lastVKCode = 0;
-        private static uint lastScanCode = 0;
-        private static byte[] lastKeyState = new byte[255];
-        private static bool lastIsDead = false;
+        private static uint _lastVkCode;
+        private static uint _lastScanCode;
+        private static byte[] _lastKeyState = new byte[255];
+        private static bool _lastIsDead;
 
         /// <summary>
-        /// Convert VKCode to Unicode.
-        /// <remarks>isKeyDown is required for because of keyboard state inconsistencies!</remarks>
+        ///     Convert VKCode to Unicode.
+        ///     <remarks>isKeyDown is required for because of keyboard state inconsistencies!</remarks>
         /// </summary>
-        /// <param name="VKCode">VKCode</param>
+        /// <param name="vkCode">VKCode</param>
         /// <param name="isKeyDown">Is the key down event?</param>
         /// <returns>String representing single unicode character.</returns>
-        public static string VKCodeToString(uint VKCode, bool isKeyDown)
+        public static string VkCodeToString(uint vkCode, bool isKeyDown)
         {
             // ToUnicodeEx needs StringBuilder, it populates that during execution.
-            System.Text.StringBuilder sbString = new System.Text.StringBuilder(5);
+            var sbString = new StringBuilder(5);
 
-            byte[] bKeyState = new byte[255];
+            var bKeyState = new byte[255];
             bool bKeyStateStatus;
-            bool isDead = false;
+            var isDead = false;
 
             // Gets the current windows window handle, threadID, processID
-            IntPtr currentHWnd = GetForegroundWindow();
-            uint currentProcessID;
-            uint currentWindowThreadID = GetWindowThreadProcessId(currentHWnd, out currentProcessID);
+            var currentHWnd = GetForegroundWindow();
+            uint currentProcessId;
+            var currentWindowThreadId = GetWindowThreadProcessId(currentHWnd, out currentProcessId);
 
             // This programs Thread ID
-            uint thisProgramThreadId = GetCurrentThreadId();
+            var thisProgramThreadId = GetCurrentThreadId();
 
             // Attach to active thread so we can get that keyboard state
-            if (AttachThreadInput(thisProgramThreadId, currentWindowThreadID, true))
+            if (AttachThreadInput(thisProgramThreadId, currentWindowThreadId, true))
             {
                 // Current state of the modifiers in keyboard
                 bKeyStateStatus = GetKeyboardState(bKeyState);
 
                 // Detach
-                AttachThreadInput(thisProgramThreadId, currentWindowThreadID, false);
+                AttachThreadInput(thisProgramThreadId, currentWindowThreadId, false);
             }
             else
             {
@@ -386,19 +389,19 @@ namespace EventHook.Client.Utility.Hooks
                 return "";
 
             // Gets the layout of keyboard
-            IntPtr HKL = GetKeyboardLayout(currentWindowThreadID);
+            var hkl = GetKeyboardLayout(currentWindowThreadId);
 
             // Maps the virtual keycode
-            uint lScanCode = MapVirtualKeyEx(VKCode, 0, HKL);
+            var lScanCode = MapVirtualKeyEx(vkCode, 0, hkl);
 
             // Keyboard state goes inconsistent if this is not in place. In other words, we need to call above commands in UP events also.
             if (!isKeyDown)
                 return "";
 
             // Converts the VKCode to unicode
-            int relevantKeyCountInBuffer = ToUnicodeEx(VKCode, lScanCode, bKeyState, sbString, sbString.Capacity, (uint)0, HKL);
+            var relevantKeyCountInBuffer = ToUnicodeEx(vkCode, lScanCode, bKeyState, sbString, sbString.Capacity, 0, hkl);
 
-            string ret = String.Empty;
+            var ret = string.Empty;
 
             switch (relevantKeyCountInBuffer)
             {
@@ -407,7 +410,7 @@ namespace EventHook.Client.Utility.Hooks
                     isDead = true;
 
                     // We must clear the buffer because ToUnicodeEx messed it up, see below.
-                    ClearKeyboardBuffer(VKCode, lScanCode, HKL);
+                    ClearKeyboardBuffer(vkCode, lScanCode, hkl);
                     break;
 
                 case 0:
@@ -419,7 +422,6 @@ namespace EventHook.Client.Utility.Hooks
                     break;
 
                 // Two or more (only two of them is relevant)
-                case 2:
                 default:
                     ret = sbString.ToString().Substring(0, 2);
                     break;
@@ -430,36 +432,38 @@ namespace EventHook.Client.Utility.Hooks
             //   http://www.experts-exchange.com/Programming/System/Windows__Programming/Q_23453780.html
             //   http://blogs.msdn.com/michkap/archive/2005/01/19/355870.aspx
             //   http://blogs.msdn.com/michkap/archive/2007/10/27/5717859.aspx
-            if (lastVKCode != 0 && lastIsDead)
+            if (_lastVkCode != 0 && _lastIsDead)
             {
-                System.Text.StringBuilder sbTemp = new System.Text.StringBuilder(5);
-                ToUnicodeEx(lastVKCode, lastScanCode, lastKeyState, sbTemp, sbTemp.Capacity, (uint)0, HKL);
-                lastVKCode = 0;
+                var sbTemp = new StringBuilder(5);
+                ToUnicodeEx(_lastVkCode, _lastScanCode, _lastKeyState, sbTemp, sbTemp.Capacity, 0, hkl);
+                _lastVkCode = 0;
 
                 return ret;
             }
 
             // Save these
-            lastScanCode = lScanCode;
-            lastVKCode = VKCode;
-            lastIsDead = isDead;
-            lastKeyState = (byte[])bKeyState.Clone();
+            _lastScanCode = lScanCode;
+            _lastVkCode = vkCode;
+            _lastIsDead = isDead;
+            _lastKeyState = (byte[]) bKeyState.Clone();
 
             return ret;
         }
 
         private static void ClearKeyboardBuffer(uint vk, uint sc, IntPtr hkl)
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder(10);
+            var sb = new StringBuilder(10);
 
             int rc;
             do
             {
-                byte[] lpKeyStateNull = new Byte[255];
+                var lpKeyStateNull = new byte[255];
                 rc = ToUnicodeEx(vk, sc, lpKeyStateNull, sb, sb.Capacity, 0, hkl);
             } while (rc < 0);
         }
+
         #endregion
     }
+
     #endregion
 }

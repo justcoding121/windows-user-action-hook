@@ -1,49 +1,39 @@
-﻿
-using System.Runtime.InteropServices;
-using System;
+﻿using System;
 using System.Globalization;
+using System.Runtime.InteropServices;
 
-namespace EventHook.Client.Utility.Hooks.Library
+namespace EventHook.Hooks.Library
 {
-  
-
-
     [StructLayout(LayoutKind.Sequential)]
     public struct SYSTEMTIME
     {
-        [MarshalAs(UnmanagedType.U2)]
-        public short Year;
-        [MarshalAs(UnmanagedType.U2)]
-        public short Month;
-        [MarshalAs(UnmanagedType.U2)]
-        public short DayOfWeek;
-        [MarshalAs(UnmanagedType.U2)]
-        public short Day;
-        [MarshalAs(UnmanagedType.U2)]
-        public short Hour;
-        [MarshalAs(UnmanagedType.U2)]
-        public short Minute;
-        [MarshalAs(UnmanagedType.U2)]
-        public short Second;
-        [MarshalAs(UnmanagedType.U2)]
-        public short Milliseconds;
+        [MarshalAs(UnmanagedType.U2)] public short Year;
+        [MarshalAs(UnmanagedType.U2)] public short Month;
+        [MarshalAs(UnmanagedType.U2)] public short DayOfWeek;
+        [MarshalAs(UnmanagedType.U2)] public short Day;
+        [MarshalAs(UnmanagedType.U2)] public short Hour;
+        [MarshalAs(UnmanagedType.U2)] public short Minute;
+        [MarshalAs(UnmanagedType.U2)] public short Second;
+        [MarshalAs(UnmanagedType.U2)] public short Milliseconds;
 
         public SYSTEMTIME(DateTime dt)
         {
-            dt = dt.ToUniversalTime();  // SetSystemTime expects the SYSTEMTIME in UTC
-            Year = (short)dt.Year;
-            Month = (short)dt.Month;
-            DayOfWeek = (short)dt.DayOfWeek;
-            Day = (short)dt.Day;
-            Hour = (short)dt.Hour;
-            Minute = (short)dt.Minute;
-            Second = (short)dt.Second;
-            Milliseconds = (short)dt.Millisecond;
+            dt = dt.ToUniversalTime(); // SetSystemTime expects the SYSTEMTIME in UTC
+            Year = (short) dt.Year;
+            Month = (short) dt.Month;
+            DayOfWeek = (short) dt.DayOfWeek;
+            Day = (short) dt.Day;
+            Hour = (short) dt.Hour;
+            Minute = (short) dt.Minute;
+            Second = (short) dt.Second;
+            Milliseconds = (short) dt.Millisecond;
         }
 
         public DateTime ToDateTime()
         {
-            return new DateTime(Year, Month, Day, Hour, Minute, Second, Milliseconds, CultureInfo.CurrentCulture.Calendar, DateTimeKind.Utc).ToLocalTime();
+            return
+                new DateTime(Year, Month, Day, Hour, Minute, Second, Milliseconds, CultureInfo.CurrentCulture.Calendar,
+                    DateTimeKind.Utc).ToLocalTime();
         }
     }
 
@@ -64,7 +54,7 @@ namespace EventHook.Client.Utility.Hooks.Library
         JOB_STATUS_RESTART = 0x00000800,
         JOB_STATUS_COMPLETE = 0x00001000,
         JOB_STATUS_RETAINED = 0x00002000,
-        JOB_STATUS_RENDERING_LOCALLY = 0x00004000,
+        JOB_STATUS_RENDERING_LOCALLY = 0x00004000
     }
 
 
@@ -126,7 +116,7 @@ namespace EventHook.Client.Utility.Hooks.Library
         PRINTER_NOTIFY_FIELD_TOTAL_PAGES = 22,
         PRINTER_NOTIFY_FIELD_PAGES_PRINTED = 23,
         PRINTER_NOTIFY_FIELD_TOTAL_BYTES = 24,
-        PRINTER_NOTIFY_FIELD_BYTES_PRINTED = 25,
+        PRINTER_NOTIFY_FIELD_BYTES_PRINTED = 25
     }
 
     public enum PRINTERJOBNOTIFICATIONTYPES
@@ -154,21 +144,22 @@ namespace EventHook.Client.Utility.Hooks.Library
         JOB_NOTIFY_FIELD_TOTAL_PAGES = 20,
         JOB_NOTIFY_FIELD_PAGES_PRINTED = 21,
         JOB_NOTIFY_FIELD_TOTAL_BYTES = 22,
-        JOB_NOTIFY_FIELD_BYTES_PRINTED = 23,
+        JOB_NOTIFY_FIELD_BYTES_PRINTED = 23
     }
 
     [StructLayout(LayoutKind.Sequential)]
     public class PRINTER_NOTIFY_OPTIONS
     {
-        public int dwVersion = 2;
-        public int dwFlags;
         public int Count = 2;
+        public int dwFlags;
+        public int dwVersion = 2;
         public IntPtr lpTypes;
 
         public PRINTER_NOTIFY_OPTIONS()
         {
-            int bytesNeeded = (2 + PRINTER_NOTIFY_OPTIONS_TYPE.JOB_FIELDS_COUNT + PRINTER_NOTIFY_OPTIONS_TYPE.PRINTER_FIELDS_COUNT) * 2;
-            PRINTER_NOTIFY_OPTIONS_TYPE pJobTypes = new PRINTER_NOTIFY_OPTIONS_TYPE();
+            var bytesNeeded = (2 + PRINTER_NOTIFY_OPTIONS_TYPE.JOB_FIELDS_COUNT +
+                               PRINTER_NOTIFY_OPTIONS_TYPE.PRINTER_FIELDS_COUNT)*2;
+            var pJobTypes = new PRINTER_NOTIFY_OPTIONS_TYPE();
             lpTypes = Marshal.AllocHGlobal(bytesNeeded);
             Marshal.StructureToPtr(pJobTypes, lpTypes, true);
         }
@@ -185,19 +176,27 @@ namespace EventHook.Client.Utility.Hooks.Library
     {
         public const int JOB_FIELDS_COUNT = 24;
         public const int PRINTER_FIELDS_COUNT = 23;
-
-        public Int16 wJobType;
-        public Int16 wJobReserved0;
-        public Int32 dwJobReserved1;
-        public Int32 dwJobReserved2;
-        public Int32 JobFieldCount;
+        public int dwJobReserved1;
+        public int dwJobReserved2;
+        public int dwPrinterReserved1;
+        public int dwPrinterReserved2;
+        public int JobFieldCount;
         public IntPtr pJobFields;
-        public Int16 wPrinterType;
-        public Int16 wPrinterReserved0;
-        public Int32 dwPrinterReserved1;
-        public Int32 dwPrinterReserved2;
-        public Int32 PrinterFieldCount;
         public IntPtr pPrinterFields;
+        public int PrinterFieldCount;
+        public short wJobReserved0;
+
+        public short wJobType;
+        public short wPrinterReserved0;
+        public short wPrinterType;
+
+        public PRINTER_NOTIFY_OPTIONS_TYPE()
+        {
+            wJobType = (short) PRINTERNOTIFICATIONTYPES.JOB_NOTIFY_TYPE;
+            wPrinterType = (short) PRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_TYPE;
+
+            SetupFields();
+        }
 
         private void SetupFields()
         {
@@ -206,35 +205,36 @@ namespace EventHook.Client.Utility.Hooks.Library
                 Marshal.FreeHGlobal(pJobFields);
             }
 
-            if (wJobType == (short)PRINTERNOTIFICATIONTYPES.JOB_NOTIFY_TYPE)
+            if (wJobType == (short) PRINTERNOTIFICATIONTYPES.JOB_NOTIFY_TYPE)
             {
                 JobFieldCount = JOB_FIELDS_COUNT;
-                pJobFields = Marshal.AllocHGlobal((JOB_FIELDS_COUNT * 2) - 1);
+                pJobFields = Marshal.AllocHGlobal((JOB_FIELDS_COUNT*2) - 1);
 
-                Marshal.WriteInt16(pJobFields, 0, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PRINTER_NAME);
-                Marshal.WriteInt16(pJobFields, 2, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_MACHINE_NAME);
-                Marshal.WriteInt16(pJobFields, 4, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PORT_NAME);
-                Marshal.WriteInt16(pJobFields, 6, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_USER_NAME);
-                Marshal.WriteInt16(pJobFields, 8, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_NOTIFY_NAME);
-                Marshal.WriteInt16(pJobFields, 10, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_DATATYPE);
-                Marshal.WriteInt16(pJobFields, 12, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PRINT_PROCESSOR);
-                Marshal.WriteInt16(pJobFields, 14, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PARAMETERS);
-                Marshal.WriteInt16(pJobFields, 16, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_DRIVER_NAME);
-                Marshal.WriteInt16(pJobFields, 18, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_DEVMODE);
-                Marshal.WriteInt16(pJobFields, 20, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_STATUS);
-                Marshal.WriteInt16(pJobFields, 22, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_STATUS_STRING);
-                Marshal.WriteInt16(pJobFields, 24, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_SECURITY_DESCRIPTOR);
-                Marshal.WriteInt16(pJobFields, 26, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_DOCUMENT);
-                Marshal.WriteInt16(pJobFields, 28, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PRIORITY);
-                Marshal.WriteInt16(pJobFields, 30, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_POSITION);
-                Marshal.WriteInt16(pJobFields, 32, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_SUBMITTED);
-                Marshal.WriteInt16(pJobFields, 34, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_StartTime);
-                Marshal.WriteInt16(pJobFields, 36, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_UNTIL_TIME);
-                Marshal.WriteInt16(pJobFields, 38, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_TIME);
-                Marshal.WriteInt16(pJobFields, 40, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_TOTAL_PAGES);
-                Marshal.WriteInt16(pJobFields, 42, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PAGES_PRINTED);
-                Marshal.WriteInt16(pJobFields, 44, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_TOTAL_BYTES);
-                Marshal.WriteInt16(pJobFields, 46, (short)PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_BYTES_PRINTED);
+                Marshal.WriteInt16(pJobFields, 0, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PRINTER_NAME);
+                Marshal.WriteInt16(pJobFields, 2, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_MACHINE_NAME);
+                Marshal.WriteInt16(pJobFields, 4, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PORT_NAME);
+                Marshal.WriteInt16(pJobFields, 6, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_USER_NAME);
+                Marshal.WriteInt16(pJobFields, 8, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_NOTIFY_NAME);
+                Marshal.WriteInt16(pJobFields, 10, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_DATATYPE);
+                Marshal.WriteInt16(pJobFields, 12, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PRINT_PROCESSOR);
+                Marshal.WriteInt16(pJobFields, 14, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PARAMETERS);
+                Marshal.WriteInt16(pJobFields, 16, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_DRIVER_NAME);
+                Marshal.WriteInt16(pJobFields, 18, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_DEVMODE);
+                Marshal.WriteInt16(pJobFields, 20, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_STATUS);
+                Marshal.WriteInt16(pJobFields, 22, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_STATUS_STRING);
+                Marshal.WriteInt16(pJobFields, 24,
+                    (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_SECURITY_DESCRIPTOR);
+                Marshal.WriteInt16(pJobFields, 26, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_DOCUMENT);
+                Marshal.WriteInt16(pJobFields, 28, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PRIORITY);
+                Marshal.WriteInt16(pJobFields, 30, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_POSITION);
+                Marshal.WriteInt16(pJobFields, 32, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_SUBMITTED);
+                Marshal.WriteInt16(pJobFields, 34, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_StartTime);
+                Marshal.WriteInt16(pJobFields, 36, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_UNTIL_TIME);
+                Marshal.WriteInt16(pJobFields, 38, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_TIME);
+                Marshal.WriteInt16(pJobFields, 40, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_TOTAL_PAGES);
+                Marshal.WriteInt16(pJobFields, 42, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_PAGES_PRINTED);
+                Marshal.WriteInt16(pJobFields, 44, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_TOTAL_BYTES);
+                Marshal.WriteInt16(pJobFields, 46, (short) PRINTERJOBNOTIFICATIONTYPES.JOB_NOTIFY_FIELD_BYTES_PRINTED);
             }
 
             if (pPrinterFields.ToInt32() != 0)
@@ -242,43 +242,58 @@ namespace EventHook.Client.Utility.Hooks.Library
                 Marshal.FreeHGlobal(pPrinterFields);
             }
 
-            if (wPrinterType == (short)PRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_TYPE)
+            if (wPrinterType == (short) PRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_TYPE)
             {
                 PrinterFieldCount = PRINTER_FIELDS_COUNT;
-                pPrinterFields = Marshal.AllocHGlobal((PRINTER_FIELDS_COUNT - 1) * 2);
+                pPrinterFields = Marshal.AllocHGlobal((PRINTER_FIELDS_COUNT - 1)*2);
 
-                Marshal.WriteInt16(pPrinterFields, 0, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_SERVER_NAME);
-                Marshal.WriteInt16(pPrinterFields, 2, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PRINTER_NAME);
-                Marshal.WriteInt16(pPrinterFields, 4, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_SHARE_NAME);
-                Marshal.WriteInt16(pPrinterFields, 6, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PORT_NAME);
-                Marshal.WriteInt16(pPrinterFields, 8, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_DRIVER_NAME);
-                Marshal.WriteInt16(pPrinterFields, 10, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_COMMENT);
-                Marshal.WriteInt16(pPrinterFields, 12, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_LOCATION);
-                Marshal.WriteInt16(pPrinterFields, 14, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_SEPFILE);
-                Marshal.WriteInt16(pPrinterFields, 16, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PRINT_PROCESSOR);
-                Marshal.WriteInt16(pPrinterFields, 18, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PARAMETERS);
-                Marshal.WriteInt16(pPrinterFields, 20, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_DATATYPE);
-                Marshal.WriteInt16(pPrinterFields, 22, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_ATTRIBUTES);
-                Marshal.WriteInt16(pPrinterFields, 24, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PRIORITY);
-                Marshal.WriteInt16(pPrinterFields, 26, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_DEFAULT_PRIORITY);
-                Marshal.WriteInt16(pPrinterFields, 28, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_StartTime);
-                Marshal.WriteInt16(pPrinterFields, 30, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_UNTIL_TIME);
-                Marshal.WriteInt16(pPrinterFields, 32, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_STATUS_STRING);
-                Marshal.WriteInt16(pPrinterFields, 34, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_CJOBS);
-                Marshal.WriteInt16(pPrinterFields, 36, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_AVERAGE_PPM);
-                Marshal.WriteInt16(pPrinterFields, 38, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_TOTAL_PAGES);
-                Marshal.WriteInt16(pPrinterFields, 40, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PAGES_PRINTED);
-                Marshal.WriteInt16(pPrinterFields, 42, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_TOTAL_BYTES);
-                Marshal.WriteInt16(pPrinterFields, 44, (short)PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_BYTES_PRINTED);
+                Marshal.WriteInt16(pPrinterFields, 0,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_SERVER_NAME);
+                Marshal.WriteInt16(pPrinterFields, 2,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PRINTER_NAME);
+                Marshal.WriteInt16(pPrinterFields, 4,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_SHARE_NAME);
+                Marshal.WriteInt16(pPrinterFields, 6,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PORT_NAME);
+                Marshal.WriteInt16(pPrinterFields, 8,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_DRIVER_NAME);
+                Marshal.WriteInt16(pPrinterFields, 10,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_COMMENT);
+                Marshal.WriteInt16(pPrinterFields, 12,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_LOCATION);
+                Marshal.WriteInt16(pPrinterFields, 14,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_SEPFILE);
+                Marshal.WriteInt16(pPrinterFields, 16,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PRINT_PROCESSOR);
+                Marshal.WriteInt16(pPrinterFields, 18,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PARAMETERS);
+                Marshal.WriteInt16(pPrinterFields, 20,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_DATATYPE);
+                Marshal.WriteInt16(pPrinterFields, 22,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_ATTRIBUTES);
+                Marshal.WriteInt16(pPrinterFields, 24,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PRIORITY);
+                Marshal.WriteInt16(pPrinterFields, 26,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_DEFAULT_PRIORITY);
+                Marshal.WriteInt16(pPrinterFields, 28,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_StartTime);
+                Marshal.WriteInt16(pPrinterFields, 30,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_UNTIL_TIME);
+                Marshal.WriteInt16(pPrinterFields, 32,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_STATUS_STRING);
+                Marshal.WriteInt16(pPrinterFields, 34,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_CJOBS);
+                Marshal.WriteInt16(pPrinterFields, 36,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_AVERAGE_PPM);
+                Marshal.WriteInt16(pPrinterFields, 38,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_TOTAL_PAGES);
+                Marshal.WriteInt16(pPrinterFields, 40,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_PAGES_PRINTED);
+                Marshal.WriteInt16(pPrinterFields, 42,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_TOTAL_BYTES);
+                Marshal.WriteInt16(pPrinterFields, 44,
+                    (short) PRINTERPRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_FIELD_BYTES_PRINTED);
             }
-        }
-
-        public PRINTER_NOTIFY_OPTIONS_TYPE()
-        {
-            wJobType = (short)PRINTERNOTIFICATIONTYPES.JOB_NOTIFY_TYPE;
-            wPrinterType = (short)PRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_TYPE;
-
-            SetupFields();
         }
     }
 
@@ -302,18 +317,13 @@ namespace EventHook.Client.Utility.Hooks.Library
     [StructLayout(LayoutKind.Explicit)]
     public struct PRINTER_NOTIFY_INFO_DATA_UNION
     {
-        [FieldOffset(0)]
-        private uint adwData0;
-        [FieldOffset(4)]
-        private uint adwData1;
-        [FieldOffset(0)]
-        public PRINTER_NOTIFY_INFO_DATA_DATA Data;
+        [FieldOffset(0)] private readonly uint adwData0;
+        [FieldOffset(4)] private readonly uint adwData1;
+        [FieldOffset(0)] public PRINTER_NOTIFY_INFO_DATA_DATA Data;
+
         public uint[] adwData
         {
-            get
-            {
-                return new uint[] { this.adwData0, this.adwData1 };
-            }
+            get { return new[] {adwData0, adwData1}; }
         }
     }
 
@@ -327,6 +337,4 @@ namespace EventHook.Client.Utility.Hooks.Library
         public uint Id;
         public PRINTER_NOTIFY_INFO_DATA_UNION NotifyData;
     }
-
 }
-

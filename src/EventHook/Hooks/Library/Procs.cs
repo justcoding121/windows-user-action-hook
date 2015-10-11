@@ -1,4 +1,5 @@
 ﻿#region License block
+
 /*
 Copyright (c) 2009 Khaprov Ilya (http://dead-trickster.com)
 Permission is hereby granted, free of charge, to any person
@@ -22,18 +23,14 @@ WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
 OTHER DEALINGS IN THE SOFTWARE.
 */
+
 #endregion
 
 using System;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.Diagnostics;
 
-namespace EventHook.Client.Utility.Hooks.Library
+namespace EventHook.Hooks.Library
 {
-   
     public delegate IntPtr WndProc(IntPtr hWnd, uint message, IntPtr wParam, IntPtr lParam);
+
     public delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
-
-
 }

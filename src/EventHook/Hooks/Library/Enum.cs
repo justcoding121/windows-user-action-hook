@@ -1,10 +1,5 @@
-﻿
-
-namespace EventHook.Client.Utility.Library
+﻿namespace EventHook.Hooks.Library
 {
-    
-
-    #region ShellEvents enum
     public enum ShellEvents
     {
         HSHELL_WINDOWCREATED = 1,
@@ -25,10 +20,8 @@ namespace EventHook.Client.Utility.Library
         HSHELL_FLASH = (HSHELL_REDRAW | HSHELL_HIGHBIT),
         HSHELL_RUDEAPPACTIVATED = (HSHELL_WINDOWACTIVATED | HSHELL_HIGHBIT)
     }
-    #endregion
 
-    #region WindowStyle enum
-    public enum WindowStyle : int
+    public enum WindowStyle
     {
         WS_OVERLAPPED = 0x00000000,
         WS_POPUP = -2147483648,
@@ -54,15 +47,14 @@ namespace EventHook.Client.Utility.Library
         WS_ICONIC = WS_MINIMIZE,
         WS_SIZEBOX = WS_THICKFRAME,
         WS_TILEDWINDOW = WS_OVERLAPPEDWINDOW,
-        WS_OVERLAPPEDWINDOW = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
-        WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX),
-        WS_POPUPWINDOW = (WS_POPUP | WS_BORDER | WS_SYSMENU),
-        WS_CHILDWINDOW = (WS_CHILD),
-    }
-    #endregion //WindowStyle
 
-    #region WindowStyleEx enum
-    public enum WindowStyleEx : int
+        WS_OVERLAPPEDWINDOW = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU |
+                               WS_THICKFRAME | WS_MINIMIZEBOX | WS_MAXIMIZEBOX),
+        WS_POPUPWINDOW = (WS_POPUP | WS_BORDER | WS_SYSMENU),
+        WS_CHILDWINDOW = (WS_CHILD)
+    }
+
+    public enum WindowStyleEx
     {
         WS_EX_DLGMODALFRAME = 0x00000001,
         WS_EX_NOPARENTNOTIFY = 0x00000004,
@@ -89,11 +81,9 @@ namespace EventHook.Client.Utility.Library
         WS_EX_NOINHERITLAYOUT = 0x00100000, // Disable inheritence of mirroring by children
         WS_EX_LAYOUTRTL = 0x00400000, // Right to left mirroring
         WS_EX_COMPOSITED = 0x02000000,
-        WS_EX_NOACTIVATE = 0x08000000,
+        WS_EX_NOACTIVATE = 0x08000000
     }
-    #endregion //WindowStyleEx
 
-    #region GWL index enum
     public enum GWLIndex
     {
         GWL_WNDPROC = -4,
@@ -104,9 +94,7 @@ namespace EventHook.Client.Utility.Library
         GWL_USERDATA = -21,
         GWL_ID = -12
     }
-    #endregion //GWLindex enum
 
-    #region GetWindow Constants
     public enum GetWindowContstants
     {
         GW_HWNDFIRST = 0,
@@ -118,10 +106,5 @@ namespace EventHook.Client.Utility.Library
 
         GW_ENABLEDPOPUP = 6,
         GW_MAX = 6
-
     }
-    #endregion //GetWindow Constants
-
- 
-
 }

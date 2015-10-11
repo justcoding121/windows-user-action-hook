@@ -3,25 +3,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Automation;
 
-namespace EventHook.Client.Utility.Hooks
+namespace EventHook.Hooks
 {
     public class AutomationHook
     {
-
-        public AutomationElement GetUrlFromExplorerWithIdentifier(string WindowsName, IntPtr ptr)
+        public AutomationElement GetUrlFromExplorerWithIdentifier(string windowsName, IntPtr ptr)
         {
-            AutomationElement URL = null;
-            
+            AutomationElement url = null;
+
             try
             {
                 var aeBrowser = AutomationElement.FromHandle(ptr);
-                switch (WindowsName)
+                switch (windowsName)
                 {
                     case "8":
                         // URL = aeBrowser == null ? null : GetURLfromBrowser(aeBrowser, "Go to a Website", "", ControlType.Edit, "edit");
                         break;
                     case "7":
-                        URL = aeBrowser == null ? null : GetURLfromExplorer(aeBrowser, ControlType.ToolBar, "ToolbarWindow32", ControlType.Edit, "edit", "Address");
+                        url = aeBrowser == null
+                            ? null
+                            : GetUrLfromExplorer(aeBrowser, ControlType.ToolBar, "ToolbarWindow32", ControlType.Edit,
+                                "edit", "Address");
                         break;
                     case "Vista":
                         //  URL = aeBrowser == null ? null : GetURLfromBrowser(aeBrowser, "Address", "Edit", ControlType.Edit, "edit");
@@ -29,12 +31,8 @@ namespace EventHook.Client.Utility.Hooks
                     case "XP":
                         // URL = aeBrowser == null ? null : GetURLfromBrowser(aeBrowser, "Address", "Chrome_OmniboxView", ControlType.Edit, "edit");
                         break;
-
-                    default:
-                        break;
                 }
-                return URL;
-
+                return url;
             }
             catch
             {
@@ -42,15 +40,23 @@ namespace EventHook.Client.Utility.Hooks
             }
         }
 
-        public AutomationElement GetURLfromExplorer(AutomationElement rootElement, ControlType ControlTypeName1, string ClassName1, ControlType ControlTypeName2, string ClassName2, string Name2)
+        public AutomationElement GetUrLfromExplorer(AutomationElement rootElement, ControlType controlTypeName1,
+            string className1, ControlType controlTypeName2, string className2, string name2)
         {
             try
             {
-                System.Windows.Automation.Condition condition1 = new AndCondition(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlTypeName1), new PropertyCondition(AutomationElement.ClassNameProperty, ClassName1));
-                System.Windows.Automation.Condition condition2 = new AndCondition(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlTypeName2), new PropertyCondition(AutomationElement.ClassNameProperty, ClassName2), new PropertyCondition(AutomationElement.NameProperty, Name2));
+                Condition condition1 =
+                    new AndCondition(new PropertyCondition(AutomationElement.ControlTypeProperty, controlTypeName1),
+                        new PropertyCondition(AutomationElement.ClassNameProperty, className1));
+                Condition condition2 =
+                    new AndCondition(new PropertyCondition(AutomationElement.ControlTypeProperty, controlTypeName2),
+                        new PropertyCondition(AutomationElement.ClassNameProperty, className2),
+                        new PropertyCondition(AutomationElement.NameProperty, name2));
 
 
-                var walker = new TreeWalker(new AndCondition(new OrCondition(condition1, condition2), new NotCondition(new PropertyCondition(AutomationElement.NameProperty, ""))));
+                var walker =
+                    new TreeWalker(new AndCondition(new OrCondition(condition1, condition2),
+                        new NotCondition(new PropertyCondition(AutomationElement.NameProperty, ""))));
 
                 var elementNode = walker.GetFirstChild(rootElement);
 
@@ -66,33 +72,39 @@ namespace EventHook.Client.Utility.Hooks
 
             return null;
         }
-        public String GetUrlFromBrowsersWithIdentifier(string BrowserName, IntPtr ptr)
-        {
-            String URL = null;
 
-            if (BrowserName == null) return null;
+        public string GetUrlFromBrowsersWithIdentifier(string browserName, IntPtr ptr)
+        {
+            string url = null;
+
+            if (browserName == null) return null;
             try
             {
                 var aeBrowser = AutomationElement.FromHandle(ptr);
-                switch (BrowserName)
+                switch (browserName)
                 {
                     case "firefox.exe":
-                        URL = aeBrowser == null ? null : GetURLfromBrowser(ref aeBrowser, string.Empty, string.Empty, ControlType.Edit, "edit");
+                        url = aeBrowser == null
+                            ? null
+                            : GetUrLfromBrowser(ref aeBrowser, string.Empty, string.Empty, ControlType.Edit, "edit");
                         break;
                     case "opera.exe":
-                        URL = aeBrowser == null ? null : GetURLfromBrowser(ref aeBrowser, "Address field", string.Empty, ControlType.Edit, "edit");
+                        url = aeBrowser == null
+                            ? null
+                            : GetUrLfromBrowser(ref aeBrowser, "Address field", string.Empty, ControlType.Edit, "edit");
                         break;
                     case "iexplore.exe":
-                        URL = aeBrowser == null ? null : GetURLfromBrowser(ref aeBrowser, string.Empty, string.Empty, ControlType.Edit, "edit");
+                        url = aeBrowser == null
+                            ? null
+                            : GetUrLfromBrowser(ref aeBrowser, string.Empty, string.Empty, ControlType.Edit, "edit");
                         break;
                     case "chrome.exe":
-                        URL = aeBrowser == null ? null : GetURLfromBrowser(ref aeBrowser, string.Empty, string.Empty, ControlType.Edit, "edit");
-                        break;
-                    default:
+                        url = aeBrowser == null
+                            ? null
+                            : GetUrLfromBrowser(ref aeBrowser, string.Empty, string.Empty, ControlType.Edit, "edit");
                         break;
                 }
-                return URL;
-
+                return url;
             }
             catch
             {
@@ -101,18 +113,21 @@ namespace EventHook.Client.Utility.Hooks
         }
 
 
-
-
-        public string GetURLfromBrowser(ref AutomationElement rootElement, string Name, string ClassName, ControlType ControlTypeName, string LocalizedControlTypeName)
+        public string GetUrLfromBrowser(ref AutomationElement rootElement, string name, string className,
+            ControlType controlTypeName, string localizedControlTypeName)
         {
             try
             {
-                var conditions = new List<System.Windows.Automation.Condition>();
+                var conditions = new List<Condition>();
 
-                if (Name != string.Empty) conditions.Add(new PropertyCondition(AutomationElement.NameProperty, Name));
-                if (ClassName != string.Empty) conditions.Add(new PropertyCondition(AutomationElement.ClassNameProperty, ClassName));
-                if (ControlTypeName != null) conditions.Add(new PropertyCondition(AutomationElement.ControlTypeProperty, ControlTypeName));
-                if (LocalizedControlTypeName != string.Empty) conditions.Add(new PropertyCondition(AutomationElement.LocalizedControlTypeProperty, LocalizedControlTypeName));
+                if (name != string.Empty) conditions.Add(new PropertyCondition(AutomationElement.NameProperty, name));
+                if (className != string.Empty)
+                    conditions.Add(new PropertyCondition(AutomationElement.ClassNameProperty, className));
+                if (controlTypeName != null)
+                    conditions.Add(new PropertyCondition(AutomationElement.ControlTypeProperty, controlTypeName));
+                if (localizedControlTypeName != string.Empty)
+                    conditions.Add(new PropertyCondition(AutomationElement.LocalizedControlTypeProperty,
+                        localizedControlTypeName));
 
                 var walker = new TreeWalker(new AndCondition(conditions.ToArray()));
                 var elementNode = walker.GetFirstChild(rootElement);
@@ -125,11 +140,9 @@ namespace EventHook.Client.Utility.Hooks
                         if (valuePattern != null)
                         {
                             return (valuePattern.Current.Value);
-
                         }
                     }
                 }
-
             }
             catch
             {
@@ -138,7 +151,5 @@ namespace EventHook.Client.Utility.Hooks
 
             return null;
         }
-
-
     }
 }

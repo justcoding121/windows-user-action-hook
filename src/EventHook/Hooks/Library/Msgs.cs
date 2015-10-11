@@ -1,8 +1,7 @@
-﻿
-namespace EventHook.Client.Utility.Hooks.Library
+﻿namespace EventHook.Hooks.Library
 {
     /// <summary>
-    /// Windows Event Messages sent to the WindowProc
+    ///     Windows Event Messages sent to the WindowProc
     /// </summary>
     public enum Msgs
     {
