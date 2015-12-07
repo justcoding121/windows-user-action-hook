@@ -5,6 +5,8 @@ using System.Collections.Concurrent;
 using System.Threading;
 using EventHook.Hooks;
 using EventHook.Hooks.Helpers;
+using Nito.AsyncEx;
+using System.Threading.Tasks;
 
 
 namespace EventHook
@@ -25,48 +27,47 @@ namespace EventHook
         public string AppName { get; set; }
         public string AppTitle { get; set; }
     }
+
+    public class ApplicationEventArgs : EventArgs
+    {
+        public WindowData ApplicationData { get; set; }
+        public ApplicationEvents Event { get; set; }
+    }
+
     public class ApplicationWatcher
     {
         /*Application history*/
-        static BlockingCollection<object> _appQueue;
+        static AsyncCollection<object> _appQueue;
         static public bool AppRun;
         static private List<WindowData> _activeWindows;
         static private DateTime _prevTimeApp;
 
+        public static event EventHandler<ApplicationEventArgs> OnApplicationWindowChange;
 
         public static void Start()
         {
-            try
-            {
-                _activeWindows = new List<WindowData> { };
-                _prevTimeApp = DateTime.Now;
 
-                _appQueue = new BlockingCollection<object>();
+            _activeWindows = new List<WindowData> { };
+            _prevTimeApp = DateTime.Now;
 
-                WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
-                WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
-                WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
+            _appQueue = new AsyncCollection<object>();
 
-                _lastEventWasLaunched = false;
-                _lastHwndLaunched = IntPtr.Zero;
+            var handler = SharedMessagePump.GetHandle();
 
-                AppRun = true;
+            Task.Factory.StartNew(() => { }).ContinueWith(x =>
+              {
+                  WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
+                  WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
+                  WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
+                  WindowHook.Start(handler);
 
-                var appThread = new Thread(AppConsumer)
-                {
-                    Name = "ApplicationConsumer",
-                    IsBackground = true,
-                    Priority = ThreadPriority.Normal
-                };
+              }, SharedMessagePump.GetTaskScheduler());
 
-                appThread.Start();
+            _lastEventWasLaunched = false;
+            _lastHwndLaunched = IntPtr.Zero;
 
-            }
-            catch
-            {
-                Stop();
-            }
-
+            Task.Factory.StartNew(() => AppConsumer());
+            AppRun = true;
 
         }
         public static void Stop()
@@ -74,13 +75,13 @@ namespace EventHook
             WindowHook.WindowCreated -= new GeneralShellHookEventHandler(WindowCreated);
             WindowHook.WindowDestroyed -= new GeneralShellHookEventHandler(WindowDestroyed);
             WindowHook.WindowActivated -= new GeneralShellHookEventHandler(WindowActivated);
-            
+
             _appQueue.Add(false);
             AppRun = false;
 
         }
         static void WindowCreated(ShellHook shellObject, IntPtr hWnd)
-        {          
+        {
             _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
         }
         static void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
@@ -92,12 +93,12 @@ namespace EventHook
             _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
         }
         // This is the method to run when the timer is raised. 
-        static private void AppConsumer()
+        static private async Task AppConsumer()
         {
             while (AppRun)
             {
                 //blocking here until a key is added to the queue
-                var item = _appQueue.Take();
+                var item = await _appQueue.TakeAsync();
                 if (item is bool) break;
 
                 var wnd = (WindowData)item;
@@ -128,16 +129,19 @@ namespace EventHook
 
         }
 
-        private static void ApplicationStatus(WindowData wnd, ApplicationEvents Event)
+        private static void ApplicationStatus(WindowData wnd, ApplicationEvents appEvent)
         {
-
             var timeStamp = DateTime.Now;
 
-            wnd.AppTitle = Event == ApplicationEvents.Closed ? wnd.AppTitle : WindowHelper.GetWindowText(wnd.HWnd);
-            wnd.AppPath = Event == ApplicationEvents.Closed ? wnd.AppPath : WindowHelper.GetAppPath(wnd.HWnd);
-            wnd.AppName = Event == ApplicationEvents.Closed ? wnd.AppName : WindowHelper.GetAppDescription(wnd.AppPath);
+            wnd.AppTitle = appEvent == ApplicationEvents.Closed ? wnd.AppTitle : WindowHelper.GetWindowText(wnd.HWnd);
+            wnd.AppPath = appEvent == ApplicationEvents.Closed ? wnd.AppPath : WindowHelper.GetAppPath(wnd.HWnd);
+            wnd.AppName = appEvent == ApplicationEvents.Closed ? wnd.AppName : WindowHelper.GetAppDescription(wnd.AppPath);
 
-            Console.WriteLine((wnd.AppTitle));
+            EventHandler<ApplicationEventArgs> handler = OnApplicationWindowChange;
+            if (handler != null)
+            {
+                handler(null, new ApplicationEventArgs() { ApplicationData = wnd, Event = appEvent });
+            }
         }
 
         static void WindowDestroyed(WindowData wnd)

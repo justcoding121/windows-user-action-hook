@@ -20,7 +20,7 @@ namespace EventHook
         UnicodeText = 4
     }
 
-    public class ClipboarEventArgs : EventArgs
+    public class ClipboardEventArgs : EventArgs
     {
         public object Data { get; set; }
         public ClipboardContentTypes DataFormat { get; set; }
@@ -32,7 +32,7 @@ namespace EventHook
         private static ClipBoardHook _clip;
         private static AsyncCollection<object> _clipQueue;
         public static bool ClipRun;
-        public static event EventHandler<ClipboarEventArgs> OnClipboardModified;
+        public static event EventHandler<ClipboardEventArgs> OnClipboardModified;
 
 
         public static void Start()
@@ -161,10 +161,10 @@ namespace EventHook
 
             if (!validDataType) return;
 
-            EventHandler<ClipboarEventArgs> handler = OnClipboardModified;
+            EventHandler<ClipboardEventArgs> handler = OnClipboardModified;
             if (handler != null)
             {
-                handler(null, new ClipboarEventArgs() { Data = data, DataFormat = format });
+                handler(null, new ClipboardEventArgs() { Data = data, DataFormat = format });
             }
 
         }

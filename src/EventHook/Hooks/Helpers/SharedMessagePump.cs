@@ -47,7 +47,7 @@ namespace EventHook.Hooks.Helpers
 
                     t.Start();
 
-                    while (msgHandler == null) ;
+                    while (msgHandler == null);
 
                     return msgHandler;
                 });
@@ -62,6 +62,7 @@ namespace EventHook.Hooks.Helpers
         {
             return _messageHandler.Value.Handle;
         }
+
     }
 
     internal class MessageHandler : NativeWindow

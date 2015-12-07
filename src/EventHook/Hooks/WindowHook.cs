@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EventHook.Hooks.Helpers;
+using System;
 using System.Windows;
 using System.Windows.Interop;
 
@@ -7,23 +8,12 @@ namespace EventHook.Hooks
     /// <summary>One window event to many application wide listeners</summary>
     public static class WindowHook
     {
-        private static readonly Window F;
-
-        static WindowHook()
+        public static void Start(IntPtr handle)
         {
-            if (F == null)
-            {
-                F = new Window();
-                F.Visibility = Visibility.Hidden;
-                F.WindowState = WindowState.Minimized;
-                F.Show();
-                F.Hide();
-
-                var sh = new ShellHook(new WindowInteropHelper(F).Handle);
-                sh.WindowCreated += WindowCreatedEvent;
-                sh.WindowDestroyed += WindowDestroyedEvent;
-                sh.WindowActivated += WindowActivatedEvent;
-            }
+            var sh = new ShellHook(handle);
+            sh.WindowCreated += WindowCreatedEvent;
+            sh.WindowDestroyed += WindowDestroyedEvent;
+            sh.WindowActivated += WindowActivatedEvent;
         }
 
         /// <summary>

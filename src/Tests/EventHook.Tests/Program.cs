@@ -32,12 +32,19 @@ namespace EventHook.Tests
                     Console.WriteLine(e.Data);
                 };
 
+            ApplicationWatcher.Start();
+            ApplicationWatcher.OnApplicationWindowChange += (s, e) =>
+            {
+                Console.WriteLine(e.ApplicationData.AppTitle);
+                Console.WriteLine(e.Event);
+            };
 
             Console.Read();
 
             KeyboardWatcher.Stop();
             MouseWatcher.Stop();
-            ClipboardWatcher.Stop(); 
+            ClipboardWatcher.Stop();
+            ApplicationWatcher.Stop();
         }
 
 
