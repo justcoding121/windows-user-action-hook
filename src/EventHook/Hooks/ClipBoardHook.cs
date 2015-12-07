@@ -2,14 +2,15 @@
 using System.Collections;
 using System.Windows.Forms;
 using EventHook.Hooks.Library;
+using System.Threading.Tasks;
+using EventHook.Hooks.Helpers;
+using System.Threading;
 
 namespace EventHook.Hooks
 {
     public class ClipBoardHook : Form
     {
         private IntPtr _clipboardViewerNext;
-        private Queue _hyperlink = new Queue();
-
 
         public event EventHandler ClipBoardChanged = delegate { };
 
@@ -40,21 +41,31 @@ namespace EventHook.Hooks
             // Data on the clipboard uses the 
             // IDataObject interface
             //
-            try
-            {
-                var iData = Clipboard.GetDataObject();
-                ClipBoardChanged(iData, new EventArgs());
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
+            Exception threadEx = null;
+            var staThread = new Thread(
+             delegate()
+             {
+                 try
+                 {
+                     var iData = Clipboard.GetDataObject();
+                     ClipBoardChanged(iData, new EventArgs());
+                 }
+
+                 catch (Exception ex)
+                 {
+                     threadEx = ex;
+                 }
+             });
+
+            staThread.SetApartmentState(ApartmentState.STA);
+            staThread.Start();
+            staThread.Join();
         }
 
 
         protected override void WndProc(ref Message m)
         {
-            switch ((Msgs) m.Msg)
+            switch ((Msgs)m.Msg)
             {
                 //
                 // The WM_DRAWCLIPBOARD message is sent to the first window 

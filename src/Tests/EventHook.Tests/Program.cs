@@ -3,29 +3,44 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Threading;
 
 namespace EventHook.Tests
 {
     class Program
     {
-        [STAThread]
+
         static void Main(string[] args)
         {
-            Start();
-            System.Windows.Threading.Dispatcher.Run();
+            KeyboardWatcher.Start();
+            KeyboardWatcher.OnKeyInput += (s, e) =>
+            {
+                Console.WriteLine(e.KeyData.UnicodeCharacter);
+            };
+
+            MouseWatcher.Start();
+            MouseWatcher.OnMouseInput += (s, e) =>
+            {
+                Console.WriteLine(e.Message.ToString());
+            };
+
+            ClipboardWatcher.Start();
+            ClipboardWatcher.OnClipboardModified += (s, e) =>
+                {
+                    Console.WriteLine(e.DataFormat.ToString());
+                    Console.WriteLine(e.Data);
+                };
+
+
+            Console.Read();
+
+            KeyboardWatcher.Stop();
+            MouseWatcher.Stop();
+            ClipboardWatcher.Stop(); 
         }
 
-        public static void Start()
-        {
-            //System.Windows.Threading.Dispatcher.CurrentDispatcher.Thread.SetApartmentState(ApartmentState.STA);
-            KeyLogger.Start();
-            ApplicationWatcher.Start();
-            WebWatcher.Start();
-            ClipboardWatcher.Start();
-            FileWatcher.Start();
-            PrintWatcher.Start();
-            EmailClientWatcher.Start();          
-        }
+
 
     }
 }

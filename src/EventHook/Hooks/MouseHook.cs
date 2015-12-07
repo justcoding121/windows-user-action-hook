@@ -4,21 +4,57 @@ using System.Runtime.InteropServices;
 
 namespace EventHook.Hooks
 {
-    public static class MouseHook
+    internal class RawMouseEventArgs : EventArgs
+    {
+        public MouseMessages Message { get; set; }
+        public POINT Point { get; set; }
+    }
+
+    public enum MouseMessages
+    {
+        WM_LBUTTONDOWN = 0x0201,
+        WM_LBUTTONUP = 0x0202,
+        WM_MOUSEMOVE = 0x0200,
+        WM_MOUSEWHEEL = 0x020A,
+        WM_RBUTTONDOWN = 0x0204,
+        WM_RBUTTONUP = 0x0205
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public readonly int x;
+        public readonly int y;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct MSLLHOOKSTRUCT
+    {
+        public POINT pt;
+        public readonly uint mouseData;
+        public readonly uint flags;
+        public readonly uint time;
+        public readonly IntPtr dwExtraInfo;
+    }
+
+    internal class MouseHook
     {
         private const int WH_MOUSE_LL = 14;
 
-        private static readonly LowLevelMouseProc Proc = HookCallback;
+        private readonly LowLevelMouseProc Proc;
         private static IntPtr _hookId = IntPtr.Zero;
-        public static event EventHandler MouseAction = delegate { };
+        internal event EventHandler<RawMouseEventArgs> MouseAction = delegate { };
 
-
-        public static void Start()
+        public MouseHook()
+        {
+            Proc = HookCallback;
+        }
+        public void Start()
         {
             _hookId = SetHook(Proc);
         }
 
-        public static void Stop()
+        public void Stop()
         {
             UnhookWindowsHookEx(_hookId);
         }
@@ -30,40 +66,16 @@ namespace EventHook.Hooks
             return hook;
         }
 
-        private static IntPtr HookCallback(
+        private IntPtr HookCallback(
             int nCode, IntPtr wParam, IntPtr lParam)
         {
-            string[] content;
+
             MSLLHOOKSTRUCT hookStruct;
             if (nCode < 0) return CallNextHookEx(_hookId, nCode, wParam, lParam);
-            switch ((MouseMessages) wParam)
-            {
-                case MouseMessages.WM_LBUTTONDOWN:
-                    content = new string[3];
-                    hookStruct = (MSLLHOOKSTRUCT) Marshal.PtrToStructure(lParam, typeof (MSLLHOOKSTRUCT));
-                    content[0] = "LEFT";
-                    content[1] = hookStruct.pt.x.ToString();
-                    content[2] = hookStruct.pt.y.ToString();
-                    MouseAction(content, new EventArgs());
-                    break;
-                case MouseMessages.WM_RBUTTONDOWN:
-                    content = new string[3];
-                    hookStruct = (MSLLHOOKSTRUCT) Marshal.PtrToStructure(lParam, typeof (MSLLHOOKSTRUCT));
-                    content[0] = "RIGHT";
-                    content[1] = hookStruct.pt.x.ToString();
-                    content[2] = hookStruct.pt.y.ToString();
-                    MouseAction(content, new EventArgs());
-                    break;
 
-                case MouseMessages.WM_MBUTTONDOWN:
-                    content = new string[3];
-                    hookStruct = (MSLLHOOKSTRUCT) Marshal.PtrToStructure(lParam, typeof (MSLLHOOKSTRUCT));
-                    content[0] = "MIDDLE";
-                    content[1] = hookStruct.pt.x.ToString();
-                    content[2] = hookStruct.pt.y.ToString();
-                    MouseAction(content, new EventArgs());
-                    break;
-            }
+            hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
+
+            MouseAction(null, new RawMouseEventArgs() { Message = (MouseMessages)wParam, Point = hookStruct.pt });
 
             return CallNextHookEx(_hookId, nCode, wParam, lParam);
         }
@@ -85,28 +97,5 @@ namespace EventHook.Hooks
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
 
-        private enum MouseMessages
-        {
-            WM_LBUTTONDOWN = 0x0201,
-            WM_RBUTTONDOWN = 0x0204,
-            WM_MBUTTONDOWN = 0x0207
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct POINT
-        {
-            public readonly int x;
-            public readonly int y;
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        private struct MSLLHOOKSTRUCT
-        {
-            public POINT pt;
-            public readonly uint mouseData;
-            public readonly uint flags;
-            public readonly uint time;
-            public readonly IntPtr dwExtraInfo;
-        }
     }
 }
