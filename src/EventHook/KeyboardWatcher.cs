@@ -19,7 +19,12 @@ namespace EventHook
     {
         public string UnicodeCharacter;
         public string Keyname;
-        public int EventType;
+        public KeyEvent EventType;
+    }
+    public enum KeyEvent
+    {
+        down = 0,
+        up = 1
     }
 
     public class KeyboardWatcher
@@ -43,7 +48,8 @@ namespace EventHook
                     _kQueue = new AsyncCollection<object>();
 
                     _kh = new KeyboardHook();
-                    _kh.KeyDown += new RawKeyEventHandler(KListener_KeyDown);
+                    _kh.KeyDown += new RawKeyEventHandler(KListener);
+                    _kh.KeyUp += new RawKeyEventHandler(KListener);
 
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                     {
@@ -65,7 +71,7 @@ namespace EventHook
 
                     if (_kh != null)
                     {
-                        _kh.KeyDown -= new RawKeyEventHandler(KListener_KeyDown);
+                        _kh.KeyDown -= new RawKeyEventHandler(KListener);
                         _kh.Stop();
                         _kh = null;
                     }
@@ -77,9 +83,9 @@ namespace EventHook
         }
 
 
-        private static void KListener_KeyDown(object sender, RawKeyEventArgs e)
+        private static void KListener(object sender, RawKeyEventArgs e)
         {
-            _kQueue.Add(new KeyData() { UnicodeCharacter = e.Character, Keyname = e.Key.ToString(), EventType = e.EventType });
+            _kQueue.Add(new KeyData() { UnicodeCharacter = e.Character, Keyname = e.Key.ToString(), EventType = (KeyEvent)e.EventType });
         }
 
         // This is the method to run when the timer is raised. 

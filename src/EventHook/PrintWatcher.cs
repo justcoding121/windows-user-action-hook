@@ -13,9 +13,9 @@ namespace EventHook
     {
         public DateTime EventDateTime { get; set; }
         public string PrinterName { get; set; }
-        public string DocumentName { get; set; }
+        public string JobName { get; set; }
         public int? Pages { get; set; }
-        public int? DocumentSize { get; set; }
+        public int? JobSize { get; set; }
     }
 
     public class PrintEventArgs : EventArgs
@@ -78,8 +78,8 @@ namespace EventHook
                 var printEvent = new PrintEventData()
                  {
 
-                     DocumentName = e.JobInfo.JobName,
-                     DocumentSize = e.JobInfo.JobSize,
+                     JobName = e.JobInfo.JobName,
+                     JobSize = e.JobInfo.JobSize,
                      EventDateTime = DateTime.Now,
                      Pages = e.JobInfo.NumberOfPages,
                      PrinterName = ((PrintQueueHook)sender).SpoolerName
