@@ -15,7 +15,7 @@ namespace EventHook
         public POINT Point { get; set; }
     }
 
-    public class MouseWatchter
+    public class MouseWatcher
     {
 
         /*Keyboard*/
