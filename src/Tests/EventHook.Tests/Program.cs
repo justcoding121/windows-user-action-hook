@@ -39,12 +39,19 @@ namespace EventHook.Tests
                 Console.WriteLine(e.Event);
             };
 
+            PrintWatcher.Start();
+            PrintWatcher.OnPrintEvent += (s, e) =>
+            {
+                Console.WriteLine(e.EventData.DocumentName); 
+            };
+
             Console.Read();
 
             KeyboardWatcher.Stop();
             MouseWatcher.Stop();
             ClipboardWatcher.Stop();
             ApplicationWatcher.Stop();
+            PrintWatcher.Stop(); 
         }
 
 

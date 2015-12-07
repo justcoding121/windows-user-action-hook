@@ -65,8 +65,6 @@ namespace EventHook.Hooks
         {
             // Let us open the printer and get the printer handle.
             SpoolerName = strSpoolName;
-            //Start Monitoring
-            Start();
         }
 
         #endregion
