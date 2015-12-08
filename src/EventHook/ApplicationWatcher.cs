@@ -54,11 +54,12 @@ namespace EventHook
 
             var handler = SharedMessagePump.GetHandle();
 
+            WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
+            WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
+            WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
+
             Task.Factory.StartNew(() => { }).ContinueWith(x =>
-              {
-                  WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
-                  WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
-                  WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
+              {          
                   WindowHook.Start(handler);
 
               }, SharedMessagePump.GetTaskScheduler());
@@ -82,15 +83,15 @@ namespace EventHook
         }
         static void WindowCreated(ShellHook shellObject, IntPtr hWnd)
         {
-            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
+            _appQueue.AddAsync(new WindowData() { HWnd = hWnd, EventType = 0 });
         }
         static void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
         {
-            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 2 });
+            _appQueue.AddAsync(new WindowData() { HWnd = hWnd, EventType = 2 });
         }
         static void WindowActivated(ShellHook shellObject, IntPtr hWnd)
         {
-            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
+            _appQueue.AddAsync(new WindowData() { HWnd = hWnd, EventType = 1 });
         }
         // This is the method to run when the timer is raised. 
         static private async Task AppConsumer()
