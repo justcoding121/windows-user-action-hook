@@ -53,14 +53,12 @@ namespace EventHook
             _appQueue = new AsyncCollection<object>();
 
             var handler = SharedMessagePump.GetHandle();
-
-            WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
-            WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
-            WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
-
+         
             Task.Factory.StartNew(() => { }).ContinueWith(x =>
-              {          
-                  WindowHook.Start(handler);
+              {
+                  WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
+                  WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
+                  WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
 
               }, SharedMessagePump.GetTaskScheduler());
 
