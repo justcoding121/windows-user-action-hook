@@ -81,15 +81,15 @@ namespace EventHook
         }
         static void WindowCreated(ShellHook shellObject, IntPtr hWnd)
         {
-            _appQueue.AddAsync(new WindowData() { HWnd = hWnd, EventType = 0 });
+            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
         }
         static void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
         {
-            _appQueue.AddAsync(new WindowData() { HWnd = hWnd, EventType = 2 });
+            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 2 });
         }
         static void WindowActivated(ShellHook shellObject, IntPtr hWnd)
         {
-            _appQueue.AddAsync(new WindowData() { HWnd = hWnd, EventType = 1 });
+            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
         }
         // This is the method to run when the timer is raised. 
         static private async Task AppConsumer()
