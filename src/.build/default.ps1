@@ -31,7 +31,7 @@ $MSBuild ="${env:ProgramFiles(x86)}\MSBuild\12.0\Bin\msbuild.exe"
 
 FormatTaskName (("-"*25) + "[{0}]" + ("-"*25))
 
-Task default -depends Build
+Task default -depends Clean, Build, Package
 
 Task Build -depends Restore-Packages {
 	exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration }
