@@ -21,7 +21,7 @@ if(!$Configuration) { $Configuration = $env:Configuration }
 if(!$Configuration) { $Configuration = "Release" }
 
 if(!$Version) { $Version = $env:APPVEYOR_BUILD_VERSION }
-if(!$Version) { $Version = "0.3.$BuildNumber" }
+if(!$Version) { $Version = "1.0.$BuildNumber" }
 
 Import-Module "$Here\Common" -DisableNameChecking
 
@@ -35,6 +35,7 @@ Task default -depends Clean, Build, Package
 
 Task Build -depends Restore-Packages {
 	exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration }
+    exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration-Net45 }
 }
 
 Task Package -depends Update-AssemblyInfoFiles, Build {

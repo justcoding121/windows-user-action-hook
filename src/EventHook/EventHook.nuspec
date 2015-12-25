@@ -23,7 +23,7 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\$configuration$\EventHook*" target="lib\net40" />
-    <file src="bin\$configuration$\EventHook*" target="lib\net451" />
+    <file src="bin\$configuration$\EventHook.dll" target="lib\net40" />
+    <file src="bin\$configuration$-Net45\EventHook.dll" target="lib\net45" />
   </files>
 </package>
