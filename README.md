@@ -1,8 +1,8 @@
+## Windows User Action Hook
+
 An one stop library for global windows user actions such mouse, keyboard, clipboard, website visit  &amp; print events
 
 Kindly report only issues/bugs here . For programming help or questions use [StackOverflow](http://stackoverflow.com/questions/tagged/windows-user-action-hook) with the tag EventHook or Windows-User-Action-Hook.
-
-![alt tag](https://raw.githubusercontent.com/titanium007/Windows-User-Action-Hook/master/src/Tests/EventHook.Tests/Capture.PNG)
 
 ![Build Status](https://ci.appveyor.com/api/projects/status/htea647ukrgg4qcl?svg=true)
 
@@ -63,3 +63,5 @@ Install by nuget:
             PrintWatcher.Stop(); 
 ```
 
+
+![alt tag](https://raw.githubusercontent.com/titanium007/Windows-User-Action-Hook/master/src/Tests/EventHook.Tests/Capture.PNG)
