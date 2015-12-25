@@ -23,7 +23,7 @@ configuration: Release
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - cmd: .\build.bat Package
+  - cmd: .\src\build.bat Package
 
 assembly_info:
   patch: true
