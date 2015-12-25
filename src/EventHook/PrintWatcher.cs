@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace EventHook
 {
-
     public class PrintEventData
     {
         public DateTime EventDateTime { get; set; }
@@ -23,53 +22,59 @@ namespace EventHook
         public PrintEventData EventData { get; set; }
     }
 
-
     public class PrintWatcher
     {
         /*Print history*/
+        private static bool _IsRunning;
+        private static object _Accesslock = new object();
+
         private static ArrayList _printers = null;
         private static PrintServer ps = null;
-        public static bool PrintRun;
-
 
         public static event EventHandler<PrintEventArgs> OnPrintEvent;
 
         public static void Start()
         {
+             if (!_IsRunning)
+                 lock (_Accesslock)
+                 {
+                     _printers = new ArrayList();
+                     ps = new PrintServer();
+                     foreach (var pq in ps.GetPrintQueues())
+                     {
 
-            _printers = new ArrayList();
-            ps = new PrintServer();
-            foreach (var pq in ps.GetPrintQueues())
-            {
-
-                var pqm = new PrintQueueHook(pq.Name);
-                pqm.OnJobStatusChange += pqm_OnJobStatusChange;
-                pqm.Start(); 
-                _printers.Add(pqm);
-            }
-            PrintRun = true;
+                         var pqm = new PrintQueueHook(pq.Name);
+                         pqm.OnJobStatusChange += pqm_OnJobStatusChange;
+                         pqm.Start();
+                         _printers.Add(pqm);
+                     }
+                     _IsRunning = true;
+                 }
 
         }
         public static void Stop()
         {
-            if (_printers != null)
-            {
-                foreach (PrintQueueHook pqm in _printers)
-                {
-                    pqm.OnJobStatusChange -= pqm_OnJobStatusChange;
-                    pqm.Stop();
-                }
-                _printers.Clear();
-            }
-            _printers = null;
-            PrintRun = false;
+             if (_IsRunning)
+                 lock (_Accesslock)
+                 {
+                     if (_printers != null)
+                     {
+                         foreach (PrintQueueHook pqm in _printers)
+                         {
+                             pqm.OnJobStatusChange -= pqm_OnJobStatusChange;
+                             pqm.Stop();
+                         }
+                         _printers.Clear();
+                     }
+                     _printers = null;
+                     _IsRunning = false;
+                 }
         }
-        static void pqm_OnJobStatusChange(object sender, PrintJobChangeEventArgs e)
+        private static void pqm_OnJobStatusChange(object sender, PrintJobChangeEventArgs e)
         {
 
             if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING && e.JobInfo !=null)
             {
-
 
                 var hWnd = WindowHelper.GetActiveWindowHandle();
                 var appTitle = WindowHelper.GetWindowText(hWnd);
@@ -92,10 +97,7 @@ namespace EventHook
                 {
                     handler(null, new PrintEventArgs() { EventData = printEvent });
                 }
-
             }
-
         }
-
     }
 }

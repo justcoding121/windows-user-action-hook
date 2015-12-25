@@ -37,64 +37,74 @@ namespace EventHook
     public class ApplicationWatcher
     {
         /*Application history*/
-        static AsyncCollection<object> _appQueue;
-        static public bool AppRun;
-        static private List<WindowData> _activeWindows;
-        static private DateTime _prevTimeApp;
+        private static object _Accesslock = new object();
+        private static bool _IsRunning;
+
+        private static AsyncCollection<object> _appQueue;
+
+        private static List<WindowData> _activeWindows;
+        private static DateTime _prevTimeApp;
 
         public static event EventHandler<ApplicationEventArgs> OnApplicationWindowChange;
 
         public static void Start()
         {
+            if (!_IsRunning)
+                lock (_Accesslock)
+                {
+                    _activeWindows = new List<WindowData> { };
+                    _prevTimeApp = DateTime.Now;
 
-            _activeWindows = new List<WindowData> { };
-            _prevTimeApp = DateTime.Now;
+                    _appQueue = new AsyncCollection<object>();
 
-            _appQueue = new AsyncCollection<object>();
+                    var handler = SharedMessagePump.GetHandle();
 
-            var handler = SharedMessagePump.GetHandle();
-         
-            Task.Factory.StartNew(() => { }).ContinueWith(x =>
-              {
-                  WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
-                  WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
-                  WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
+                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                      {
+                          WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
+                          WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
+                          WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
 
-              }, SharedMessagePump.GetTaskScheduler());
+                      }, SharedMessagePump.GetTaskScheduler());
 
-            _lastEventWasLaunched = false;
-            _lastHwndLaunched = IntPtr.Zero;
+                    _lastEventWasLaunched = false;
+                    _lastHwndLaunched = IntPtr.Zero;
 
-            Task.Factory.StartNew(() => AppConsumer());
-            AppRun = true;
+                    Task.Factory.StartNew(() => AppConsumer());
+                    _IsRunning = true;
+                }
 
         }
         public static void Stop()
         {
-            WindowHook.WindowCreated -= new GeneralShellHookEventHandler(WindowCreated);
-            WindowHook.WindowDestroyed -= new GeneralShellHookEventHandler(WindowDestroyed);
-            WindowHook.WindowActivated -= new GeneralShellHookEventHandler(WindowActivated);
+            if (_IsRunning)
+                lock (_Accesslock)
+                {
+                    WindowHook.WindowCreated -= new GeneralShellHookEventHandler(WindowCreated);
+                    WindowHook.WindowDestroyed -= new GeneralShellHookEventHandler(WindowDestroyed);
+                    WindowHook.WindowActivated -= new GeneralShellHookEventHandler(WindowActivated);
 
-            _appQueue.Add(false);
-            AppRun = false;
+                    _appQueue.Add(false);
+                    _IsRunning = false;
+                }
 
         }
-        static void WindowCreated(ShellHook shellObject, IntPtr hWnd)
+        private static void WindowCreated(ShellHook shellObject, IntPtr hWnd)
         {
             _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
         }
-        static void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
+        private static void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
         {
             _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 2 });
         }
-        static void WindowActivated(ShellHook shellObject, IntPtr hWnd)
+        private static void WindowActivated(ShellHook shellObject, IntPtr hWnd)
         {
             _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
         }
         // This is the method to run when the timer is raised. 
-        static private async Task AppConsumer()
+        private static async Task AppConsumer()
         {
-            while (AppRun)
+            while (_IsRunning)
             {
                 //blocking here until a key is added to the queue
                 var item = await _appQueue.TakeAsync();
@@ -116,8 +126,8 @@ namespace EventHook
 
             }
         }
-        static IntPtr _lastHwndLaunched;
-        static void WindowCreated(WindowData wnd)
+        private static IntPtr _lastHwndLaunched;
+        private static void WindowCreated(WindowData wnd)
         {
 
             _activeWindows.Add(wnd);
@@ -143,7 +153,7 @@ namespace EventHook
             }
         }
 
-        static void WindowDestroyed(WindowData wnd)
+        private static void WindowDestroyed(WindowData wnd)
         {
 
             if (_activeWindows.Any(x => x.HWnd == wnd.HWnd))
@@ -153,8 +163,8 @@ namespace EventHook
             }
             _lastEventWasLaunched = false;
         }
-        static bool _lastEventWasLaunched;
-        static void WindowActivated(WindowData wnd)
+        private static bool _lastEventWasLaunched;
+        private static void WindowActivated(WindowData wnd)
         {
 
             if (_activeWindows.Any(x => x.HWnd == wnd.HWnd))

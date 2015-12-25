@@ -31,7 +31,7 @@ namespace EventHook
     {
 
         /*Keyboard*/
-        private static bool _KeyboardRun { get; set; }
+        private static bool _IsRunning { get; set; }
         private static KeyboardHook _kh;
         private static object _Accesslock = new object();
         private static AsyncCollection<object> _kQueue;
@@ -40,11 +40,9 @@ namespace EventHook
 
         public static void Start()
         {
-
-            if (!_KeyboardRun)
+            if (!_IsRunning)
                 lock (_Accesslock)
                 {
-
                     _kQueue = new AsyncCollection<object>();
 
                     _kh = new KeyboardHook();
@@ -59,16 +57,15 @@ namespace EventHook
 
                     Task.Factory.StartNew(() => ConsumeKeyAsync());
 
-                    _KeyboardRun = true;
+                    _IsRunning = true;
                 }
      
         }
         public static void Stop()
         {
-            if (_KeyboardRun)
+            if (_IsRunning)
                 lock (_Accesslock)
                 {
-
                     if (_kh != null)
                     {
                         _kh.KeyDown -= new RawKeyEventHandler(KListener);
@@ -77,11 +74,9 @@ namespace EventHook
                     }
 
                     _kQueue.Add(false);
-                    _KeyboardRun = false;
-
+                    _IsRunning = false;
                 }
         }
-
 
         private static void KListener(object sender, RawKeyEventArgs e)
         {
@@ -91,7 +86,7 @@ namespace EventHook
         // This is the method to run when the timer is raised. 
         private static async Task ConsumeKeyAsync()
         {
-            while (_KeyboardRun)
+            while (_IsRunning)
             {
 
                 //blocking here until a key is added to the queue
@@ -99,7 +94,6 @@ namespace EventHook
                 if (item is bool) break;
 
                 KListener_KeyDown((KeyData)item);
-
             }
         }
 
@@ -113,8 +107,5 @@ namespace EventHook
 
         }
 
-
     }
-
-
 }

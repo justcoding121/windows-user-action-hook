@@ -17,21 +17,20 @@ namespace EventHook
 
     public class MouseWatcher
     {
-
         /*Keyboard*/
-        private static bool _KeyboardRun { get; set; }
+        private static bool _IsRunning { get; set; }
         private static object _Accesslock = new object();
+
         private static AsyncCollection<object> _kQueue;
+        private static MouseHook _mh;
 
         public static event EventHandler<MouseEventArgs> OnMouseInput;
-        private static MouseHook _mh;
+
         public static void Start()
         {
-
-            if (!_KeyboardRun)
+            if (!_IsRunning)
                 lock (_Accesslock)
                 {
-
                     _kQueue = new AsyncCollection<object>();
 
                     _mh = new MouseHook();
@@ -45,14 +44,14 @@ namespace EventHook
 
                     Task.Factory.StartNew(() => ConsumeKeyAsync());
 
-                    _KeyboardRun = true;
+                    _IsRunning = true;
                 }
 
         }
 
         public static void Stop()
         {
-            if (_KeyboardRun)
+            if (_IsRunning)
                 lock (_Accesslock)
                 {
                     if (_mh != null)
@@ -62,8 +61,7 @@ namespace EventHook
                         _mh = null;
                     }
                     _kQueue.Add(false);
-                    _KeyboardRun = false;
-
+                    _IsRunning = false;
                 }
         }
 
@@ -76,7 +74,7 @@ namespace EventHook
         // This is the method to run when the timer is raised. 
         private static async Task ConsumeKeyAsync()
         {
-            while (_KeyboardRun)
+            while (_IsRunning)
             {
 
                 //blocking here until a key is added to the queue
@@ -95,9 +93,6 @@ namespace EventHook
             {
                 handler(null, new MouseEventArgs() { Message = kd.Message, Point = kd.Point });
             }
-
         }
-
-
     }
 }

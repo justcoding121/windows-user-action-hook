@@ -29,61 +29,68 @@ namespace EventHook
     public class ClipboardWatcher
     {
         /*Clip board monitor*/
+        public static bool _IsRunning;
+        private static object _Accesslock = new object();
+
         private static ClipBoardHook _clip;
         private static AsyncCollection<object> _clipQueue;
-        public static bool ClipRun;
-        public static event EventHandler<ClipboardEventArgs> OnClipboardModified;
 
+        public static event EventHandler<ClipboardEventArgs> OnClipboardModified;
 
         public static void Start()
         {
-
-            try
-            {
-                _clipQueue = new AsyncCollection<object>();
-
-
-                Task.Factory.StartNew(() => { }).ContinueWith(x =>
+            if (!_IsRunning)
+                lock (_Accesslock)
                 {
-                    _clip = new ClipBoardHook();
-                    _clip.RegisterClipboardViewer();
-                    _clip.ClipBoardChanged += ClipboardHandler;
+                    try
+                    {
+                        _clipQueue = new AsyncCollection<object>();
 
-                }, SharedMessagePump.GetTaskScheduler());        
+                        Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                        {
+                            _clip = new ClipBoardHook();
+                            _clip.RegisterClipboardViewer();
+                            _clip.ClipBoardChanged += ClipboardHandler;
 
-                Task.Factory.StartNew(() => ClipConsumerAsync());
+                        }, SharedMessagePump.GetTaskScheduler());
 
-                ClipRun = true;
+                        Task.Factory.StartNew(() => ClipConsumerAsync());
 
-            }
-            catch
-            {
-                if (_clip != null)
-                {
-                    Stop();
+                        _IsRunning = true;
+
+                    }
+                    catch
+                    {
+                        if (_clip != null)
+                        {
+                            Stop();
+                        }
+
+                    }
                 }
-
-          
-            }
 
         }
         public static void Stop()
         {
-            if (_clip != null)
-            {
-                
-                Task.Factory.StartNew(() => { }).ContinueWith(x =>
+            if (_IsRunning)
+                lock (_Accesslock)
                 {
-                _clip.ClipBoardChanged -= ClipboardHandler;
-                _clip.UnregisterClipboardViewer();
-                _clip.Dispose();
+                    if (_clip != null)
+                    {
 
-                }, SharedMessagePump.GetTaskScheduler());   
+                        Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                        {
+                            _clip.ClipBoardChanged -= ClipboardHandler;
+                            _clip.UnregisterClipboardViewer();
+                            _clip.Dispose();
 
-            }
+                        }, SharedMessagePump.GetTaskScheduler());
 
-            ClipRun = false;
-            _clipQueue.Add(false);
+                    }
+
+                    _IsRunning = false;
+                    _clipQueue.Add(false);
+                }
 
         }
         private static void ClipboardHandler(object sender, EventArgs e)
@@ -93,18 +100,18 @@ namespace EventHook
 
         private static async Task ClipConsumerAsync()
         {
-            while (ClipRun)
+            while (_IsRunning)
             {
                 var item = await _clipQueue.TakeAsync();
                 if (item is bool) break;
 
                 ClipboardHandler(item);
 
-             
+
             }
 
         }
- 
+
         private static void ClipboardHandler(object sender)
         {
 
