@@ -31,15 +31,15 @@ $MSBuild ="${env:ProgramFiles(x86)}\MSBuild\12.0\Bin\msbuild.exe"
 
 FormatTaskName (("-"*25) + "[{0}]" + ("-"*25))
 
-Task default -depends Clean, Build, Package
+Task default -depends Clean, Update-AssemblyInfoFiles, Build, Package
 
 Task Build -depends Restore-Packages {
 	exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration }
     exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration-Net45 }
 }
 
-Task Package -depends Update-AssemblyInfoFiles, Build {
-	exec { . $NuGet pack "$SolutionRoot\EventHook\EventHook.nuspec" -Properties Configuration=$Configuration -OutputDirectory "$SolutionRoot" -Version "$Version" }
+Task Package {
+	exec { . $NuGet pack "$SolutionRoot\EventHook\EventHook.nuspec" -Properties Configuration=$Configuration -OutputDirectory "$SolutionRoot\packages" -Version "$Version" }
 }
 
 Task Clean {
