@@ -20,9 +20,8 @@ Install by nuget:
 
     Install-Package EventHook
 
-
 ## Sample Code:
-===========
+
 ```csharp
 KeyboardWatcher.Start();
 KeyboardWatcher.OnKeyInput += (s, e) =>
@@ -62,6 +61,5 @@ ClipboardWatcher.Stop();
 ApplicationWatcher.Stop();
 PrintWatcher.Stop(); 
 ```
-
 
 ![alt tag](https://raw.githubusercontent.com/titanium007/Windows-User-Action-Hook/master/src/Tests/EventHook.Tests/Capture.PNG)
