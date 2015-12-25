@@ -25,11 +25,19 @@ configuration: Release
 build_script:
   - cmd: .\build.bat Package
 
+assembly_info:
+  patch: true
+  file: AssemblyInfo.*
+  assembly_version: "{version}"
+  assembly_file_version: "{version}"
+  assembly_informational_version: "{version}"
+
 # to disable automatic tests 
 test: off
 
 # skip building commits that add tags (such as release tag)
 skip_tags: true
+
 
 #---------------------------------#
 #       artifacts configuration   #

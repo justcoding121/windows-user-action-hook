@@ -33,7 +33,7 @@ FormatTaskName (("-"*25) + "[{0}]" + ("-"*25))
 
 Task default -depends Clean, Build, Package
 
-Task Build -depends Restore-Packages, Update-AssemblyInfoFiles {
+Task Build -depends Restore-Packages {
 	exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration }
     exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration-Net45 }
 }
@@ -60,25 +60,3 @@ Task Install-MSBuild {
 }
 
 Task Install-BuildTools -depends Install-MSBuild
-
-# Borrowed from Luis Rocha's Blog (http://www.luisrocha.net/2009/11/setting-assembly-version-with-windows.html)
-Task Update-AssemblyInfoFiles {
-	$assemblyVersionPattern = 'AssemblyVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
-    $fileVersionPattern = 'AssemblyFileVersion\("[0-9]+(\.([0-9]+|\*)){1,3}"\)'
-    $fileCommitPattern = 'AssemblyInformationalVersion\("(.*?)"\)'
-
-    $assemblyVersion = 'AssemblyVersion("' + $Version + '")';
-    $fileVersion = 'AssemblyFileVersion("' + $Version + '")';
-    $commitVersion = 'AssemblyInformationalVersion("' + $InformationalVersion + '")';
-
-    Get-ChildItem -path $SolutionRoot -r -filter AssemblyInfo.cs | ForEach-Object {
-        $filename = $_.Directory.ToString() + '\' + $_.Name
-        $filename + ' -> ' + $Version
-    
-        (Get-Content $filename) | ForEach-Object {
-            % {$_ -replace $assemblyVersionPattern, $assemblyVersion } |
-            % {$_ -replace $fileVersionPattern, $fileVersion } |
-            % {$_ -replace $fileCommitPattern, $commitVersion }
-        } | Set-Content $filename
-    }
-}
