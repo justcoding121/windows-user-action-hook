@@ -4,13 +4,13 @@ using EventHook.Hooks.Library;
 
 namespace EventHook.Hooks
 {
-    public delegate void GeneralShellHookEventHandler(ShellHook sender, IntPtr hWnd);
+    internal delegate void GeneralShellHookEventHandler(ShellHook sender, IntPtr hWnd);
 
-    public sealed class ShellHook : NativeWindow
+    internal sealed class ShellHook : NativeWindow
     {
         private readonly uint _wmShellHook;
 
-        public ShellHook(IntPtr hWnd)
+        internal ShellHook(IntPtr hWnd)
         {
             var cp = new CreateParams();
 
@@ -25,7 +25,7 @@ namespace EventHook.Hooks
             }
         }
 
-        public void Deregister()
+        internal void Deregister()
         {
             User32.RegisterShellHook(Handle, 0);
         }
@@ -35,17 +35,17 @@ namespace EventHook.Hooks
         /// <summary>
         ///     A top-level, unowned window has been created. The window exists when the system calls this hook.
         /// </summary>
-        public event GeneralShellHookEventHandler WindowCreated;
+        internal event GeneralShellHookEventHandler WindowCreated;
 
         /// <summary>
         ///     A top-level, unowned window is about to be destroyed. The window still exists when the system calls this hook.
         /// </summary>
-        public event GeneralShellHookEventHandler WindowDestroyed;
+        internal event GeneralShellHookEventHandler WindowDestroyed;
 
         /// <summary>
         ///     The activation has changed to a different top-level, unowned window.
         /// </summary>
-        public event GeneralShellHookEventHandler WindowActivated;
+        internal event GeneralShellHookEventHandler WindowActivated;
 
 
         protected override void WndProc(ref Message m)
@@ -85,7 +85,7 @@ namespace EventHook.Hooks
 
         #region Windows enumeration
 
-        public void EnumWindows()
+        internal void EnumWindows()
         {
             User32.EnumWindows(EnumWindowsProc, IntPtr.Zero);
         }

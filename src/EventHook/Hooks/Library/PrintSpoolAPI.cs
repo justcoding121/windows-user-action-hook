@@ -5,26 +5,26 @@ using System.Runtime.InteropServices;
 namespace EventHook.Hooks.Library
 {
     [StructLayout(LayoutKind.Sequential)]
-    public struct SYSTEMTIME
+    internal struct SYSTEMTIME
     {
         [MarshalAs(UnmanagedType.U2)]
-        public short Year;
+        internal short Year;
         [MarshalAs(UnmanagedType.U2)]
-        public short Month;
+        internal short Month;
         [MarshalAs(UnmanagedType.U2)]
-        public short DayOfWeek;
+        internal short DayOfWeek;
         [MarshalAs(UnmanagedType.U2)]
-        public short Day;
+        internal short Day;
         [MarshalAs(UnmanagedType.U2)]
-        public short Hour;
+        internal short Hour;
         [MarshalAs(UnmanagedType.U2)]
-        public short Minute;
+        internal short Minute;
         [MarshalAs(UnmanagedType.U2)]
-        public short Second;
+        internal short Second;
         [MarshalAs(UnmanagedType.U2)]
-        public short Milliseconds;
+        internal short Milliseconds;
 
-        public SYSTEMTIME(DateTime dt)
+        internal SYSTEMTIME(DateTime dt)
         {
             dt = dt.ToUniversalTime();  // SetSystemTime expects the SYSTEMTIME in UTC
             Year = (short)dt.Year;
@@ -37,14 +37,14 @@ namespace EventHook.Hooks.Library
             Milliseconds = (short)dt.Millisecond;
         }
 
-        public DateTime ToDateTime()
+        internal DateTime ToDateTime()
         {
             return new DateTime(Year, Month, Day, Hour, Minute, Second, Milliseconds, CultureInfo.CurrentCulture.Calendar, DateTimeKind.Utc).ToLocalTime();
         }
     }
 
     [Flags]
-    public enum JOBSTATUS
+    internal enum JOBSTATUS
     {
         JOB_STATUS_PAUSED = 0x00000001,
         JOB_STATUS_ERROR = 0x00000002,
@@ -64,38 +64,38 @@ namespace EventHook.Hooks.Library
     }
 
 
-    public class PRINTER_CHANGES
+    internal class PRINTER_CHANGES
     {
-        public const uint PRINTER_CHANGE_ADD_PRINTER = 1;
-        public const uint PRINTER_CHANGE_SET_PRINTER = 2;
-        public const uint PRINTER_CHANGE_DELETE_PRINTER = 4;
-        public const uint PRINTER_CHANGE_FAILED_CONNECTION_PRINTER = 8;
-        public const uint PRINTER_CHANGE_PRINTER = 0xFF;
-        public const uint PRINTER_CHANGE_ADD_JOB = 0x100;
-        public const uint PRINTER_CHANGE_SET_JOB = 0x200;
-        public const uint PRINTER_CHANGE_DELETE_JOB = 0x400;
-        public const uint PRINTER_CHANGE_WRITE_JOB = 0x800;
-        public const uint PRINTER_CHANGE_JOB = 0xFF00;
-        public const uint PRINTER_CHANGE_ADD_FORM = 0x10000;
-        public const uint PRINTER_CHANGE_SET_FORM = 0x20000;
-        public const uint PRINTER_CHANGE_DELETE_FORM = 0x40000;
-        public const uint PRINTER_CHANGE_FORM = 0x70000;
-        public const uint PRINTER_CHANGE_ADD_PORT = 0x100000;
-        public const uint PRINTER_CHANGE_CONFIGURE_PORT = 0x200000;
-        public const uint PRINTER_CHANGE_DELETE_PORT = 0x400000;
-        public const uint PRINTER_CHANGE_PORT = 0x700000;
-        public const uint PRINTER_CHANGE_ADD_PRINT_PROCESSOR = 0x1000000;
-        public const uint PRINTER_CHANGE_DELETE_PRINT_PROCESSOR = 0x4000000;
-        public const uint PRINTER_CHANGE_PRINT_PROCESSOR = 0x7000000;
-        public const uint PRINTER_CHANGE_ADD_PRINTER_DRIVER = 0x10000000;
-        public const uint PRINTER_CHANGE_SET_PRINTER_DRIVER = 0x20000000;
-        public const uint PRINTER_CHANGE_DELETE_PRINTER_DRIVER = 0x40000000;
-        public const uint PRINTER_CHANGE_PRINTER_DRIVER = 0x70000000;
-        public const uint PRINTER_CHANGE_TIMEOUT = 0x80000000;
-        public const uint PRINTER_CHANGE_ALL = 0x7777FFFF;
+        internal const uint PRINTER_CHANGE_ADD_PRINTER = 1;
+        internal const uint PRINTER_CHANGE_SET_PRINTER = 2;
+        internal const uint PRINTER_CHANGE_DELETE_PRINTER = 4;
+        internal const uint PRINTER_CHANGE_FAILED_CONNECTION_PRINTER = 8;
+        internal const uint PRINTER_CHANGE_PRINTER = 0xFF;
+        internal const uint PRINTER_CHANGE_ADD_JOB = 0x100;
+        internal const uint PRINTER_CHANGE_SET_JOB = 0x200;
+        internal const uint PRINTER_CHANGE_DELETE_JOB = 0x400;
+        internal const uint PRINTER_CHANGE_WRITE_JOB = 0x800;
+        internal const uint PRINTER_CHANGE_JOB = 0xFF00;
+        internal const uint PRINTER_CHANGE_ADD_FORM = 0x10000;
+        internal const uint PRINTER_CHANGE_SET_FORM = 0x20000;
+        internal const uint PRINTER_CHANGE_DELETE_FORM = 0x40000;
+        internal const uint PRINTER_CHANGE_FORM = 0x70000;
+        internal const uint PRINTER_CHANGE_ADD_PORT = 0x100000;
+        internal const uint PRINTER_CHANGE_CONFIGURE_PORT = 0x200000;
+        internal const uint PRINTER_CHANGE_DELETE_PORT = 0x400000;
+        internal const uint PRINTER_CHANGE_PORT = 0x700000;
+        internal const uint PRINTER_CHANGE_ADD_PRINT_PROCESSOR = 0x1000000;
+        internal const uint PRINTER_CHANGE_DELETE_PRINT_PROCESSOR = 0x4000000;
+        internal const uint PRINTER_CHANGE_PRINT_PROCESSOR = 0x7000000;
+        internal const uint PRINTER_CHANGE_ADD_PRINTER_DRIVER = 0x10000000;
+        internal const uint PRINTER_CHANGE_SET_PRINTER_DRIVER = 0x20000000;
+        internal const uint PRINTER_CHANGE_DELETE_PRINTER_DRIVER = 0x40000000;
+        internal const uint PRINTER_CHANGE_PRINTER_DRIVER = 0x70000000;
+        internal const uint PRINTER_CHANGE_TIMEOUT = 0x80000000;
+        internal const uint PRINTER_CHANGE_ALL = 0x7777FFFF;
     }
 
-    public enum PRINTERPRINTERNOTIFICATIONTYPES
+    internal enum PRINTERPRINTERNOTIFICATIONTYPES
     {
         PRINTER_NOTIFY_FIELD_SERVER_NAME = 0,
         PRINTER_NOTIFY_FIELD_PRINTER_NAME = 1,
@@ -125,7 +125,7 @@ namespace EventHook.Hooks.Library
         PRINTER_NOTIFY_FIELD_BYTES_PRINTED = 25,
     }
 
-    public enum PRINTERJOBNOTIFICATIONTYPES
+    internal enum PRINTERJOBNOTIFICATIONTYPES
     {
         JOB_NOTIFY_FIELD_PRINTER_NAME = 0,
         JOB_NOTIFY_FIELD_MACHINE_NAME = 1,
@@ -154,14 +154,14 @@ namespace EventHook.Hooks.Library
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public class PRINTER_NOTIFY_OPTIONS
+    internal class PRINTER_NOTIFY_OPTIONS
     {
-        public int dwVersion = 2;
-        public int dwFlags;
-        public int Count = 2;
-        public IntPtr lpTypes;
+        internal int dwVersion = 2;
+        internal int dwFlags;
+        internal int Count = 2;
+        internal IntPtr lpTypes;
 
-        public PRINTER_NOTIFY_OPTIONS()
+        internal PRINTER_NOTIFY_OPTIONS()
         {
             int bytesNeeded = (2 + PRINTER_NOTIFY_OPTIONS_TYPE.JOB_FIELDS_COUNT + PRINTER_NOTIFY_OPTIONS_TYPE.PRINTER_FIELDS_COUNT) * 2;
             PRINTER_NOTIFY_OPTIONS_TYPE pJobTypes = new PRINTER_NOTIFY_OPTIONS_TYPE();
@@ -170,30 +170,30 @@ namespace EventHook.Hooks.Library
         }
     }
 
-    public enum PRINTERNOTIFICATIONTYPES
+    internal enum PRINTERNOTIFICATIONTYPES
     {
         PRINTER_NOTIFY_TYPE = 0,
         JOB_NOTIFY_TYPE = 1
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public class PRINTER_NOTIFY_OPTIONS_TYPE
+    internal class PRINTER_NOTIFY_OPTIONS_TYPE
     {
-        public const int JOB_FIELDS_COUNT = 24;
-        public const int PRINTER_FIELDS_COUNT = 23;
+        internal const int JOB_FIELDS_COUNT = 24;
+        internal const int PRINTER_FIELDS_COUNT = 23;
 
-        public Int16 wJobType;
-        public Int16 wJobReserved0;
-        public Int32 dwJobReserved1;
-        public Int32 dwJobReserved2;
-        public Int32 JobFieldCount;
-        public IntPtr pJobFields;
-        public Int16 wPrinterType;
-        public Int16 wPrinterReserved0;
-        public Int32 dwPrinterReserved1;
-        public Int32 dwPrinterReserved2;
-        public Int32 PrinterFieldCount;
-        public IntPtr pPrinterFields;
+        internal Int16 wJobType;
+        internal Int16 wJobReserved0;
+        internal Int32 dwJobReserved1;
+        internal Int32 dwJobReserved2;
+        internal Int32 JobFieldCount;
+        internal IntPtr pJobFields;
+        internal Int16 wPrinterType;
+        internal Int16 wPrinterReserved0;
+        internal Int32 dwPrinterReserved1;
+        internal Int32 dwPrinterReserved2;
+        internal Int32 PrinterFieldCount;
+        internal IntPtr pPrinterFields;
 
         private void SetupFields()
         {
@@ -269,7 +269,7 @@ namespace EventHook.Hooks.Library
             }
         }
 
-        public PRINTER_NOTIFY_OPTIONS_TYPE()
+        internal PRINTER_NOTIFY_OPTIONS_TYPE()
         {
             wJobType = (short)PRINTERNOTIFICATIONTYPES.JOB_NOTIFY_TYPE;
             wPrinterType = (short)PRINTERNOTIFICATIONTYPES.PRINTER_NOTIFY_TYPE;
@@ -279,32 +279,32 @@ namespace EventHook.Hooks.Library
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct PRINTER_NOTIFY_INFO
+    internal struct PRINTER_NOTIFY_INFO
     {
-        public uint Version;
-        public uint Flags;
-        public uint Count;
-        public PRINTER_NOTIFY_INFO_DATA_UNION aData;
+        internal uint Version;
+        internal uint Flags;
+        internal uint Count;
+        internal PRINTER_NOTIFY_INFO_DATA_UNION aData;
     }
 
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct PRINTER_NOTIFY_INFO_DATA_DATA
+    internal struct PRINTER_NOTIFY_INFO_DATA_DATA
     {
-        public uint cbBuf;
-        public IntPtr pBuf;
+        internal uint cbBuf;
+        internal IntPtr pBuf;
     }
 
     [StructLayout(LayoutKind.Explicit)]
-    public struct PRINTER_NOTIFY_INFO_DATA_UNION
+    internal struct PRINTER_NOTIFY_INFO_DATA_UNION
     {
         [FieldOffset(0)]
         private uint adwData0;
         [FieldOffset(4)]
         private uint adwData1;
         [FieldOffset(0)]
-        public PRINTER_NOTIFY_INFO_DATA_DATA Data;
-        public uint[] adwData
+        internal PRINTER_NOTIFY_INFO_DATA_DATA Data;
+        internal uint[] adwData
         {
             get
             {
@@ -315,13 +315,13 @@ namespace EventHook.Hooks.Library
 
     // Structure borrowed from http://lifeanEventTimesofadeveloper.blogspot.com/2007/10/unmanaged-structures-padding-and-c-part_18.html.
     [StructLayout(LayoutKind.Sequential)]
-    public struct PRINTER_NOTIFY_INFO_DATA
+    internal struct PRINTER_NOTIFY_INFO_DATA
     {
-        public ushort Type;
-        public ushort Field;
-        public uint Reserved;
-        public uint Id;
-        public PRINTER_NOTIFY_INFO_DATA_UNION NotifyData;
+        internal ushort Type;
+        internal ushort Field;
+        internal uint Reserved;
+        internal uint Id;
+        internal PRINTER_NOTIFY_INFO_DATA_UNION NotifyData;
     }
 
 }

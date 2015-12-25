@@ -5,9 +5,9 @@ using EventHook.Hooks.Library;
 
 namespace EventHook.Hooks.Helpers
 {
-    public class WindowHelper
+    internal class WindowHelper
     {
-        public static IntPtr GetActiveWindowHandle()
+        internal static IntPtr GetActiveWindowHandle()
         {
             try
             {
@@ -20,7 +20,7 @@ namespace EventHook.Hooks.Helpers
             return IntPtr.Zero;
         }
 
-        public static string GetAppPath(IntPtr hWnd)
+        internal static string GetAppPath(IntPtr hWnd)
         {
             if (hWnd == IntPtr.Zero) return null;
             try
@@ -36,7 +36,7 @@ namespace EventHook.Hooks.Helpers
             }
         }
 
-        public static string GetWindowText(IntPtr hWnd)
+        internal static string GetWindowText(IntPtr hWnd)
         {
             try
             {
@@ -51,7 +51,7 @@ namespace EventHook.Hooks.Helpers
             }
         }
 
-        public static string GetAppDescription(string appPath)
+        internal static string GetAppDescription(string appPath)
         {
             if (appPath == null) return null;
             try

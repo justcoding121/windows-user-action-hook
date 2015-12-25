@@ -8,20 +8,20 @@ using System.Windows.Threading;
 
 namespace EventHook.Hooks
 {
-    public class KeyboardHook
+    internal class KeyboardHook
     {
         private KeyboardListener _listener;
-        public event RawKeyEventHandler KeyDown = delegate { };
-        public event RawKeyEventHandler KeyUp = delegate { };
+        internal event RawKeyEventHandler KeyDown = delegate { };
+        internal event RawKeyEventHandler KeyUp = delegate { };
 
-        public void Start()
+        internal void Start()
         {
             _listener = new KeyboardListener();
             _listener.KeyDown += KListener_KeyDown;
             _listener.KeyUp += KListener_KeyUp;
         }
 
-        public void Stop()
+        internal void Stop()
         {
             if (_listener != null)
             {
@@ -43,7 +43,7 @@ namespace EventHook.Hooks
         }
     }
 
-    public class KeyboardListener : IDisposable
+    internal class KeyboardListener : IDisposable
     {
         private readonly Dispatcher _dispatcher;
 
@@ -52,7 +52,7 @@ namespace EventHook.Hooks
         /// <summary>
         ///     Creates global keyboard listener.
         /// </summary>
-        public KeyboardListener()
+        internal KeyboardListener()
         {
             // Dispatcher thread handling the KeyDown/KeyUp events.
             _dispatcher = Dispatcher.CurrentDispatcher;
@@ -90,12 +90,12 @@ namespace EventHook.Hooks
         /// <summary>
         ///     Fired when any of the keys is pressed down.
         /// </summary>
-        public event RawKeyEventHandler KeyDown;
+        internal event RawKeyEventHandler KeyDown;
 
         /// <summary>
         ///     Fired when any of the keys is released.
         /// </summary>
-        public event RawKeyEventHandler KeyUp;
+        internal event RawKeyEventHandler KeyUp;
 
         #region Inner workings
 
@@ -189,32 +189,32 @@ namespace EventHook.Hooks
     /// <summary>
     ///     Raw KeyEvent arguments.
     /// </summary>
-    public class RawKeyEventArgs : EventArgs
+    internal class RawKeyEventArgs : EventArgs
     {
         /// <summary>
         ///     Unicode character of key pressed.
         /// </summary>
-        public string Character;
+        internal string Character;
 
         /// <summary>
         ///     Up(1) or Down(0)
         /// </summary>
-        public int EventType;
+        internal int EventType;
 
         /// <summary>
         ///     Is the hitted key system key.
         /// </summary>
-        public bool IsSysKey;
+        internal bool IsSysKey;
 
         /// <summary>
         ///     WPF Key of the key.
         /// </summary>
-        public Key Key;
+        internal Key Key;
 
         /// <summary>
         ///     VKCode of the key.
         /// </summary>
-        public int VkCode;
+        internal int VkCode;
 
 
         /// <summary>
@@ -224,7 +224,7 @@ namespace EventHook.Hooks
         /// <param name="isSysKey"></param>
         /// <param name="character">Character</param>
         /// <param name="type"></param>
-        public RawKeyEventArgs(int vkCode, bool isSysKey, string character, int type)
+        internal RawKeyEventArgs(int vkCode, bool isSysKey, string character, int type)
         {
             VkCode = vkCode;
             IsSysKey = isSysKey;
@@ -248,7 +248,7 @@ namespace EventHook.Hooks
     /// </summary>
     /// <param name="sender">sender</param>
     /// <param name="args">raw keyevent arguments</param>
-    public delegate void RawKeyEventHandler(object sender, RawKeyEventArgs args);
+    internal delegate void RawKeyEventHandler(object sender, RawKeyEventArgs args);
 
     #region WINAPI Helper class
 
@@ -257,12 +257,12 @@ namespace EventHook.Hooks
     /// </summary>
     internal static class InterceptKeys
     {
-        public delegate IntPtr LowLevelKeyboardProc(int nCode, UIntPtr wParam, IntPtr lParam);
+        internal delegate IntPtr LowLevelKeyboardProc(int nCode, UIntPtr wParam, IntPtr lParam);
 
         /// <summary>
         ///     Key event
         /// </summary>
-        public enum KeyEvent
+        internal enum KeyEvent
         {
             /// <summary>
             ///     Key down
@@ -285,9 +285,9 @@ namespace EventHook.Hooks
             WM_SYSKEYDOWN = 260
         }
 
-        public static int WH_KEYBOARD_LL = 13;
+        internal static int WH_KEYBOARD_LL = 13;
 
-        public static IntPtr SetHook(LowLevelKeyboardProc proc)
+        internal static IntPtr SetHook(LowLevelKeyboardProc proc)
         {
             using (var curProcess = Process.GetCurrentProcess())
             using (var curModule = curProcess.MainModule)
@@ -297,17 +297,17 @@ namespace EventHook.Hooks
         }
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
+        internal static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool UnhookWindowsHookEx(IntPtr hhk);
+        internal static extern bool UnhookWindowsHookEx(IntPtr hhk);
 
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, UIntPtr wParam, IntPtr lParam);
+        internal static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, UIntPtr wParam, IntPtr lParam);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        public static extern IntPtr GetModuleHandle(string lpModuleName);
+        internal static extern IntPtr GetModuleHandle(string lpModuleName);
 
         #region Convert VKCode to string
 
@@ -352,7 +352,7 @@ namespace EventHook.Hooks
         /// <param name="vkCode">VKCode</param>
         /// <param name="isKeyDown">Is the key down event?</param>
         /// <returns>String representing single unicode character.</returns>
-        public static string VkCodeToString(uint vkCode, bool isKeyDown)
+        internal static string VkCodeToString(uint vkCode, bool isKeyDown)
         {
             // ToUnicodeEx needs StringBuilder, it populates that during execution.
             var sbString = new StringBuilder(5);

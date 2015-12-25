@@ -8,14 +8,14 @@ namespace EventHook.Hooks.Library
     #region RECT struct
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct RECT
+    internal struct RECT
     {
-        public int left;
-        public int top;
-        public int right;
-        public int bottom;
+        internal int left;
+        internal int top;
+        internal int right;
+        internal int bottom;
 
-        public RECT(int left, int top, int right, int bottom)
+        internal RECT(int left, int top, int right, int bottom)
         {
             this.left = left;
             this.top = top;
@@ -23,12 +23,12 @@ namespace EventHook.Hooks.Library
             this.bottom = bottom;
         }
 
-        public Rectangle Rect
+        internal Rectangle Rect
         {
             get { return new Rectangle(left, top, right - left, bottom - top); }
         }
 
-        public static RECT FromXywh(int x, int y, int width, int height)
+        internal static RECT FromXywh(int x, int y, int width, int height)
         {
             return new RECT(x,
                 y,
@@ -36,7 +36,7 @@ namespace EventHook.Hooks.Library
                 y + height);
         }
 
-        public static RECT FromRectangle(Rectangle rect)
+        internal static RECT FromRectangle(Rectangle rect)
         {
             return new RECT(rect.Left,
                 rect.Top,
@@ -55,10 +55,10 @@ namespace EventHook.Hooks.Library
 
     #region SHELLHOOKINFO
 
-    public struct SHELLHOOKINFO
+    internal struct SHELLHOOKINFO
     {
-        public IntPtr Hwnd;
-        public RECT Rc;
+        internal IntPtr Hwnd;
+        internal RECT Rc;
     }
 
     #endregion

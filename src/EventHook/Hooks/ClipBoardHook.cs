@@ -8,16 +8,16 @@ using System.Threading;
 
 namespace EventHook.Hooks
 {
-    public class ClipBoardHook : Form
+    internal class ClipBoardHook : Form
     {
         private IntPtr _clipboardViewerNext;
 
-        public event EventHandler ClipBoardChanged = delegate { };
+        internal event EventHandler ClipBoardChanged = delegate { };
 
         /// <summary>
         ///     Register this form as a Clipboard Viewer application
         /// </summary>
-        public void RegisterClipboardViewer()
+        internal void RegisterClipboardViewer()
         {
             _clipboardViewerNext = User32.SetClipboardViewer(Handle);
         }
@@ -25,7 +25,7 @@ namespace EventHook.Hooks
         /// <summary>
         ///     Remove this form from the Clipboard Viewer list
         /// </summary>
-        public void UnregisterClipboardViewer()
+        internal void UnregisterClipboardViewer()
         {
             User32.ChangeClipboardChain(Handle, _clipboardViewerNext);
         }

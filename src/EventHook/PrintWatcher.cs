@@ -67,7 +67,7 @@ namespace EventHook
         static void pqm_OnJobStatusChange(object sender, PrintJobChangeEventArgs e)
         {
 
-            if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING)
+            if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING && e.JobInfo !=null)
             {
 
 

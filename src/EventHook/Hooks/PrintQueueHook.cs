@@ -9,9 +9,9 @@ using Microsoft.Win32.SafeHandles;
 
 namespace EventHook.Hooks
 {
-    public class PrintJobChangeEventArgs : EventArgs
+    internal class PrintJobChangeEventArgs : EventArgs
     {
-        public PrintJobChangeEventArgs(int intJobID, string strJobName, JOBSTATUS jStatus, PrintSystemJobInfo objJobInfo)
+        internal PrintJobChangeEventArgs(int intJobID, string strJobName, JOBSTATUS jStatus, PrintSystemJobInfo objJobInfo)
         {
             _jobId = intJobID;
             _jobName = strJobName;
@@ -19,22 +19,22 @@ namespace EventHook.Hooks
             _jobInfo = objJobInfo;
         }
 
-        public int JobId
+        internal int JobId
         {
             get { return _jobId; }
         }
 
-        public string JobName
+        internal string JobName
         {
             get { return _jobName; }
         }
 
-        public JOBSTATUS JobStatus
+        internal JOBSTATUS JobStatus
         {
             get { return _jobStatus; }
         }
 
-        public PrintSystemJobInfo JobInfo
+        internal PrintSystemJobInfo JobInfo
         {
             get { return _jobInfo; }
         }
@@ -49,9 +49,9 @@ namespace EventHook.Hooks
         #endregion
     }
 
-    public delegate void PrintJobStatusChanged(object sender, PrintJobChangeEventArgs e);
+    internal delegate void PrintJobStatusChanged(object sender, PrintJobChangeEventArgs e);
 
-    public class PrintQueueHook
+    internal class PrintQueueHook
     {
         #region Constants
 
@@ -61,7 +61,7 @@ namespace EventHook.Hooks
 
         #region constructor
 
-        public PrintQueueHook(string strSpoolName)
+        internal PrintQueueHook(string strSpoolName)
         {
             // Let us open the printer and get the printer handle.
             SpoolerName = strSpoolName;
@@ -71,7 +71,7 @@ namespace EventHook.Hooks
 
         #region Events
 
-        public event PrintJobStatusChanged OnJobStatusChange;
+        internal event PrintJobStatusChanged OnJobStatusChange;
 
         #endregion
 
@@ -86,7 +86,7 @@ namespace EventHook.Hooks
 
         #region StartMonitoring
 
-        public void Start()
+        internal void Start()
         {
             OpenPrinter(SpoolerName, out _printerHandle, 0);
             if (_printerHandle != IntPtr.Zero)
@@ -113,7 +113,7 @@ namespace EventHook.Hooks
 
         #region StopMonitoring
 
-        public void Stop()
+        internal void Stop()
         {
             if (_printerHandle != IntPtr.Zero)
             {
@@ -126,7 +126,7 @@ namespace EventHook.Hooks
 
         #region Callback Function
 
-        public void PrinterNotifyWaitCallback(object state, bool timedOut)
+        internal void PrinterNotifyWaitCallback(object state, bool timedOut)
         {
             if (_printerHandle == IntPtr.Zero) return;
 
@@ -220,7 +220,7 @@ namespace EventHook.Hooks
 
         [DllImport("winspool.drv", EntryPoint = "OpenPrinterA", SetLastError = true, CharSet = CharSet.Ansi,
             ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
-        public static extern bool OpenPrinter(string pPrinterName,
+        internal static extern bool OpenPrinter(string pPrinterName,
             out IntPtr phPrinter,
             int pDefault);
 
@@ -229,7 +229,7 @@ namespace EventHook.Hooks
             SetLastError = true,
             ExactSpelling = true,
             CallingConvention = CallingConvention.StdCall)]
-        public static extern bool ClosePrinter
+        internal static extern bool ClosePrinter
             (int hPrinter);
 
         [DllImport("winspool.drv",
@@ -237,7 +237,7 @@ namespace EventHook.Hooks
             SetLastError = true, CharSet = CharSet.Ansi,
             ExactSpelling = true,
             CallingConvention = CallingConvention.StdCall)]
-        public static extern IntPtr FindFirstPrinterChangeNotification
+        internal static extern IntPtr FindFirstPrinterChangeNotification
             ([In] IntPtr hPrinter,
                 [In] int fwFlags,
                 [In] int fwOptions,
@@ -247,7 +247,7 @@ namespace EventHook.Hooks
             SetLastError = true, CharSet = CharSet.Ansi,
             ExactSpelling = false,
             CallingConvention = CallingConvention.StdCall)]
-        public static extern bool FindNextPrinterChangeNotification
+        internal static extern bool FindNextPrinterChangeNotification
             ([In] IntPtr hChangeObject,
                 [Out] out int pdwChange,
                 [In, MarshalAs(UnmanagedType.LPStruct)] PRINTER_NOTIFY_OPTIONS pPrinterNotifyOptions,
@@ -259,7 +259,7 @@ namespace EventHook.Hooks
         #region private variables
 
         private IntPtr _printerHandle = IntPtr.Zero;
-        public string SpoolerName;
+        internal string SpoolerName;
         private readonly ManualResetEvent _mrEvent = new ManualResetEvent(false);
         private RegisteredWaitHandle _waitHandle;
         private IntPtr _changeHandle = IntPtr.Zero;

@@ -1,6 +1,6 @@
 ﻿namespace EventHook.Hooks.Library
 {
-    public enum ShellEvents
+    internal enum ShellEvents
     {
         HSHELL_WINDOWCREATED = 1,
         HSHELL_WINDOWDESTROYED = 2,
@@ -21,7 +21,7 @@
         HSHELL_RUDEAPPACTIVATED = (HSHELL_WINDOWACTIVATED | HSHELL_HIGHBIT)
     }
 
-    public enum WindowStyle
+    internal enum WindowStyle
     {
         WS_OVERLAPPED = 0x00000000,
         WS_POPUP = -2147483648,
@@ -54,7 +54,7 @@
         WS_CHILDWINDOW = (WS_CHILD)
     }
 
-    public enum WindowStyleEx
+    internal enum WindowStyleEx
     {
         WS_EX_DLGMODALFRAME = 0x00000001,
         WS_EX_NOPARENTNOTIFY = 0x00000004,
@@ -84,7 +84,7 @@
         WS_EX_NOACTIVATE = 0x08000000
     }
 
-    public enum GWLIndex
+    internal enum GWLIndex
     {
         GWL_WNDPROC = -4,
         GWL_HINSTANCE = -6,
@@ -95,7 +95,7 @@
         GWL_ID = -12
     }
 
-    public enum GetWindowContstants
+    internal enum GetWindowContstants
     {
         GW_HWNDFIRST = 0,
         GW_HWNDLAST = 1,

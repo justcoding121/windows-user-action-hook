@@ -9,7 +9,7 @@ using System.Windows.Threading;
 
 namespace EventHook.Hooks.Helpers
 {
-    public class SharedMessagePump
+    internal class SharedMessagePump
     {
         static Lazy<TaskScheduler> _scheduler;
         static Lazy<MessageHandler> _messageHandler;
@@ -53,12 +53,12 @@ namespace EventHook.Hooks.Helpers
                 });
         }
 
-        public static TaskScheduler GetTaskScheduler()
+        internal static TaskScheduler GetTaskScheduler()
         {
             return _scheduler.Value;
         }
 
-        public static IntPtr GetHandle()
+        internal static IntPtr GetHandle()
         {
             return _messageHandler.Value.Handle;
         }
@@ -68,7 +68,7 @@ namespace EventHook.Hooks.Helpers
     internal class MessageHandler : NativeWindow
     {
 
-        public MessageHandler()
+        internal MessageHandler()
         {
             CreateHandle(new CreateParams());
         }

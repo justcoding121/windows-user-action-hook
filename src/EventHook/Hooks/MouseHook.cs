@@ -6,8 +6,8 @@ namespace EventHook.Hooks
 {
     internal class RawMouseEventArgs : EventArgs
     {
-        public MouseMessages Message { get; set; }
-        public POINT Point { get; set; }
+        internal MouseMessages Message { get; set; }
+        internal POINT Point { get; set; }
     }
 
     public enum MouseMessages
@@ -30,11 +30,11 @@ namespace EventHook.Hooks
     [StructLayout(LayoutKind.Sequential)]
     internal struct MSLLHOOKSTRUCT
     {
-        public POINT pt;
-        public readonly uint mouseData;
-        public readonly uint flags;
-        public readonly uint time;
-        public readonly IntPtr dwExtraInfo;
+        internal POINT pt;
+        internal readonly uint mouseData;
+        internal readonly uint flags;
+        internal readonly uint time;
+        internal readonly IntPtr dwExtraInfo;
     }
 
     internal class MouseHook
@@ -45,16 +45,16 @@ namespace EventHook.Hooks
         private static IntPtr _hookId = IntPtr.Zero;
         internal event EventHandler<RawMouseEventArgs> MouseAction = delegate { };
 
-        public MouseHook()
+        internal MouseHook()
         {
             Proc = HookCallback;
         }
-        public void Start()
+        internal void Start()
         {
             _hookId = SetHook(Proc);
         }
 
-        public void Stop()
+        internal void Stop()
         {
             UnhookWindowsHookEx(_hookId);
         }

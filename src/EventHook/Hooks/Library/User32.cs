@@ -7,49 +7,49 @@ namespace EventHook.Hooks.Library
     internal class User32
     {
         [DllImport("user32.dll")]
-        public static extern int GetForegroundWindow();
+        internal static extern int GetForegroundWindow();
 
         [DllImport("user32.dll", SetLastError = true)]
-        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        internal static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetWindowTextLength(IntPtr hWnd);
+        internal static extern int GetWindowTextLength(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetWindowText(IntPtr hWnd, [Out] StringBuilder lpString, int nMaxCount);
+        internal static extern int GetWindowText(IntPtr hWnd, [Out] StringBuilder lpString, int nMaxCount);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr SetClipboardViewer(IntPtr hWnd);
+        internal static extern IntPtr SetClipboardViewer(IntPtr hWnd);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern bool ChangeClipboardChain(
+        internal static extern bool ChangeClipboardChain(
             IntPtr hWndRemove, // handle to window to remove
             IntPtr hWndNewNext // handle to next window
             );
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
-        public static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
+        internal static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern bool EnumWindows(EnumWindowsProc numFunc, IntPtr lParam);
+        internal static extern bool EnumWindows(EnumWindowsProc numFunc, IntPtr lParam);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr GetParent(IntPtr hWnd);
+        internal static extern IntPtr GetParent(IntPtr hWnd);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr GetWindow(IntPtr hwnd, int uCmd);
+        internal static extern IntPtr GetWindow(IntPtr hwnd, int uCmd);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLong", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+        internal static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr", SetLastError = true, CharSet = CharSet.Auto)]
-        public static extern int GetWindowLongPtr(IntPtr hWnd, int nIndex);
+        internal static extern int GetWindowLongPtr(IntPtr hWnd, int nIndex);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern bool IsWindowVisible(IntPtr hwnd);
+        internal static extern bool IsWindowVisible(IntPtr hwnd);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern bool RegisterShellHook(IntPtr hWnd, int flags);
+        internal static extern bool RegisterShellHook(IntPtr hWnd, int flags);
 
         /// <summary>
         ///     Registers a specified Shell window to receive certain messages for events or notifications that are useful to
@@ -74,12 +74,12 @@ namespace EventHook.Hooks.Library
         ///     for more see MSDN
         /// </remarks>
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern bool RegisterShellHookWindow(IntPtr hWnd);
+        internal static extern bool RegisterShellHookWindow(IntPtr hWnd);
 
         [DllImport("User32.dll", CharSet = CharSet.Auto)]
-        public static extern uint RegisterWindowMessage(string Message);
+        internal static extern uint RegisterWindowMessage(string Message);
 
         [DllImport("user32.dll")]
-        public static extern void SetTaskmanWindow(IntPtr hwnd);
+        internal static extern void SetTaskmanWindow(IntPtr hwnd);
     }
 }

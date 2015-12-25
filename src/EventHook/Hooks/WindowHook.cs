@@ -8,21 +8,21 @@ using System.Windows.Interop;
 namespace EventHook.Hooks
 {
     ///<summary>One window event to many application wide listeners</summary>
-    public static class WindowHook
+    internal static class WindowHook
     {
         /// <summary>
         /// A top-level, unowned window has been created. The window exists when the system calls this hook.
         /// </summary>
-        public static event GeneralShellHookEventHandler WindowCreated;
+        internal static event GeneralShellHookEventHandler WindowCreated;
         /// <summary>
         /// A top-level, unowned window is about to be destroyed. The window still exists when the system calls this hook.
         /// </summary>
-        public static event GeneralShellHookEventHandler WindowDestroyed;
+        internal static event GeneralShellHookEventHandler WindowDestroyed;
 
         /// <summary>
         /// The activation has changed to a different top-level, unowned window. 
         /// </summary>
-        public static event GeneralShellHookEventHandler WindowActivated;
+        internal static event GeneralShellHookEventHandler WindowActivated;
 
         private static ShellHook sh;
 
