@@ -39,7 +39,7 @@ Task Build -depends Restore-Packages {
 }
 
 Task Package {
-	exec { . $NuGet pack "$SolutionRoot\EventHook\EventHook.nuspec" -Properties Configuration=$Configuration -OutputDirectory "$SolutionRoot\packages" -Version "$Version" }
+	exec { . $NuGet pack "$SolutionRoot\EventHook\EventHook.nuspec" -Properties Configuration=$Configuration -OutputDirectory "$SolutionRoot" -Version "$Version" }
 }
 
 Task Clean {
