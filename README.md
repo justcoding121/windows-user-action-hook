@@ -62,4 +62,4 @@ ApplicationWatcher.Stop();
 PrintWatcher.Stop(); 
 ```
 
-![alt tag](https://raw.githubusercontent.com/titanium007/Windows-User-Action-Hook/master/src/Tests/EventHook.Tests/Capture.PNG)
+![alt tag](https://raw.githubusercontent.com/titanium007/Windows-User-Action-Hook/master/EventHook.Tests/Capture.PNG)
