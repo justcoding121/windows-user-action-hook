@@ -1,26 +1,30 @@
-EventHook
-==========
+## EventHook
+
 An one stop library for global windows user actions such mouse, keyboard, clipboard, website visit  &amp; print events
 
 Kindly report only issues/bugs here . For programming help or questions use [StackOverflow](http://stackoverflow.com/questions/tagged/windows-user-action-hook) with the tag EventHook or Windows-User-Action-Hook.
 
 ![alt tag](https://raw.githubusercontent.com/titanium007/Windows-User-Action-Hook/master/src/Tests/EventHook.Tests/Capture.PNG)
 
-Supported Events
-===============
+## Supported Events
+
 * Keyboard events
 * Mouse events
 * clipboard events
 * application events
 * print events
 
-Usage
-=====
+## Usage
+
 Install by nuget:
 
     Install-Package EventHook
 
-Sample Code:
+## Continuous Integration System
+
+![Build Status](https://ci.appveyor.com/api/projects/status/htea647ukrgg4qcl?svg=true)
+
+## Sample Code:
 ===========
 ```csharp
             KeyboardWatcher.Start();
