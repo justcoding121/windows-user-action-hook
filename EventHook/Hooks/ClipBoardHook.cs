@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EventHook.Hooks.Helpers;
 using System.Threading;
 
+//https://github.com/MrksKwsnck/Wlipper
 namespace EventHook.Hooks
 {
     internal class ClipBoardHook : Form
