@@ -9,6 +9,7 @@ using Microsoft.Win32.SafeHandles;
 
 namespace EventHook.Hooks
 {
+    //http://www.codeproject.com/Articles/51085/Monitor-jobs-in-a-printer-queue-NET
     internal class PrintJobChangeEventArgs : EventArgs
     {
         internal PrintJobChangeEventArgs(int intJobID, string strJobName, JOBSTATUS jStatus, PrintSystemJobInfo objJobInfo)
