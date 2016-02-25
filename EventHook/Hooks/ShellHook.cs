@@ -6,6 +6,7 @@ namespace EventHook.Hooks
 {
     internal delegate void GeneralShellHookEventHandler(ShellHook sender, IntPtr hWnd);
 
+    //https://github.com/lemkepf/ClipHub/blob/master/ClipHub/ClipHub/Code/Helpers/ShellHook.cs
     internal sealed class ShellHook : NativeWindow
     {
         private readonly uint _wmShellHook;
