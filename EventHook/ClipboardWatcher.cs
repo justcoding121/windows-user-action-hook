@@ -1,5 +1,5 @@
 ﻿using EventHook.Hooks;
-using EventHook.Hooks.Helpers;
+using EventHook.Helpers;
 using Nito.AsyncEx;
 using System;
 using System.Collections.Concurrent;

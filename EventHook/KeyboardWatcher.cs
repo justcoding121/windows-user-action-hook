@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using EventHook.Hooks;
-using EventHook.Hooks.Helpers;
+using EventHook.Helpers;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
 

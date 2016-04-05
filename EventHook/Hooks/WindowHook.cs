@@ -1,4 +1,4 @@
-﻿using EventHook.Hooks.Helpers;
+﻿using EventHook.Helpers;
 using System;
 using System.Threading;
 using System.Windows;

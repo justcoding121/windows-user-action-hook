@@ -68,7 +68,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\EventHook\EventHook.csproj">
+    <ProjectReference Include="..\..\EventHook\EventHook.csproj">
       <Project>{4ff5e04f-3425-4f55-a50a-30ceba7c2b95}</Project>
       <Name>EventHook</Name>
     </ProjectReference>

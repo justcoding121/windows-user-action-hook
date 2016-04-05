@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Printing;
 using EventHook.Hooks;
-using EventHook.Hooks.Helpers;
+using EventHook.Helpers;
 using EventHook.Hooks.Library;
 using System.Threading.Tasks;
 

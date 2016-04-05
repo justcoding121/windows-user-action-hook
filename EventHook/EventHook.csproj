@@ -144,12 +144,12 @@
   <ItemGroup>
     <Compile Include="ApplicationWatcher.cs" />
     <Compile Include="ClipboardWatcher.cs" />
-    <Compile Include="Hooks\Helpers\SharedMessagePump.cs" />
+    <Compile Include="Helpers\SharedMessagePump.cs" />
     <Compile Include="KeyboardWatcher.cs" />
     <Compile Include="MouseWatcher.cs" />
     <Compile Include="PrintWatcher.cs" />
     <Compile Include="Hooks\WindowHook.cs" />
-    <Compile Include="Hooks\Helpers\WindowHelper.cs" />
+    <Compile Include="Helpers\WindowHelper.cs" />
     <Compile Include="Hooks\ClipBoardHook.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook", "EventHook\EventHook.csproj", "{4FF5E04F-3425-4F55-A50A-30CEBA7C2B95}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C622ACD2-76FB-4B6D-844D-C0C406C73214}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{C622ACD2-76FB-4B6D-844D-C0C406C73214}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{44D5BA9F-DF7B-4208-BCD0-A909ECAADE1C}"
 	ProjectSection(SolutionItems) = preProject
@@ -14,7 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{44D5BA
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook.Tests", "EventHook.Tests\EventHook.Tests.csproj", "{0075830E-89B6-4E6B-9C49-CA377746AB4C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook.Forms.Tests", "Examples\EventHook.Forms.Tests\EventHook.Forms.Tests.csproj", "{17264D8C-CF5A-4032-9E70-090525D574F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook.Tests", "Examples\EventHook.Tests\EventHook.Tests.csproj", "{0075830E-89B6-4E6B-9C49-CA377746AB4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,6 +34,14 @@ Global
 		{4FF5E04F-3425-4F55-A50A-30CEBA7C2B95}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4FF5E04F-3425-4F55-A50A-30CEBA7C2B95}.Release-Net45|Any CPU.ActiveCfg = Release-Net45|Any CPU
 		{4FF5E04F-3425-4F55-A50A-30CEBA7C2B95}.Release-Net45|Any CPU.Build.0 = Release-Net45|Any CPU
+		{17264D8C-CF5A-4032-9E70-090525D574F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17264D8C-CF5A-4032-9E70-090525D574F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17264D8C-CF5A-4032-9E70-090525D574F2}.Debug-Net45|Any CPU.ActiveCfg = Debug|Any CPU
+		{17264D8C-CF5A-4032-9E70-090525D574F2}.Debug-Net45|Any CPU.Build.0 = Debug|Any CPU
+		{17264D8C-CF5A-4032-9E70-090525D574F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17264D8C-CF5A-4032-9E70-090525D574F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17264D8C-CF5A-4032-9E70-090525D574F2}.Release-Net45|Any CPU.ActiveCfg = Release|Any CPU
+		{17264D8C-CF5A-4032-9E70-090525D574F2}.Release-Net45|Any CPU.Build.0 = Release|Any CPU
 		{0075830E-89B6-4E6B-9C49-CA377746AB4C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{0075830E-89B6-4E6B-9C49-CA377746AB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0075830E-89B6-4E6B-9C49-CA377746AB4C}.Debug-Net45|Any CPU.ActiveCfg = Debug-Net45|Any CPU
@@ -45,6 +55,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{17264D8C-CF5A-4032-9E70-090525D574F2} = {C622ACD2-76FB-4B6D-844D-C0C406C73214}
 		{0075830E-89B6-4E6B-9C49-CA377746AB4C} = {C622ACD2-76FB-4B6D-844D-C0C406C73214}
 	EndGlobalSection
 EndGlobal

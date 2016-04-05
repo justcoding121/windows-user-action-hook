@@ -3,7 +3,7 @@ using System.Collections;
 using System.Windows.Forms;
 using EventHook.Hooks.Library;
 using System.Threading.Tasks;
-using EventHook.Hooks.Helpers;
+using EventHook.Helpers;
 using System.Threading;
 
 //https://github.com/MrksKwsnck/Wlipper

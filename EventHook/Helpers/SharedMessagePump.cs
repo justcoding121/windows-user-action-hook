@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Threading;
 
-namespace EventHook.Hooks.Helpers
+namespace EventHook.Helpers
 {
     internal class SharedMessagePump
     {
@@ -18,13 +19,17 @@ namespace EventHook.Hooks.Helpers
         {
             _scheduler = new Lazy<TaskScheduler>(() =>
             {
+                          
+               if(SynchronizationContext.Current!=null)
+                    return TaskScheduler.FromCurrentSynchronizationContext();
+
                 TaskScheduler current = null;
-                //check if current is null, else create a message pump and a shared hwnd handle
+
+                //if current task scheduler is null, create a message pump 
                 //http://stackoverflow.com/questions/2443867/message-pump-in-net-windows-service
                 //use async for performance gain!
-                var t = new Task(() =>
+                new Task(() =>
                 {
-                   
                     System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
                     {
                         current = TaskScheduler.FromCurrentSynchronizationContext();
@@ -32,22 +37,30 @@ namespace EventHook.Hooks.Helpers
 
                ), DispatcherPriority.Normal);
                     System.Windows.Threading.Dispatcher.Run();
-                });
-                t.Start();
+                }).Start();
 
-                while (current == null) ;
+                while (current == null)
+                {
+                    Thread.Sleep(10);
+                }
 
                 return current;
+
             });
 
             _messageHandler = new Lazy<MessageHandler>(() =>
                 {
                     MessageHandler msgHandler = null;
-                    var t = new Task((e) => { msgHandler = new MessageHandler(); }, GetTaskScheduler());
 
-                    t.Start();
+                    new Task((e) =>
+                    {
+                        msgHandler = new MessageHandler();
+                    }, GetTaskScheduler()).Start();
 
-                    while (msgHandler == null);
+                    while (msgHandler == null)
+                    {
+                        Thread.Sleep(10);
+                    };
 
                     return msgHandler;
                 });
@@ -60,6 +73,17 @@ namespace EventHook.Hooks.Helpers
 
         internal static IntPtr GetHandle()
         {
+            var handle = IntPtr.Zero;
+
+            try
+            {
+                handle = Process.GetCurrentProcess().MainWindowHandle;
+
+                if (handle != IntPtr.Zero)
+                    return handle;
+            }
+            catch { }
+
             return _messageHandler.Value.Handle;
         }
 

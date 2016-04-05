@@ -4,7 +4,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using System.Threading;
 using EventHook.Hooks;
-using EventHook.Hooks.Helpers;
+using EventHook.Helpers;
 using Nito.AsyncEx;
 using System.Threading.Tasks;
 
@@ -40,7 +40,7 @@ namespace EventHook
         private static object _Accesslock = new object();
         private static bool _IsRunning;
 
-        private static AsyncCollection<object> _appQueue;
+        private static AsyncCollection<object> appQueue;
 
         private static List<WindowData> _activeWindows;
         private static DateTime _prevTimeApp;
@@ -55,9 +55,7 @@ namespace EventHook
                     _activeWindows = new List<WindowData> { };
                     _prevTimeApp = DateTime.Now;
 
-                    _appQueue = new AsyncCollection<object>();
-
-                    var handler = SharedMessagePump.GetHandle();
+                    appQueue = new AsyncCollection<object>();
 
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                       {
@@ -84,22 +82,22 @@ namespace EventHook
                     WindowHook.WindowDestroyed -= new GeneralShellHookEventHandler(WindowDestroyed);
                     WindowHook.WindowActivated -= new GeneralShellHookEventHandler(WindowActivated);
 
-                    _appQueue.Add(false);
+                    appQueue.Add(false);
                     _IsRunning = false;
                 }
 
         }
         private static void WindowCreated(ShellHook shellObject, IntPtr hWnd)
         {
-            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
+            appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
         }
         private static void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
         {
-            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 2 });
+            appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 2 });
         }
         private static void WindowActivated(ShellHook shellObject, IntPtr hWnd)
         {
-            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
+            appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
         }
         // This is the method to run when the timer is raised. 
         private static async Task AppConsumer()
@@ -107,7 +105,7 @@ namespace EventHook
             while (_IsRunning)
             {
                 //blocking here until a key is added to the queue
-                var item = await _appQueue.TakeAsync();
+                var item = await appQueue.TakeAsync();
                 if (item is bool) break;
 
                 var wnd = (WindowData)item;

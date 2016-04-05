@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Text;
 using EventHook.Hooks.Library;
 
-namespace EventHook.Hooks.Helpers
+namespace EventHook.Helpers
 {
     internal class WindowHelper
     {
