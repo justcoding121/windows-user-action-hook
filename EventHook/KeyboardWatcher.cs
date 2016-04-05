@@ -48,7 +48,8 @@ namespace EventHook
                     _kh = new KeyboardHook();
                     _kh.KeyDown += new RawKeyEventHandler(KListener);
                     _kh.KeyUp += new RawKeyEventHandler(KListener);
-                    var handle = SharedMessagePump.GetHandle();
+
+                    SharedMessagePump.Initialize();
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                     {
                         _kh.Start();

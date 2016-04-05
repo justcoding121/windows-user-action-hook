@@ -14,14 +14,18 @@ namespace EventHook.Helpers
     {
         static Lazy<TaskScheduler> _scheduler;
         static Lazy<MessageHandler> _messageHandler;
-
+  
         static SharedMessagePump()
         {
             _scheduler = new Lazy<TaskScheduler>(() =>
             {
-                          
-               if(SynchronizationContext.Current!=null)
-                    return TaskScheduler.FromCurrentSynchronizationContext();
+                Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+                if (dispatcher != null)
+                {
+                    if (SynchronizationContext.Current != null)
+                        return TaskScheduler.FromCurrentSynchronizationContext();
+                }           
+            
 
                 TaskScheduler current = null;
 
@@ -64,6 +68,12 @@ namespace EventHook.Helpers
 
                     return msgHandler;
                 });
+        }
+
+        internal static void Initialize()
+        {
+            GetTaskScheduler();
+            GetHandle();
         }
 
         internal static TaskScheduler GetTaskScheduler()

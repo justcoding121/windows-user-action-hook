@@ -56,7 +56,8 @@ namespace EventHook
                     _prevTimeApp = DateTime.Now;
 
                     appQueue = new AsyncCollection<object>();
-
+                   
+                    SharedMessagePump.Initialize();
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                       {
                           WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
