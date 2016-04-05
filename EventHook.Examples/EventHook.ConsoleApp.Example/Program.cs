@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Threading;
 
-namespace EventHook.Tests
+namespace EventHook.ConsoleApp.Example
 {
     class Program
     {

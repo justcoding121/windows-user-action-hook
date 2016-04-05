@@ -14,9 +14,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{44D5BA
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook.Forms.Tests", "Examples\EventHook.Forms.Tests\EventHook.Forms.Tests.csproj", "{17264D8C-CF5A-4032-9E70-090525D574F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook.WinForms.Example", "EventHook.Examples\EventHook.WinForms.Example\EventHook.WinForms.Example.csproj", "{17264D8C-CF5A-4032-9E70-090525D574F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook.Tests", "Examples\EventHook.Tests\EventHook.Tests.csproj", "{0075830E-89B6-4E6B-9C49-CA377746AB4C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook.ConsoleApp.Example", "EventHook.Examples\EventHook.ConsoleApp.Example\EventHook.ConsoleApp.Example.csproj", "{0075830E-89B6-4E6B-9C49-CA377746AB4C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

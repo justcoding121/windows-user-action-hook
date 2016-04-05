@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace EventHook.Forms.Tests
+namespace EventHook.WinForms.Example
 {
     public partial class MainForm : Form
     {

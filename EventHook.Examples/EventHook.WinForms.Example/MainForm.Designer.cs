@@ -1,4 +1,4 @@
-﻿namespace EventHook.Forms.Tests
+﻿namespace EventHook.WinForms.Example
 {
     partial class MainForm
     {

@@ -7,8 +7,8 @@
     <ProjectGuid>{0075830E-89B6-4E6B-9C49-CA377746AB4C}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>EventHook.Tests</RootNamespace>
-    <AssemblyName>EventHook.Tests</AssemblyName>
+    <RootNamespace>EventHook.ConsoleApp.Example</RootNamespace>
+    <AssemblyName>EventHook.ConsoleApp.Example</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
