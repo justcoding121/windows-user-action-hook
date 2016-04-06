@@ -21,23 +21,23 @@ namespace EventHook
             if (_isRunning) return;
 
             lock (Accesslock)
-            {
-                _kQueue = new AsyncCollection<object>();
-
-                _mh = new MouseHook();
-                _mh.MouseAction += MListener;
-
-                SharedMessagePump.Initialize();
-                Task.Factory.StartNew(() => { }).ContinueWith(x =>
                 {
-                    _mh.Start();
+                    _kQueue = new AsyncCollection<object>();
 
-                }, SharedMessagePump.GetTaskScheduler());
+                    _mh = new MouseHook();
+                    _mh.MouseAction += MListener;
 
-                Task.Factory.StartNew(() => ConsumeKeyAsync());
+
+                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                    {
+                        _mh.Start();
+
+                    }, SharedMessagePump.GetTaskScheduler());
+
+                    Task.Factory.StartNew(() => ConsumeKeyAsync());
 
                 _isRunning = true;
-            }
+                }
         }
 
         public static void Stop()
@@ -45,16 +45,16 @@ namespace EventHook
             if (!_isRunning) return;
 
             lock (Accesslock)
-            {
-                if (_mh != null)
                 {
-                    _mh.MouseAction -= MListener;
-                    _mh.Stop();
-                    _mh = null;
-                }
-                _kQueue.Add(false);
+                    if (_mh != null)
+                    {
+                        _mh.MouseAction -= MListener;
+                        _mh.Stop();
+                        _mh = null;
+                    }
+                    _kQueue.Add(false);
                 _isRunning = false;
-            }
+                }
         }
 
 
