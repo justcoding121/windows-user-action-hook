@@ -14,10 +14,9 @@ namespace EventHook
         private static bool _isRunning;
         private static readonly object Accesslock = new object();
 
-        private static AsyncCollection<object> appQueue;
+        private static AsyncCollection<object> _appQueue;
 
         private static List<WindowData> _activeWindows;
-        private static DateTime _prevTimeApp;
 
         public static event EventHandler<ApplicationEventArgs> OnApplicationWindowChange;
 
@@ -28,9 +27,8 @@ namespace EventHook
             lock (Accesslock)
             {
                 _activeWindows = new List<WindowData> {};
-                _prevTimeApp = DateTime.Now;
 
-                appQueue = new AsyncCollection<object>();
+                _appQueue = new AsyncCollection<object>();
 
 
                 Task.Factory.StartNew(() => { }).ContinueWith(x =>
@@ -59,22 +57,22 @@ namespace EventHook
                 WindowHook.WindowDestroyed -= WindowDestroyed;
                 WindowHook.WindowActivated -= WindowActivated;
 
-                appQueue.Add(false);
+                _appQueue.Add(false);
                 _isRunning = false;
             }
         }
 
         private static void WindowCreated(ShellHook shellObject, IntPtr hWnd)
         {
-            appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
+            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
         }
         private static void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
         {
-            appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 2 });
+            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 2 });
         }
         private static void WindowActivated(ShellHook shellObject, IntPtr hWnd)
         {
-            appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
+            _appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
         }
 
         // This is the method to run when the timer is raised. 
@@ -83,7 +81,7 @@ namespace EventHook
             while (_isRunning)
             {
                 //blocking here until a key is added to the queue
-                var item = await appQueue.TakeAsync();
+                var item = await _appQueue.TakeAsync();
                 if (item is bool) break;
 
                 var wnd = (WindowData)item;
