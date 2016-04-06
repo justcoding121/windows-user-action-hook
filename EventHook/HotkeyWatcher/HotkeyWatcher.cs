@@ -13,6 +13,19 @@ namespace EventHook
         private static readonly HotkeyListener Listener = new HotkeyListener();
         public static event EventHandler<HotkeyEventArgs> OnHotkeyInput;
 
+        static HotkeyWatcher()
+        {
+            Listener.OnHotkey += Listener_OnHotkey;
+        }
+
+        private static void Listener_OnHotkey(object sender, HotkeyEventArgs e)
+        {
+            var handler = OnHotkeyInput;
+            if (handler == null) return;
+
+            handler.Invoke(sender, e);
+        }
+
         public static void Register(Keys hotkey)
         {
             var info = new HotkeyInfo(hotkey);
