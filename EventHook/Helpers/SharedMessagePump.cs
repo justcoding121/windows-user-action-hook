@@ -72,6 +72,8 @@ namespace EventHook.Helpers
 
                     return msgHandler;
                 });
+
+            Initialize();
         }
 
         private static void Initialize()
