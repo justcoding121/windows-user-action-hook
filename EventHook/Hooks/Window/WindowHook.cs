@@ -1,11 +1,8 @@
-﻿using EventHook.Helpers;
-using System;
-using System.Threading;
-using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Interop;
+﻿using System;
+using EventHook.Helpers;
+using EventHook.Hooks.Shell;
 
-namespace EventHook.Hooks
+namespace EventHook.Hooks.Window
 {
     ///<summary>One window event to many application wide listeners</summary>
     internal static class WindowHook

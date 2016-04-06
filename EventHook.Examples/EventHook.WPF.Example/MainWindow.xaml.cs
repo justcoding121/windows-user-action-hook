@@ -28,7 +28,7 @@ namespace EventHook.WPF.Example
             KeyboardWatcher.Start();
             KeyboardWatcher.OnKeyInput += (s, e) =>
             {
-                Debug.WriteLine(string.Format("Key {0} event of key {1}", e.KeyData.EventType, e.KeyData.Keyname));
+                Debug.WriteLine(string.Format("Key {0} event of key {1}", e.KeyData.KeyState, e.KeyData.Keyname));
             };
 
             MouseWatcher.Start();

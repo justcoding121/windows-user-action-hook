@@ -3,7 +3,7 @@
     /// <summary>
     ///     Windows Event Messages sent to the WindowProc
     /// </summary>
-    internal enum Msgs
+    internal enum WinMessage
     {
         WM_NULL = 0x0000,
         WM_CREATE = 0x0001,

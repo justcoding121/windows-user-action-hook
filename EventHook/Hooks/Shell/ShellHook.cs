@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using EventHook.Hooks.Library;
 
-namespace EventHook.Hooks
+namespace EventHook.Hooks.Shell
 {
     internal delegate void GeneralShellHookEventHandler(ShellHook sender, IntPtr hWnd);
 
@@ -53,16 +53,16 @@ namespace EventHook.Hooks
         {
             if (m.Msg == _wmShellHook)
             {
-                switch ((ShellEvents) m.WParam)
+                switch ((ShellMessage) m.WParam)
                 {
-                    case ShellEvents.HSHELL_WINDOWCREATED:
+                    case ShellMessage.HSHELL_WINDOWCREATED:
                         if (IsAppWindow(m.LParam))
                         {
                             OnWindowCreated(m.LParam);
                         }
 
                         break;
-                    case ShellEvents.HSHELL_WINDOWDESTROYED:
+                    case ShellMessage.HSHELL_WINDOWDESTROYED:
 
                         if (WindowDestroyed != null)
                         {
@@ -71,7 +71,7 @@ namespace EventHook.Hooks
 
                         break;
 
-                    case ShellEvents.HSHELL_WINDOWACTIVATED:
+                    case ShellMessage.HSHELL_WINDOWACTIVATED:
                         if (WindowActivated != null)
                         {
                             WindowActivated(this, m.LParam);
@@ -116,7 +116,7 @@ namespace EventHook.Hooks
             {
                 if ((GetWindowLong(hWnd, (int) GWLIndex.GWL_EXSTYLE) & (int) WindowStyleEx.WS_EX_TOOLWINDOW) != 0)
                     return false;
-                var hwndOwner = User32.GetWindow(hWnd, (int) GetWindowContstants.GW_OWNER);
+                var hwndOwner = User32.GetWindow(hWnd, (int) GetWindowContstant.GW_OWNER);
                 return ((GetWindowLong(hwndOwner, (int) GWLIndex.GWL_STYLE) &
                          ((int) WindowStyle.WS_VISIBLE | (int) WindowStyle.WS_CLIPCHILDREN)) !=
                         ((int) WindowStyle.WS_VISIBLE | (int) WindowStyle.WS_CLIPCHILDREN)) ||
