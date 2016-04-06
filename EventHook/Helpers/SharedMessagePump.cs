@@ -12,9 +12,11 @@ namespace EventHook.Helpers
 {
     internal class SharedMessagePump
     {
+        private static bool _hasUIThread = false;
+
         static Lazy<TaskScheduler> _scheduler;
         static Lazy<MessageHandler> _messageHandler;
-  
+
         static SharedMessagePump()
         {
             _scheduler = new Lazy<TaskScheduler>(() =>
@@ -23,10 +25,12 @@ namespace EventHook.Helpers
                 if (dispatcher != null)
                 {
                     if (SynchronizationContext.Current != null)
+                    {
+                        _hasUIThread = true;
                         return TaskScheduler.FromCurrentSynchronizationContext();
+                    }
                 }           
             
-
                 TaskScheduler current = null;
 
                 //if current task scheduler is null, create a message pump 
@@ -85,14 +89,17 @@ namespace EventHook.Helpers
         {
             var handle = IntPtr.Zero;
 
-            try
+            if (_hasUIThread)
             {
-                handle = Process.GetCurrentProcess().MainWindowHandle;
+                try
+                {
+                    handle = Process.GetCurrentProcess().MainWindowHandle;
 
-                if (handle != IntPtr.Zero)
-                    return handle;
+                    if (handle != IntPtr.Zero)
+                        return handle;
+                }
+                catch { }
             }
-            catch { }
 
             return _messageHandler.Value.Handle;
         }
