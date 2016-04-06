@@ -14,9 +14,9 @@ namespace EventHook.Hooks.Keyboard
         internal string Character;
 
         /// <summary>
-        ///     Up(1) or Down(0)
+        ///     Released/Up(1) or Pressed/Down(0)
         /// </summary>
-        internal int EventType;
+        internal int KeyState;
 
         /// <summary>
         ///     Is the hitted key system key.
@@ -47,7 +47,7 @@ namespace EventHook.Hooks.Keyboard
             IsSysKey = isSysKey;
             Character = character;
             Key = KeyInterop.KeyFromVirtualKey(vkCode);
-            EventType = type;
+            KeyState = type;
         }
 
         /// <summary>

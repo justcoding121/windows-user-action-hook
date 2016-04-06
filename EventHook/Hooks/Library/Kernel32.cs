@@ -47,9 +47,7 @@ namespace EventHook.Hooks.Library
         /// If the system loads another module, it could reuse the module handle that was recently freed. 
         /// Therefore, the first thread would have a handle to a different module than the one intended.
         /// </remarks>
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
-
-
     }
 }

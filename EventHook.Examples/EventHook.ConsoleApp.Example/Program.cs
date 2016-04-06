@@ -16,7 +16,7 @@ namespace EventHook.ConsoleApp.Example
             KeyboardWatcher.Start();
             KeyboardWatcher.OnKeyInput += (s, e) =>
             {
-                Console.WriteLine(string.Format("Key {0} event of key {1}", e.KeyData.EventType, e.KeyData.Keyname));
+                Console.WriteLine(string.Format("Key {0} event of key {1}", e.KeyData.KeyState, e.KeyData.Keyname));
             };
 
             MouseWatcher.Start();

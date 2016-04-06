@@ -1,12 +1,8 @@
-﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace EventHook.Hooks.Library
 {
-
-    #region RECT struct
-
     [StructLayout(LayoutKind.Sequential)]
     internal struct RECT
     {
@@ -50,16 +46,4 @@ namespace EventHook.Hooks.Library
                    "right=" + right + ", " + "bottom=" + bottom + "}";
         }
     }
-
-    #endregion //RECT
-
-    #region SHELLHOOKINFO
-
-    internal struct SHELLHOOKINFO
-    {
-        internal IntPtr Hwnd;
-        internal RECT Rc;
-    }
-
-    #endregion
 }

@@ -66,7 +66,7 @@ namespace EventHook.Hooks
 
         protected override void WndProc(ref Message m)
         {
-            switch ((Msgs)m.Msg)
+            switch ((WinMessage)m.Msg)
             {
                 //
                 // The WM_DRAWCLIPBOARD message is sent to the first window 
@@ -74,7 +74,7 @@ namespace EventHook.Hooks
                 // clipboard changes. This enables a clipboard viewer 
                 // window to display the new content of the clipboard. 
                 //
-                case Msgs.WM_DRAWCLIPBOARD:
+                case WinMessage.WM_DRAWCLIPBOARD:
 
 
                     GetClipboardData();
@@ -93,7 +93,7 @@ namespace EventHook.Hooks
                 // in the clipboard viewer chain when a window is being 
                 // removed from the chain. 
                 //
-                case Msgs.WM_CHANGECBCHAIN:
+                case WinMessage.WM_CHANGECBCHAIN:
 
 
                     // When a clipboard viewer window receives the WM_CHANGECBCHAIN message, 

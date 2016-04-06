@@ -6,9 +6,14 @@ namespace EventHook.Hooks.PrintQueue
 {
     internal class PrintJobChangeEventArgs : EventArgs
     {
-        internal PrintJobChangeEventArgs(int intJobID, string strJobName, JOBSTATUS jStatus, PrintSystemJobInfo objJobInfo)
+        private readonly int _jobId;
+        private readonly string _jobName;
+        private readonly JOBSTATUS _jobStatus;
+        private readonly PrintSystemJobInfo _jobInfo;
+
+        internal PrintJobChangeEventArgs(int intJobId, string strJobName, JOBSTATUS jStatus, PrintSystemJobInfo objJobInfo)
         {
-            _jobId = intJobID;
+            _jobId = intJobId;
             _jobName = strJobName;
             _jobStatus = jStatus;
             _jobInfo = objJobInfo;
@@ -33,14 +38,5 @@ namespace EventHook.Hooks.PrintQueue
         {
             get { return _jobInfo; }
         }
-
-        #region private variables
-
-        private readonly int _jobId;
-        private readonly string _jobName;
-        private readonly JOBSTATUS _jobStatus;
-        private readonly PrintSystemJobInfo _jobInfo;
-
-        #endregion
     }
 }

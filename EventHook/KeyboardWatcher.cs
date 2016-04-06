@@ -1,96 +1,73 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
-using EventHook.Hooks;
 using EventHook.Helpers;
 using System.Threading.Tasks;
 using EventHook.Hooks.Keyboard;
 using Nito.AsyncEx;
 
-
 namespace EventHook
 {
-    public class KeyInputEventArgs : EventArgs
+    public static class KeyboardWatcher
     {
-        public KeyData KeyData { get; set; }
-    }
-    public class KeyData
-    {
-        public string UnicodeCharacter;
-        public string Keyname;
-        public KeyEvent EventType;
-    }
-    public enum KeyEvent
-    {
-        down = 0,
-        up = 1
-    }
-
-    public class KeyboardWatcher
-    {
-
-        /*Keyboard*/
-        private static bool _IsRunning { get; set; }
+        private static bool _isRunning;
         private static KeyboardHook _kh;
-        private static object _Accesslock = new object();
+        private static readonly object Accesslock = new object();
         private static AsyncCollection<object> _kQueue;
 
         public static event EventHandler<KeyInputEventArgs> OnKeyInput;
 
         public static void Start()
         {
-            if (!_IsRunning)
-                lock (_Accesslock)
+            if (_isRunning) return;
+
+            lock (Accesslock)
+            {
+                _kQueue = new AsyncCollection<object>();
+
+                _kh = new KeyboardHook();
+                _kh.KeyDown += KListener;
+                _kh.KeyUp += KListener;
+
+                SharedMessagePump.Initialize();
+                Task.Factory.StartNew(() => { }).ContinueWith(x =>
                 {
-                    _kQueue = new AsyncCollection<object>();
-
-                    _kh = new KeyboardHook();
-                    _kh.KeyDown += new RawKeyEventHandler(KListener);
-                    _kh.KeyUp += new RawKeyEventHandler(KListener);
-
-                    SharedMessagePump.Initialize();
-                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
-                    {
-                        _kh.Start();
+                    _kh.Start();
                
-                    }, SharedMessagePump.GetTaskScheduler());
+                }, SharedMessagePump.GetTaskScheduler());
 
-                    Task.Factory.StartNew(() => ConsumeKeyAsync());
+                Task.Factory.StartNew(() => ConsumeKeyAsync());
 
-                    _IsRunning = true;
-                }
-     
+                _isRunning = true;
+            }
         }
+
         public static void Stop()
         {
-            if (_IsRunning)
-                lock (_Accesslock)
-                {
-                    if (_kh != null)
-                    {
-                        _kh.KeyDown -= new RawKeyEventHandler(KListener);
-                        _kh.Stop();
-                        _kh = null;
-                    }
+            if (!_isRunning) return;
 
-                    _kQueue.Add(false);
-                    _IsRunning = false;
+            lock (Accesslock)
+            {
+                if (_kh != null)
+                {
+                    _kh.KeyDown -= KListener;
+                    _kh.Stop();
+                    _kh = null;
                 }
+
+                _kQueue.Add(false);
+                _isRunning = false;
+            }
         }
 
         private static void KListener(object sender, RawKeyEventArgs e)
         {
-            _kQueue.Add(new KeyData() { UnicodeCharacter = e.Character, Keyname = e.Key.ToString(), EventType = (KeyEvent)e.EventType });
+            _kQueue.Add(new KeyData { UnicodeCharacter = e.Character, Keyname = e.Key.ToString(), KeyState = (KeyState)e.KeyState });
         }
 
         // This is the method to run when the timer is raised. 
         private static async Task ConsumeKeyAsync()
         {
-            while (_IsRunning)
+            while (_isRunning)
             {
-
                 //blocking here until a key is added to the queue
                 var item = await _kQueue.TakeAsync();
                 if (item is bool) break;
@@ -101,13 +78,11 @@ namespace EventHook
 
         private static void KListener_KeyDown(KeyData kd)
         {
-            EventHandler<KeyInputEventArgs> handler = OnKeyInput;
+            var handler = OnKeyInput;
             if (handler != null)
             {
-                handler(null, new KeyInputEventArgs() { KeyData = kd });
+                handler(null, new KeyInputEventArgs(kd));
             }
-
         }
-
     }
 }

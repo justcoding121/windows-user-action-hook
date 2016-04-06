@@ -50,7 +50,7 @@ namespace EventHook.Hooks.Keyboard
         }
 
         /// <summary>
-        ///     Fired when any of the keys is pressed down.
+        ///     Fired when any of the keys is pressed Down.
         /// </summary>
         internal event RawKeyEventHandler KeyDown;
 
@@ -72,7 +72,7 @@ namespace EventHook.Hooks.Keyboard
         /// <param name="character">Character</param>
         /// <param name="keyEvent">Keyboard event</param>
         /// <param name="vkCode">VKCode</param>
-        private delegate void KeyboardCallbackAsync(InterceptKeys.KeyEvent keyEvent, int vkCode, string character);
+        private delegate void KeyboardCallbackAsync(KeyEvent keyEvent, int vkCode, string character);
 
         /// <summary>
         ///     Actual callback hook.
@@ -86,17 +86,17 @@ namespace EventHook.Hooks.Keyboard
         private IntPtr LowLevelKeyboardProc(int nCode, UIntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0)
-                if (wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_KEYDOWN ||
-                    wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_KEYUP ||
-                    wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_SYSKEYDOWN ||
-                    wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_SYSKEYUP)
+                if (wParam.ToUInt32() == (int) KeyEvent.WM_KEYDOWN ||
+                    wParam.ToUInt32() == (int) KeyEvent.WM_KEYUP ||
+                    wParam.ToUInt32() == (int) KeyEvent.WM_SYSKEYDOWN ||
+                    wParam.ToUInt32() == (int) KeyEvent.WM_SYSKEYUP)
                 {
                     // Captures the character(s) pressed only on WM_KEYDOWN
                     var chars = InterceptKeys.VkCodeToString((uint) Marshal.ReadInt32(lParam),
-                        (wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_KEYDOWN ||
-                         wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_SYSKEYDOWN));
+                        (wParam.ToUInt32() == (int) KeyEvent.WM_KEYDOWN ||
+                         wParam.ToUInt32() == (int) KeyEvent.WM_SYSKEYDOWN));
 
-                    _hookedKeyboardCallbackAsync.BeginInvoke((InterceptKeys.KeyEvent) wParam.ToUInt32(),
+                    _hookedKeyboardCallbackAsync.BeginInvoke((KeyEvent) wParam.ToUInt32(),
                         Marshal.ReadInt32(lParam), chars, null, null);
                 }
 
@@ -114,30 +114,30 @@ namespace EventHook.Hooks.Keyboard
         /// <param name="keyEvent">Keyboard event</param>
         /// <param name="vkCode">VKCode</param>
         /// <param name="character">Character as string.</param>
-        private void KeyboardListener_KeyboardCallbackAsync(InterceptKeys.KeyEvent keyEvent, int vkCode,
+        private void KeyboardListener_KeyboardCallbackAsync(KeyEvent keyEvent, int vkCode,
             string character)
         {
             switch (keyEvent)
             {
                 // KeyDown events
-                case InterceptKeys.KeyEvent.WM_KEYDOWN:
+                case KeyEvent.WM_KEYDOWN:
                     if (KeyDown != null)
                         _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyDown), this,
                             new RawKeyEventArgs(vkCode, false, character, 0));
                     break;
-                case InterceptKeys.KeyEvent.WM_SYSKEYDOWN:
+                case KeyEvent.WM_SYSKEYDOWN:
                     if (KeyDown != null)
                         _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyDown), this,
                             new RawKeyEventArgs(vkCode, true, character, 0));
                     break;
 
                 // KeyUp events
-                case InterceptKeys.KeyEvent.WM_KEYUP:
+                case KeyEvent.WM_KEYUP:
                     if (KeyUp != null)
                         _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyUp), this,
                             new RawKeyEventArgs(vkCode, false, character, 1));
                     break;
-                case InterceptKeys.KeyEvent.WM_SYSKEYUP:
+                case KeyEvent.WM_SYSKEYUP:
                     if (KeyUp != null)
                         _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyUp), this,
                             new RawKeyEventArgs(vkCode, true, character, 1));

@@ -1,25 +1,15 @@
-﻿using EventHook.Hooks;
-using EventHook.Helpers;
+﻿using EventHook.Helpers;
 using Nito.AsyncEx;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using EventHook.Hooks.Mouse;
 
 namespace EventHook
 {
-    public class MouseEventArgs : EventArgs
+    public static class MouseWatcher
     {
-        public MouseMessages Message { get; set; }
-        public POINT Point { get; set; }
-    }
-
-    public class MouseWatcher
-    {
-        /*Keyboard*/
-        private static bool _IsRunning { get; set; }
-        private static object _Accesslock = new object();
+        private static bool _isRunning;
+        private static readonly object Accesslock = new object();
 
         private static AsyncCollection<object> _kQueue;
         private static MouseHook _mh;
@@ -28,42 +18,43 @@ namespace EventHook
 
         public static void Start()
         {
-            if (!_IsRunning)
-                lock (_Accesslock)
+            if (_isRunning) return;
+
+            lock (Accesslock)
+            {
+                _kQueue = new AsyncCollection<object>();
+
+                _mh = new MouseHook();
+                _mh.MouseAction += MListener;
+
+                SharedMessagePump.Initialize();
+                Task.Factory.StartNew(() => { }).ContinueWith(x =>
                 {
-                    _kQueue = new AsyncCollection<object>();
+                    _mh.Start();
 
-                    _mh = new MouseHook();
-                    _mh.MouseAction += MListener;
+                }, SharedMessagePump.GetTaskScheduler());
 
-                    SharedMessagePump.Initialize();
-                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
-                    {
-                        _mh.Start();
+                Task.Factory.StartNew(() => ConsumeKeyAsync());
 
-                    }, SharedMessagePump.GetTaskScheduler());
-
-                    Task.Factory.StartNew(() => ConsumeKeyAsync());
-
-                    _IsRunning = true;
-                }
-
+                _isRunning = true;
+            }
         }
 
         public static void Stop()
         {
-            if (_IsRunning)
-                lock (_Accesslock)
+            if (!_isRunning) return;
+
+            lock (Accesslock)
+            {
+                if (_mh != null)
                 {
-                    if (_mh != null)
-                    {
-                        _mh.MouseAction -= MListener;
-                        _mh.Stop();
-                        _mh = null;
-                    }
-                    _kQueue.Add(false);
-                    _IsRunning = false;
+                    _mh.MouseAction -= MListener;
+                    _mh.Stop();
+                    _mh = null;
                 }
+                _kQueue.Add(false);
+                _isRunning = false;
+            }
         }
 
 
@@ -75,7 +66,7 @@ namespace EventHook
         // This is the method to run when the timer is raised. 
         private static async Task ConsumeKeyAsync()
         {
-            while (_IsRunning)
+            while (_isRunning)
             {
 
                 //blocking here until a key is added to the queue
@@ -83,16 +74,15 @@ namespace EventHook
                 if (item is bool) break;
 
                 KListener_KeyDown(item as RawMouseEventArgs);
-
             }
         }
 
         private static void KListener_KeyDown(RawMouseEventArgs kd)
         {
-            EventHandler<MouseEventArgs> handler = OnMouseInput;
+            var handler = OnMouseInput;
             if (handler != null)
             {
-                handler(null, new MouseEventArgs() { Message = kd.Message, Point = kd.Point });
+                handler(null, new MouseEventArgs(kd));
             }
         }
     }

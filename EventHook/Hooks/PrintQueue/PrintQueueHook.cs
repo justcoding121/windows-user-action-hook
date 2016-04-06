@@ -15,13 +15,18 @@ namespace EventHook.Hooks.PrintQueue
 
     internal class PrintQueueHook
     {
-        #region Constants
+        internal readonly string SpoolerName;
+        internal event PrintJobStatusChanged OnJobStatusChange;
 
         private const int PRINTER_NOTIFY_OPTIONS_REFRESH = 1;
 
-        #endregion
-
-        #region constructor
+        private IntPtr _printerHandle = IntPtr.Zero;
+        private readonly ManualResetEvent _mrEvent = new ManualResetEvent(false);
+        private RegisteredWaitHandle _waitHandle;
+        private IntPtr _changeHandle = IntPtr.Zero;
+        private readonly PRINTER_NOTIFY_OPTIONS _notifyOptions = new PRINTER_NOTIFY_OPTIONS();
+        private readonly Dictionary<int, string> _objJobDict = new Dictionary<int, string>();
+        private System.Printing.PrintQueue _spooler;
 
         internal PrintQueueHook(string strSpoolName)
         {
@@ -29,24 +34,10 @@ namespace EventHook.Hooks.PrintQueue
             SpoolerName = strSpoolName;
         }
 
-        #endregion
-
-        #region Events
-
-        internal event PrintJobStatusChanged OnJobStatusChange;
-
-        #endregion
-
-        #region destructor
-
         ~PrintQueueHook()
         {
             Stop();
         }
-
-        #endregion
-
-        #region StartMonitoring
 
         internal void Start()
         {
@@ -71,10 +62,6 @@ namespace EventHook.Hooks.PrintQueue
             }
         }
 
-        #endregion
-
-        #region StopMonitoring
-
         internal void Stop()
         {
             if (_printerHandle != IntPtr.Zero)
@@ -84,15 +71,9 @@ namespace EventHook.Hooks.PrintQueue
             }
         }
 
-        #endregion
-
-        #region Callback Function
-
-        internal void PrinterNotifyWaitCallback(object state, bool timedOut)
+        private void PrinterNotifyWaitCallback(object state, bool timedOut)
         {
             if (_printerHandle == IntPtr.Zero) return;
-
-            #region read notification details
 
             _notifyOptions.Count = 1;
             var pdwChange = 0;
@@ -113,10 +94,6 @@ namespace EventHook.Hooks.PrintQueue
                                      PRINTER_CHANGES.PRINTER_CHANGE_WRITE_JOB);
             if (!bJobRelatedChange) return;
 
-            #endregion
-
-            #region populate Notification Information
-
             //Now, let us initialize and populate the Notify Info data
             var info = (PRINTER_NOTIFY_INFO) Marshal.PtrToStructure(pNotifyInfo, typeof (PRINTER_NOTIFY_INFO));
             var pData = (long) pNotifyInfo + (long) Marshal.OffsetOf(typeof (PRINTER_NOTIFY_INFO), "aData");
@@ -127,10 +104,6 @@ namespace EventHook.Hooks.PrintQueue
                     (PRINTER_NOTIFY_INFO_DATA) Marshal.PtrToStructure((IntPtr) pData, typeof (PRINTER_NOTIFY_INFO_DATA));
                 pData += Marshal.SizeOf(typeof (PRINTER_NOTIFY_INFO_DATA));
             }
-
-            #endregion
-
-            #region iterate through all elements in the data array
 
             for (var i = 0; i < data.Count(); i++)
             {
@@ -166,28 +139,8 @@ namespace EventHook.Hooks.PrintQueue
                 }
             }
 
-            #endregion
-
-            #region reset the Event and wait for the next event
-
             _mrEvent.Reset();
             _waitHandle = ThreadPool.RegisterWaitForSingleObject(_mrEvent, PrinterNotifyWaitCallback, _mrEvent, -1, true);
-
-            #endregion
         }
-
-        #endregion
-        #region private variables
-
-        private IntPtr _printerHandle = IntPtr.Zero;
-        internal string SpoolerName;
-        private readonly ManualResetEvent _mrEvent = new ManualResetEvent(false);
-        private RegisteredWaitHandle _waitHandle;
-        private IntPtr _changeHandle = IntPtr.Zero;
-        private readonly PRINTER_NOTIFY_OPTIONS _notifyOptions = new PRINTER_NOTIFY_OPTIONS();
-        private readonly Dictionary<int, string> _objJobDict = new Dictionary<int, string>();
-        private System.Printing.PrintQueue _spooler;
-
-        #endregion
     }
 }

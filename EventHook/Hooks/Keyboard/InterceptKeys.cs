@@ -12,32 +12,6 @@ namespace EventHook.Hooks.Keyboard
     {
         internal delegate IntPtr LowLevelKeyboardProc(int nCode, UIntPtr wParam, IntPtr lParam);
 
-        /// <summary>
-        ///     Key event
-        /// </summary>
-        internal enum KeyEvent
-        {
-            /// <summary>
-            ///     Key down
-            /// </summary>
-            WM_KEYDOWN = 256,
-
-            /// <summary>
-            ///     Key up
-            /// </summary>
-            WM_KEYUP = 257,
-
-            /// <summary>
-            ///     System key up
-            /// </summary>
-            WM_SYSKEYUP = 261,
-
-            /// <summary>
-            ///     System key down
-            /// </summary>
-            WM_SYSKEYDOWN = 260
-        }
-
         internal static int WH_KEYBOARD_LL = 13;
 
         internal static IntPtr SetHook(LowLevelKeyboardProc proc)
@@ -103,7 +77,7 @@ namespace EventHook.Hooks.Keyboard
         ///     <remarks>isKeyDown is required for because of keyboard state inconsistencies!</remarks>
         /// </summary>
         /// <param name="vkCode">VKCode</param>
-        /// <param name="isKeyDown">Is the key down event?</param>
+        /// <param name="isKeyDown">Is the key Down event?</param>
         /// <returns>String representing single unicode character.</returns>
         internal static string VkCodeToString(uint vkCode, bool isKeyDown)
         {
@@ -162,7 +136,7 @@ namespace EventHook.Hooks.Keyboard
                 case -1:
                     isDead = true;
 
-                    // We must clear the buffer because ToUnicodeEx messed it up, see below.
+                    // We must clear the buffer because ToUnicodeEx messed it Up, see below.
                     ClearKeyboardBuffer(vkCode, lScanCode, hkl);
                     break;
 

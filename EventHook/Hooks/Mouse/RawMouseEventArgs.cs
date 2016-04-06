@@ -1,11 +1,26 @@
 ﻿using System;
-using EventHook.Hooks.Library;
 
 namespace EventHook.Hooks.Mouse
 {
     internal class RawMouseEventArgs : EventArgs
     {
-        internal Msgs Message { get; set; }
-        internal POINT Point { get; set; }
+        private readonly MouseMessage _message;
+        private readonly POINT _point;
+
+        public RawMouseEventArgs(MouseMessage message, POINT point)
+        {
+            _message = message;
+            _point = point;
+        }
+
+        internal MouseMessage Message
+        {
+            get { return _message; }
+        }
+
+        internal POINT Point
+        {
+            get { return _point; }
+        }
     }
 }
