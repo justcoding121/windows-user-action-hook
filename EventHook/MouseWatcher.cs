@@ -36,7 +36,7 @@ namespace EventHook
                     _mh = new MouseHook();
                     _mh.MouseAction += MListener;
 
-                    SharedMessagePump.Initialize();
+
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                     {
                         _mh.Start();

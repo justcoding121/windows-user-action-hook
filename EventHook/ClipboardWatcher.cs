@@ -46,7 +46,7 @@ namespace EventHook
                     {
                         _clipQueue = new AsyncCollection<object>();
 
-                        SharedMessagePump.Initialize();
+
                         Task.Factory.StartNew(() => { }).ContinueWith(x =>
                         {
                             _clip = new ClipBoardHook();
