@@ -103,6 +103,7 @@
     <Compile Include="ClipboardContentType.cs" />
     <Compile Include="ClipboardEventArgs.cs" />
     <Compile Include="ClipboardWatcher.cs" />
+    <Compile Include="Helpers\MessageHandler.cs" />
     <Compile Include="Helpers\SharedMessagePump.cs" />
     <Compile Include="Hooks\Keyboard\InterceptKeys.cs" />
     <Compile Include="Hooks\Keyboard\KeyboardListener.cs" />

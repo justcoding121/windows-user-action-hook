@@ -5,7 +5,7 @@ using EventHook.Hooks.Library;
 
 namespace EventHook.Helpers
 {
-    internal class WindowHelper
+    internal static class WindowHelper
     {
         internal static IntPtr GetActiveWindowHandle()
         {
@@ -53,7 +53,11 @@ namespace EventHook.Helpers
 
         internal static string GetAppDescription(string appPath)
         {
-            if (appPath == null) return null;
+            if (appPath == null)
+            {
+                return null;
+            }
+
             try
             {
                 return FileVersionInfo.GetVersionInfo(appPath).FileDescription;

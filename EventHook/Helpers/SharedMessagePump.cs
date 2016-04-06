@@ -1,36 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 using System.Windows.Threading;
 
 namespace EventHook.Helpers
 {
-    internal class SharedMessagePump
+    internal static class SharedMessagePump
     {
-        private static bool _hasUIThread = false;
+        private static bool _hasUiThread;
 
-        static Lazy<TaskScheduler> _scheduler;
-        static Lazy<MessageHandler> _messageHandler;
+        private static readonly Lazy<TaskScheduler> Scheduler;
+        private static readonly Lazy<MessageHandler> MessageHandler;
 
         static SharedMessagePump()
         {
-            _scheduler = new Lazy<TaskScheduler>(() =>
+            Scheduler = new Lazy<TaskScheduler>(() =>
             {
-                Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+                var dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
                 if (dispatcher != null)
                 {
                     if (SynchronizationContext.Current != null)
                     {
-                        _hasUIThread = true;
+                        _hasUiThread = true;
                         return TaskScheduler.FromCurrentSynchronizationContext();
                     }
-                }           
-            
+                }
+
                 TaskScheduler current = null;
 
                 //if current task scheduler is null, create a message pump 
@@ -38,13 +34,11 @@ namespace EventHook.Helpers
                 //use async for performance gain!
                 new Task(() =>
                 {
-                    System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
+                    Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
                     {
                         current = TaskScheduler.FromCurrentSynchronizationContext();
-                    }
-
-               ), DispatcherPriority.Normal);
-                    System.Windows.Threading.Dispatcher.Run();
+                    }), DispatcherPriority.Normal);
+                    Dispatcher.Run();
                 }).Start();
 
                 while (current == null)
@@ -56,22 +50,23 @@ namespace EventHook.Helpers
 
             });
 
-            _messageHandler = new Lazy<MessageHandler>(() =>
+            MessageHandler = new Lazy<MessageHandler>(() =>
+            {
+                MessageHandler msgHandler = null;
+
+                new Task(e =>
                 {
-                    MessageHandler msgHandler = null;
+                    msgHandler = new MessageHandler();
+                }, GetTaskScheduler()).Start();
 
-                    new Task((e) =>
-                    {
-                        msgHandler = new MessageHandler();
-                    }, GetTaskScheduler()).Start();
+                while (msgHandler == null)
+                {
+                    Thread.Sleep(10);
+                }
+                ;
 
-                    while (msgHandler == null)
-                    {
-                        Thread.Sleep(10);
-                    };
-
-                    return msgHandler;
-                });
+                return msgHandler;
+            });
 
             Initialize();
         }
@@ -84,42 +79,30 @@ namespace EventHook.Helpers
 
         internal static TaskScheduler GetTaskScheduler()
         {
-            return _scheduler.Value;
+            return Scheduler.Value;
         }
 
         internal static IntPtr GetHandle()
         {
-            var handle = IntPtr.Zero;
-
-            if (_hasUIThread)
+            if (!_hasUiThread)
             {
-                try
-                {
-                    handle = Process.GetCurrentProcess().MainWindowHandle;
-
-                    if (handle != IntPtr.Zero)
-                        return handle;
-                }
-                catch { }
+                return MessageHandler.Value.Handle;
             }
 
-            return _messageHandler.Value.Handle;
-        }
+            try
+            {
+                var handle = Process.GetCurrentProcess().MainWindowHandle;
+                if (handle != IntPtr.Zero)
+                {
+                    return handle;
+                }
+            }
+            catch
+            {
+                // ignored
+            }
 
-    }
-
-    internal class MessageHandler : NativeWindow
-    {
-
-        internal MessageHandler()
-        {
-            CreateHandle(new CreateParams());
-        }
-
-        protected override void WndProc(ref Message msg)
-        {
-            base.WndProc(ref msg);
+            return MessageHandler.Value.Handle;
         }
     }
-
 }
