@@ -2,7 +2,7 @@
 using System.Windows.Forms;
 using EventHook.Hooks.Library;
 
-namespace EventHook.Hooks
+namespace EventHook.Hooks.Shell
 {
     internal delegate void GeneralShellHookEventHandler(ShellHook sender, IntPtr hWnd);
 

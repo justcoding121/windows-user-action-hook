@@ -5,6 +5,7 @@ using EventHook.Hooks;
 using EventHook.Helpers;
 using EventHook.Hooks.Library;
 using System.Threading.Tasks;
+using EventHook.Hooks.PrintQueue;
 
 namespace EventHook
 {

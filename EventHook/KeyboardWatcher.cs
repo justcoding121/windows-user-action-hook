@@ -6,6 +6,7 @@ using System.Threading;
 using EventHook.Hooks;
 using EventHook.Helpers;
 using System.Threading.Tasks;
+using EventHook.Hooks.Keyboard;
 using Nito.AsyncEx;
 
 

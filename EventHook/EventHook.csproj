@@ -100,19 +100,25 @@
     <Compile Include="ApplicationWatcher.cs" />
     <Compile Include="ClipboardWatcher.cs" />
     <Compile Include="Helpers\SharedMessagePump.cs" />
+    <Compile Include="Hooks\Keyboard\InterceptKeys.cs" />
+    <Compile Include="Hooks\Keyboard\KeyboardListener.cs" />
+    <Compile Include="Hooks\Keyboard\RawKeyEventArgs.cs" />
     <Compile Include="Hooks\Library\Kernel32.cs" />
+    <Compile Include="Hooks\Library\WinSpool.cs" />
+    <Compile Include="Hooks\Mouse\RawMouseEventArgs.cs" />
+    <Compile Include="Hooks\PrintQueue\PrintJobChangeEventArgs.cs" />
     <Compile Include="KeyboardWatcher.cs" />
     <Compile Include="MouseWatcher.cs" />
     <Compile Include="PrintWatcher.cs" />
-    <Compile Include="Hooks\WindowHook.cs" />
+    <Compile Include="Hooks\Window\WindowHook.cs" />
     <Compile Include="Helpers\WindowHelper.cs" />
-    <Compile Include="Hooks\ClipBoardHook.cs">
+    <Compile Include="Hooks\ClipBoard\ClipBoardHook.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Hooks\KeyboardHook.cs" />
-    <Compile Include="Hooks\MouseHook.cs" />
-    <Compile Include="Hooks\PrintQueueHook.cs" />
-    <Compile Include="Hooks\ShellHook.cs" />
+    <Compile Include="Hooks\Keyboard\KeyboardHook.cs" />
+    <Compile Include="Hooks\Mouse\MouseHook.cs" />
+    <Compile Include="Hooks\PrintQueue\PrintQueueHook.cs" />
+    <Compile Include="Hooks\Shell\ShellHook.cs" />
     <Compile Include="Hooks\Library\Enum.cs" />
     <Compile Include="Hooks\Library\Msgs.cs" />
     <Compile Include="Hooks\Library\PrintSpoolAPI.cs" />

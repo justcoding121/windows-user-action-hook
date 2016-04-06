@@ -7,6 +7,8 @@ using EventHook.Hooks;
 using EventHook.Helpers;
 using Nito.AsyncEx;
 using System.Threading.Tasks;
+using EventHook.Hooks.Shell;
+using EventHook.Hooks.Window;
 
 
 namespace EventHook
