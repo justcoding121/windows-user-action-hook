@@ -32,6 +32,7 @@ namespace EventHook.Helpers
                 //if current task scheduler is null, create a message pump 
                 //http://stackoverflow.com/questions/2443867/message-pump-in-net-windows-service
                 //use async for performance gain!
+                //todo: change 'new Task(...).Start()' to 'Task.Factory.StartNew(...)'
                 new Task(() =>
                 {
                     Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
@@ -47,13 +48,13 @@ namespace EventHook.Helpers
                 }
 
                 return current;
-
             });
 
             MessageHandler = new Lazy<MessageHandler>(() =>
             {
                 MessageHandler msgHandler = null;
 
+                //todo: change 'new Task(...).Start()' to 'Task.Factory.StartNew(...)'
                 new Task(e =>
                 {
                     msgHandler = new MessageHandler();
@@ -63,7 +64,6 @@ namespace EventHook.Helpers
                 {
                     Thread.Sleep(10);
                 }
-                ;
 
                 return msgHandler;
             });
