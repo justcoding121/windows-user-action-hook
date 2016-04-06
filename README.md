@@ -1,6 +1,6 @@
 ## Windows User Action Hook
 
-A one stop library for global windows user actions such mouse, keyboard, clipboard, website visit  &amp; print events
+A one stop library for global windows user actions such mouse, keyboard, clipboard, &amp; print events
 ![Build Status](https://ci.appveyor.com/api/projects/status/htea647ukrgg4qcl?svg=true)
 
 Kindly report only issues/bugs here . For programming help or questions use [StackOverflow](http://stackoverflow.com/questions/tagged/windows-user-action-hook) with the tag EventHook or Windows-User-Action-Hook.
@@ -61,4 +61,4 @@ ApplicationWatcher.Stop();
 PrintWatcher.Stop(); 
 ```
 
-![alt tag](https://raw.githubusercontent.com/titanium007/Windows-User-Action-Hook/master/EventHook.Tests/Capture.PNG)
+![alt tag](https://raw.githubusercontent.com/justcoding121/Windows-User-Action-Hook/master/EventHook.Examples/EventHook.ConsoleApp.Example/Capture.PNG)
