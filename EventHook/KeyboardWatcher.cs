@@ -49,7 +49,7 @@ namespace EventHook
                     _kh.KeyDown += new RawKeyEventHandler(KListener);
                     _kh.KeyUp += new RawKeyEventHandler(KListener);
 
-                    SharedMessagePump.Initialize();
+
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                     {
                         _kh.Start();

@@ -74,7 +74,7 @@ namespace EventHook.Helpers
                 });
         }
 
-        internal static void Initialize()
+        private static void Initialize()
         {
             GetTaskScheduler();
             GetHandle();
