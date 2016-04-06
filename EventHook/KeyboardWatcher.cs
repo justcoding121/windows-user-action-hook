@@ -20,42 +20,42 @@ namespace EventHook
             if (_isRunning) return;
 
             lock (Accesslock)
-                {
-                    _kQueue = new AsyncCollection<object>();
+            {
+                _kQueue = new AsyncCollection<object>();
 
-                    _kh = new KeyboardHook();
+                _kh = new KeyboardHook();
                 _kh.KeyDown += KListener;
                 _kh.KeyUp += KListener;
 
 
-                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
-                    {
-                        _kh.Start();
-               
-                    }, SharedMessagePump.GetTaskScheduler());
+                Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                {
+                    _kh.Start();
 
-                    Task.Factory.StartNew(() => ConsumeKeyAsync());
+                }, SharedMessagePump.GetTaskScheduler());
+
+                Task.Factory.StartNew(() => ConsumeKeyAsync());
 
                 _isRunning = true;
             }
-                }
-     
+        }
+
         public static void Stop()
         {
             if (!_isRunning) return;
 
             lock (Accesslock)
+            {
+                if (_kh != null)
                 {
-                    if (_kh != null)
-                    {
                     _kh.KeyDown -= KListener;
-                        _kh.Stop();
-                        _kh = null;
-                    }
-
-                    _kQueue.Add(false);
-                _isRunning = false;
+                    _kh.Stop();
+                    _kh = null;
                 }
+
+                _kQueue.Add(false);
+                _isRunning = false;
+            }
         }
 
         private static void KListener(object sender, RawKeyEventArgs e)
