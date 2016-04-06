@@ -29,9 +29,9 @@ namespace EventHook.Hooks.Window
             {
                 sh = new ShellHook(SharedMessagePump.GetHandle());
 
-                sh.WindowCreated += new GeneralShellHookEventHandler(WindowCreatedEvent);
-                sh.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyedEvent);
-                sh.WindowActivated += new GeneralShellHookEventHandler(WindowActivatedEvent);
+                sh.WindowCreated += WindowCreatedEvent;
+                sh.WindowDestroyed += WindowDestroyedEvent;
+                sh.WindowActivated += WindowActivatedEvent;
             }
 
         }

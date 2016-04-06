@@ -11,7 +11,7 @@ namespace EventHook.Helpers
         private static bool _hasUiThread;
 
         private static readonly Lazy<TaskScheduler> Scheduler;
-        private static readonly Lazy<MessageHandler> MessageHandler;
+        internal static readonly Lazy<MessageHandler> MessageHandler;
 
         static SharedMessagePump()
         {
@@ -31,21 +31,14 @@ namespace EventHook.Helpers
 
                 //if current task scheduler is null, create a message pump 
                 //http://stackoverflow.com/questions/2443867/message-pump-in-net-windows-service
-                //use async for performance gain!
-                //todo: change 'new Task(...).Start()' to 'Task.Factory.StartNew(...)'
-                new Task(() =>
+                Task.Factory.StartNew(() =>
                 {
                     Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
                     {
                         current = TaskScheduler.FromCurrentSynchronizationContext();
                     }), DispatcherPriority.Normal);
                     Dispatcher.Run();
-                }).Start();
-
-                while (current == null)
-                {
-                    Thread.Sleep(10);
-                }
+                }).Wait();
 
                 return current;
             });
@@ -54,16 +47,10 @@ namespace EventHook.Helpers
             {
                 MessageHandler msgHandler = null;
 
-                //todo: change 'new Task(...).Start()' to 'Task.Factory.StartNew(...)'
-                new Task(e =>
+                Task.Factory.StartNew(e =>
                 {
                     msgHandler = new MessageHandler();
-                }, GetTaskScheduler()).Start();
-
-                while (msgHandler == null)
-                {
-                    Thread.Sleep(10);
-                }
+                }, GetTaskScheduler()).Wait();
 
                 return msgHandler;
             });

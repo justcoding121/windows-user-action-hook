@@ -105,6 +105,10 @@
     <Compile Include="ClipboardWatcher\ClipboardWatcher.cs" />
     <Compile Include="Helpers\MessageHandler.cs" />
     <Compile Include="Helpers\SharedMessagePump.cs" />
+    <Compile Include="Hooks\Hotkey\HotkeyHook.cs" />
+    <Compile Include="Hooks\Hotkey\HotkeyHookInfo.cs" />
+    <Compile Include="Hooks\Hotkey\HotkeyListener.cs" />
+    <Compile Include="Hooks\Hotkey\KeyModifier.cs" />
     <Compile Include="Hooks\Keyboard\InterceptKeys.cs" />
     <Compile Include="Hooks\Keyboard\KeyboardListener.cs" />
     <Compile Include="Hooks\Keyboard\KeyEvent.cs" />
@@ -121,6 +125,9 @@
     <Compile Include="Hooks\Mouse\POINT.cs" />
     <Compile Include="Hooks\Mouse\RawMouseEventArgs.cs" />
     <Compile Include="Hooks\PrintQueue\PrintJobChangeEventArgs.cs" />
+    <Compile Include="HotkeyWatcher\HotkeyInfo.cs" />
+    <Compile Include="HotkeyWatcher\HotkeyEventArgs.cs" />
+    <Compile Include="HotkeyWatcher\HotkeyWatcher.cs" />
     <Compile Include="KeyboardWatcher\KeyboardWatcher.cs" />
     <Compile Include="KeyboardWatcher\KeyData.cs" />
     <Compile Include="KeyboardWatcher\KeyInputEventArgs.cs" />
@@ -190,6 +197,7 @@
       <Private>True</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
