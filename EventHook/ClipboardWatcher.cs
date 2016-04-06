@@ -21,34 +21,34 @@ namespace EventHook
             if (_isRunning) return;
 
             lock (Accesslock)
-            {
-                try
                 {
-                    _clipQueue = new AsyncCollection<object>();
-
-                    SharedMessagePump.Initialize();
-                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                    try
                     {
-                        _clip = new ClipBoardHook();
-                        _clip.RegisterClipboardViewer();
-                        _clip.ClipBoardChanged += ClipboardHandler;
+                        _clipQueue = new AsyncCollection<object>();
 
-                    }, SharedMessagePump.GetTaskScheduler());
 
-                    Task.Factory.StartNew(() => ClipConsumerAsync());
+                        Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                        {
+                            _clip = new ClipBoardHook();
+                            _clip.RegisterClipboardViewer();
+                            _clip.ClipBoardChanged += ClipboardHandler;
+
+                        }, SharedMessagePump.GetTaskScheduler());
+
+                        Task.Factory.StartNew(() => ClipConsumerAsync());
 
                     _isRunning = true;
 
-                }
-                catch
-                {
-                    if (_clip != null)
-                    {
-                        Stop();
                     }
+                    catch
+                    {
+                        if (_clip != null)
+                        {
+                            Stop();
+                        }
 
+                    }
                 }
-            }
         }
 
         public static void Stop()
@@ -56,23 +56,23 @@ namespace EventHook
             if (!_isRunning) return;
 
             lock (Accesslock)
-            {
-                if (_clip != null)
                 {
-
-                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                    if (_clip != null)
                     {
-                        _clip.ClipBoardChanged -= ClipboardHandler;
-                        _clip.UnregisterClipboardViewer();
-                        _clip.Dispose();
 
-                    }, SharedMessagePump.GetTaskScheduler());
+                        Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                        {
+                            _clip.ClipBoardChanged -= ClipboardHandler;
+                            _clip.UnregisterClipboardViewer();
+                            _clip.Dispose();
 
-                }
+                        }, SharedMessagePump.GetTaskScheduler());
+
+                    }
 
                 _isRunning = false;
-                _clipQueue.Add(false);
-            }
+                    _clipQueue.Add(false);
+                }
         }
 
         private static void ClipboardHandler(object sender, EventArgs e)

@@ -27,43 +27,43 @@ namespace EventHook
             if (_isRunning) return;
 
             lock (Accesslock)
-            {
-                _activeWindows = new List<WindowData> { };
-                _prevTimeApp = DateTime.Now;
-
-                appQueue = new AsyncCollection<object>();
-                   
-                SharedMessagePump.Initialize();
-                Task.Factory.StartNew(() => { }).ContinueWith(x =>
                 {
+                    _activeWindows = new List<WindowData> { };
+                    _prevTimeApp = DateTime.Now;
+
+                    appQueue = new AsyncCollection<object>();
+                   
+
+                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                      {
                     WindowHook.WindowCreated += WindowCreated;
                     WindowHook.WindowDestroyed += WindowDestroyed;
                     WindowHook.WindowActivated += WindowActivated;
 
-                }, SharedMessagePump.GetTaskScheduler());
+                      }, SharedMessagePump.GetTaskScheduler());
 
-                _lastEventWasLaunched = false;
-                _lastHwndLaunched = IntPtr.Zero;
+                    _lastEventWasLaunched = false;
+                    _lastHwndLaunched = IntPtr.Zero;
 
-                Task.Factory.StartNew(() => AppConsumer());
+                    Task.Factory.StartNew(() => AppConsumer());
                 _isRunning = true;
             }
-        }
+                }
 
         public static void Stop()
         {
             if (!_isRunning) return;
 
             lock (Accesslock)
-            {
+                {
                 WindowHook.WindowCreated -= WindowCreated;
                 WindowHook.WindowDestroyed -= WindowDestroyed;
                 WindowHook.WindowActivated -= WindowActivated;
 
-                appQueue.Add(false);
+                    appQueue.Add(false);
                 _isRunning = false;
             }
-        }
+                }
 
         private static void WindowCreated(ShellHook shellObject, IntPtr hWnd)
         {
