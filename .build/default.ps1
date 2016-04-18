@@ -35,7 +35,6 @@ Task default -depends Clean, Build, Package
 
 Task Build -depends Restore-Packages {
 	exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration }
-    exec { . $MSBuild $SolutionFile /t:Build /v:normal /p:Configuration=$Configuration-Net45 }
 }
 
 Task Package -depends Build {

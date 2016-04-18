@@ -1,9 +1,5 @@
 ﻿using EventHook.Helpers;
 using System;
-using System.Threading;
-using System.Windows;
-using System.Windows.Forms;
-using System.Windows.Interop;
 
 namespace EventHook.Hooks
 {

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Collections.Concurrent;
-using System.Threading;
 using EventHook.Hooks;
 using EventHook.Helpers;
 using Nito.AsyncEx;

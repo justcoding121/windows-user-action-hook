@@ -2,11 +2,6 @@
 using EventHook.Helpers;
 using Nito.AsyncEx;
 using System;
-using System.Collections.Concurrent;
-using System.Globalization;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace EventHook

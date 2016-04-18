@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading;
 using EventHook.Hooks;
 using EventHook.Helpers;
 using System.Threading.Tasks;
