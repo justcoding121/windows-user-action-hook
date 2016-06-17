@@ -7,22 +7,37 @@ using Nito.AsyncEx;
 
 namespace EventHook
 {
+    /// <summary>
+    /// Key press data
+    /// </summary>
     public class KeyInputEventArgs : EventArgs
     {
         public KeyData KeyData { get; set; }
     }
+
+    /// <summary>
+    /// Key data
+    /// </summary>
     public class KeyData
     {
         public string UnicodeCharacter;
         public string Keyname;
         public KeyEvent EventType;
     }
+
+    /// <summary>
+    /// Key press event type
+    /// </summary>
     public enum KeyEvent
     {
         down = 0,
         up = 1
     }
 
+    /// <summary>
+    /// Wraps low level keyboard hook
+    /// Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks
+    /// </summary>
     public class KeyboardWatcher
     {
 
@@ -34,6 +49,9 @@ namespace EventHook
 
         public static event EventHandler<KeyInputEventArgs> OnKeyInput;
 
+        /// <summary>
+        /// Start watching
+        /// </summary>
         public static void Start()
         {
             if (!_IsRunning)
@@ -45,7 +63,7 @@ namespace EventHook
                     _kh.KeyDown += new RawKeyEventHandler(KListener);
                     _kh.KeyUp += new RawKeyEventHandler(KListener);
 
-
+                    //low level hooks need to run on the context of a UI thread to hook successfully
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                     {
                         _kh.Start();
@@ -58,6 +76,10 @@ namespace EventHook
                 }
      
         }
+
+        /// <summary>
+        /// Stop watching
+        /// </summary>
         public static void Stop()
         {
             if (_IsRunning)
@@ -75,12 +97,20 @@ namespace EventHook
                 }
         }
 
+        /// <summary>
+        /// Add key event to the producer queue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void KListener(object sender, RawKeyEventArgs e)
         {
             _kQueue.Add(new KeyData() { UnicodeCharacter = e.Character, Keyname = e.Key.ToString(), EventType = (KeyEvent)e.EventType });
         }
 
-        // This is the method to run when the timer is raised. 
+       /// <summary>
+       /// Consume events from the producer queue asynchronously
+       /// </summary>
+       /// <returns></returns>
         private static async Task ConsumeKeyAsync()
         {
             while (_IsRunning)
@@ -94,13 +124,13 @@ namespace EventHook
             }
         }
 
+        /// <summary>
+        /// Invoke user call backs
+        /// </summary>
+        /// <param name="kd"></param>
         private static void KListener_KeyDown(KeyData kd)
         {
-            EventHandler<KeyInputEventArgs> handler = OnKeyInput;
-            if (handler != null)
-            {
-                handler(null, new KeyInputEventArgs() { KeyData = kd });
-            }
+            OnKeyInput?.Invoke(null, new KeyInputEventArgs() { KeyData = kd });
 
         }
 

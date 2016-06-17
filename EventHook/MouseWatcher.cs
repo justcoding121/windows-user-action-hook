@@ -6,12 +6,19 @@ using System.Threading.Tasks;
 
 namespace EventHook
 {
+    /// <summary>
+    /// Event argument to pass data through user callbacks
+    /// </summary>
     public class MouseEventArgs : EventArgs
     {
         public MouseMessages Message { get; set; }
         public POINT Point { get; set; }
     }
 
+    /// <summary>
+    /// Wraps low level mouse hook
+    /// Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks
+    /// </summary>
     public class MouseWatcher
     {
         /*Keyboard*/
@@ -23,6 +30,9 @@ namespace EventHook
 
         public static event EventHandler<MouseEventArgs> OnMouseInput;
 
+        /// <summary>
+        /// Start watching mouse events
+        /// </summary>
         public static void Start()
         {
             if (!_IsRunning)
@@ -33,7 +43,7 @@ namespace EventHook
                     _mh = new MouseHook();
                     _mh.MouseAction += MListener;
 
-
+                    //low level hooks need to be registered in the context of a UI thread
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                     {
                         _mh.Start();
@@ -47,6 +57,9 @@ namespace EventHook
 
         }
 
+        /// <summary>
+        /// Stop watching mouse events
+        /// </summary>
         public static void Stop()
         {
             if (_IsRunning)
@@ -63,13 +76,20 @@ namespace EventHook
                 }
         }
 
-
+        /// <summary>
+        /// Add mouse event to our producer queue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void MListener(object sender, RawMouseEventArgs e)
         {
             _kQueue.Add(e);
         }
 
-        // This is the method to run when the timer is raised. 
+        /// <summary>
+        /// Consume mouse events in our producer queue asynchronously
+        /// </summary>
+        /// <returns></returns>
         private static async Task ConsumeKeyAsync()
         {
             while (_IsRunning)
@@ -84,13 +104,13 @@ namespace EventHook
             }
         }
 
+        /// <summary>
+        /// Invoke user callbacks with the argument
+        /// </summary>
+        /// <param name="kd"></param>
         private static void KListener_KeyDown(RawMouseEventArgs kd)
         {
-            EventHandler<MouseEventArgs> handler = OnMouseInput;
-            if (handler != null)
-            {
-                handler(null, new MouseEventArgs() { Message = kd.Message, Point = kd.Point });
-            }
+            OnMouseInput?.Invoke(null, new MouseEventArgs() { Message = kd.Message, Point = kd.Point });
         }
     }
 }

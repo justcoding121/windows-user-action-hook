@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace EventHook
 {
+    /// <summary>
+    /// Type of clipboard content
+    /// </summary>
     public enum ClipboardContentTypes
     {
         PlainText = 0,
@@ -15,12 +18,19 @@ namespace EventHook
         UnicodeText = 4
     }
 
+    /// <summary>
+    /// An argument send to user
+    /// </summary>
     public class ClipboardEventArgs : EventArgs
     {
         public object Data { get; set; }
         public ClipboardContentTypes DataFormat { get; set; }
     }
 
+    /// <summary>
+    /// Wraps around clipboardHook
+    /// Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks
+    /// </summary>
     public class ClipboardWatcher
     {
         /*Clip board monitor*/
@@ -32,6 +42,9 @@ namespace EventHook
 
         public static event EventHandler<ClipboardEventArgs> OnClipboardModified;
 
+        /// <summary>
+        /// Start watching
+        /// </summary>
         public static void Start()
         {
             if (!_IsRunning)
@@ -41,7 +54,7 @@ namespace EventHook
                     {
                         _clipQueue = new AsyncCollection<object>();
 
-
+                        //Low level hooks need to be run in the context of a UI thread
                         Task.Factory.StartNew(() => { }).ContinueWith(x =>
                         {
                             _clip = new ClipBoardHook();
@@ -66,6 +79,10 @@ namespace EventHook
                 }
 
         }
+
+        /// <summary>
+        /// Stop watching
+        /// </summary>
         public static void Stop()
         {
             if (_IsRunning)
@@ -89,11 +106,21 @@ namespace EventHook
                 }
 
         }
+
+        /// <summary>
+        /// Add event to producer queue
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void ClipboardHandler(object sender, EventArgs e)
         {
             _clipQueue.Add(sender);
         }
 
+        /// <summary>
+        /// Consume event from producer queue asynchronously
+        /// </summary>
+        /// <returns></returns>
         private static async Task ClipConsumerAsync()
         {
             while (_IsRunning)
@@ -103,11 +130,14 @@ namespace EventHook
 
                 ClipboardHandler(item);
 
-
             }
 
         }
 
+        /// <summary>
+        /// Actuall handler to invoke user call backs
+        /// </summary>
+        /// <param name="sender"></param>
         private static void ClipboardHandler(object sender)
         {
 
@@ -164,11 +194,7 @@ namespace EventHook
 
             if (!validDataType) return;
 
-            EventHandler<ClipboardEventArgs> handler = OnClipboardModified;
-            if (handler != null)
-            {
-                handler(null, new ClipboardEventArgs() { Data = data, DataFormat = format });
-            }
+            OnClipboardModified?.Invoke(null, new ClipboardEventArgs() { Data = data, DataFormat = format });
 
         }
     }

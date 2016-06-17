@@ -5,8 +5,15 @@ using EventHook.Hooks.Library;
 
 namespace EventHook.Helpers
 {
+    /// <summary>
+    /// A helper class to get window names/handles etc
+    /// </summary>
     internal class WindowHelper
     {
+        /// <summary>
+        /// Get the handle of current acitive window on screen if any
+        /// </summary>
+        /// <returns></returns>
         internal static IntPtr GetActiveWindowHandle()
         {
             try
@@ -20,6 +27,11 @@ namespace EventHook.Helpers
             return IntPtr.Zero;
         }
 
+        /// <summary>
+        /// The the application exe path of this window
+        /// </summary>
+        /// <param name="hWnd">window handle</param>
+        /// <returns></returns>
         internal static string GetAppPath(IntPtr hWnd)
         {
             if (hWnd == IntPtr.Zero) return null;
@@ -35,7 +47,11 @@ namespace EventHook.Helpers
                 return null;
             }
         }
-
+        /// <summary>
+        /// Get the title text of this window
+        /// </summary>
+        /// <param name="hWnd">widow handle</param>
+        /// <returns></returns>
         internal static string GetWindowText(IntPtr hWnd)
         {
             try
@@ -51,6 +67,11 @@ namespace EventHook.Helpers
             }
         }
 
+        /// <summary>
+        /// Get the application description file attribute from path of an executable file
+        /// </summary>
+        /// <param name="appPath"></param>
+        /// <returns></returns>
         internal static string GetAppDescription(string appPath)
         {
             if (appPath == null) return null;
