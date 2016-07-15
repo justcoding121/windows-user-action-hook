@@ -55,6 +55,7 @@ namespace EventHook
         public static void Start()
         {
             if (!isRunning)
+            {
                 lock (accesslock)
                 {
                     keyQueue = new AsyncCollection<object>();
@@ -67,13 +68,14 @@ namespace EventHook
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                     {
                         keyboardHook.Start();
-               
+
                     }, SharedMessagePump.GetTaskScheduler());
 
                     Task.Factory.StartNew(() => ConsumeKeyAsync());
 
                     isRunning = true;
                 }
+            }
      
         }
 
