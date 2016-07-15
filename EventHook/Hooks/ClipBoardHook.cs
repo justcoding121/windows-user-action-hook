@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections;
 using System.Windows.Forms;
 using EventHook.Hooks.Library;
-using System.Threading.Tasks;
-using EventHook.Helpers;
 using System.Threading;
 
-//https://github.com/MrksKwsnck/Wlipper
+/// <summary>
+/// https://github.com/MrksKwsnck/Wlipper
+/// </summary>
 namespace EventHook.Hooks
 {
     internal class ClipBoardHook : Form
