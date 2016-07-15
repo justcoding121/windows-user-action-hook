@@ -36,25 +36,16 @@ namespace EventHook.Hooks
         }
         private static void WindowCreatedEvent(ShellHook ShellObject, IntPtr hWnd)
         {
-            if (WindowCreated != null)
-            {
-                WindowCreated(ShellObject, hWnd);
-            }
+            WindowCreated?.Invoke(ShellObject, hWnd);
 
         }
         private static void WindowDestroyedEvent(ShellHook ShellObject, IntPtr hWnd)
         {
-            if (WindowDestroyed != null)
-            {
-                WindowDestroyed(ShellObject, hWnd);
-            }
+            WindowDestroyed?.Invoke(ShellObject, hWnd);
         }
         private static void WindowActivatedEvent(ShellHook ShellObject, IntPtr hWnd)
         {
-            if (WindowActivated != null)
-            {
-                WindowActivated(ShellObject, hWnd);
-            }
+            WindowActivated?.Invoke(ShellObject, hWnd);
         }
     }
 }

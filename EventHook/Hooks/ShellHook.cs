@@ -4,9 +4,12 @@ using EventHook.Hooks.Library;
 
 namespace EventHook.Hooks
 {
+    /// <summary>
+    /// //https://github.com/lemkepf/ClipHub/blob/master/ClipHub/ClipHub/Code/Helpers/ShellHook.cs
+    /// </summary>
+    /// 
     internal delegate void GeneralShellHookEventHandler(ShellHook sender, IntPtr hWnd);
 
-    //https://github.com/lemkepf/ClipHub/blob/master/ClipHub/ClipHub/Code/Helpers/ShellHook.cs
     internal sealed class ShellHook : NativeWindow
     {
         private readonly uint _wmShellHook;
@@ -26,7 +29,7 @@ namespace EventHook.Hooks
             }
         }
 
-        internal void Deregister()
+        internal void DeRegister()
         {
             User32.RegisterShellHook(Handle, 0);
         }

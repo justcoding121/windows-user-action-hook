@@ -33,11 +33,11 @@ namespace EventHook
     public class PrintWatcher
     {
         /*Print history*/
-        private static bool _IsRunning;
-        private static object _Accesslock = new object();
+        private static bool isRunning;
+        private static object accesslock = new object();
 
-        private static ArrayList _printers = null;
-        private static PrintServer ps = null;
+        private static ArrayList printers = null;
+        private static PrintServer printServer = null;
 
         public static event EventHandler<PrintEventArgs> OnPrintEvent;
 
@@ -46,22 +46,23 @@ namespace EventHook
         /// </summary>
         public static void Start()
         {
-            if (!_IsRunning)
-                lock (_Accesslock)
+            if (!isRunning)
+            {
+                lock (accesslock)
                 {
-                    _printers = new ArrayList();
-                    ps = new PrintServer();
-                    foreach (var pq in ps.GetPrintQueues())
+                    printers = new ArrayList();
+                    printServer = new PrintServer();
+                    foreach (var pq in printServer.GetPrintQueues())
                     {
 
                         var pqm = new PrintQueueHook(pq.Name);
                         pqm.OnJobStatusChange += pqm_OnJobStatusChange;
                         pqm.Start();
-                        _printers.Add(pqm);
+                        printers.Add(pqm);
                     }
-                    _IsRunning = true;
+                    isRunning = true;
                 }
-
+            }
         }
 
         /// <summary>
@@ -69,12 +70,13 @@ namespace EventHook
         /// </summary>
         public static void Stop()
         {
-            if (_IsRunning)
-                lock (_Accesslock)
+            if (isRunning)
+            {
+                lock (accesslock)
                 {
-                    if (_printers != null)
+                    if (printers != null)
                     {
-                        foreach (PrintQueueHook pqm in _printers)
+                        foreach (PrintQueueHook pqm in printers)
                         {
                             pqm.OnJobStatusChange -= pqm_OnJobStatusChange;
 
@@ -89,11 +91,12 @@ namespace EventHook
                                 //not a bug deal since we a stopping it anyway
                             }
                         }
-                        _printers.Clear();
+                        printers.Clear();
                     }
-                    _printers = null;
-                    _IsRunning = false;
+                    printers = null;
+                    isRunning = false;
                 }
+            }
         }
 
         /// <summary>
@@ -106,7 +109,6 @@ namespace EventHook
 
             if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING && e.JobInfo != null)
             {
-
                 var hWnd = WindowHelper.GetActiveWindowHandle();
                 var appTitle = WindowHelper.GetWindowText(hWnd);
                 var appName = WindowHelper.GetAppDescription(WindowHelper.GetAppPath(hWnd));

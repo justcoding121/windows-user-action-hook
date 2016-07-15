@@ -17,7 +17,6 @@ namespace EventHook
         Launched,
         Closed,
         Activated
-
     }
 
     /// <summary>
@@ -49,13 +48,13 @@ namespace EventHook
     public class ApplicationWatcher
     {
         /*Application history*/
-        private static object _Accesslock = new object();
-        private static bool _IsRunning;
+        private static object accesslock = new object();
+        private static bool isRunning;
 
         private static AsyncCollection<object> appQueue;
 
-        private static List<WindowData> _activeWindows;
-        private static DateTime _prevTimeApp;
+        private static List<WindowData> activeWindows;
+        private static DateTime prevTimeApp;
 
         public static event EventHandler<ApplicationEventArgs> OnApplicationWindowChange;
 
@@ -64,11 +63,12 @@ namespace EventHook
         /// </summary>
         public static void Start()
         {
-            if (!_IsRunning)
-                lock (_Accesslock)
+            if (!isRunning)
+            {
+                lock (accesslock)
                 {
-                    _activeWindows = new List<WindowData> { };
-                    _prevTimeApp = DateTime.Now;
+                    activeWindows = new List<WindowData> { };
+                    prevTimeApp = DateTime.Now;
 
                     appQueue = new AsyncCollection<object>();
 
@@ -82,12 +82,13 @@ namespace EventHook
 
                     }, SharedMessagePump.GetTaskScheduler());
 
-                    _lastEventWasLaunched = false;
-                    _lastHwndLaunched = IntPtr.Zero;
+                    lastEventWasLaunched = false;
+                    lastHwndLaunched = IntPtr.Zero;
 
                     Task.Factory.StartNew(() => AppConsumer());
-                    _IsRunning = true;
+                    isRunning = true;
                 }
+            }
 
         }
 
@@ -96,16 +97,18 @@ namespace EventHook
         /// </summary>
         public static void Stop()
         {
-            if (_IsRunning)
-                lock (_Accesslock)
+            if (isRunning)
+            {
+                lock (accesslock)
                 {
                     WindowHook.WindowCreated -= new GeneralShellHookEventHandler(WindowCreated);
                     WindowHook.WindowDestroyed -= new GeneralShellHookEventHandler(WindowDestroyed);
                     WindowHook.WindowActivated -= new GeneralShellHookEventHandler(WindowActivated);
 
                     appQueue.Add(false);
-                    _IsRunning = false;
+                    isRunning = false;
                 }
+            }
 
         }
 
@@ -148,7 +151,7 @@ namespace EventHook
         /// <returns></returns>
         private static async Task AppConsumer()
         {
-            while (_IsRunning)
+            while (isRunning)
             {
                 //blocking here until a key is added to the queue
                 var item = await appQueue.TakeAsync();
@@ -174,7 +177,7 @@ namespace EventHook
         /// <summary>
         /// A handle to keep track of last window launched
         /// </summary>
-        private static IntPtr _lastHwndLaunched;
+        private static IntPtr lastHwndLaunched;
 
         /// <summary>
         /// A window got created
@@ -183,11 +186,11 @@ namespace EventHook
         private static void WindowCreated(WindowData wnd)
         {
 
-            _activeWindows.Add(wnd);
+            activeWindows.Add(wnd);
             ApplicationStatus(wnd, ApplicationEvents.Launched);
 
-            _lastEventWasLaunched = true;
-            _lastHwndLaunched = wnd.HWnd;
+            lastEventWasLaunched = true;
+            lastHwndLaunched = wnd.HWnd;
 
         }
 
@@ -213,29 +216,30 @@ namespace EventHook
         /// <param name="wnd"></param>
         private static void WindowDestroyed(WindowData wnd)
         {
-
-            if (_activeWindows.Any(x => x.HWnd == wnd.HWnd))
+            if (activeWindows.Any(x => x.HWnd == wnd.HWnd))
             {
-                ApplicationStatus(_activeWindows.First(x => x.HWnd == wnd.HWnd), ApplicationEvents.Closed);
-                _activeWindows.RemoveAll(x => x.HWnd == wnd.HWnd);
+                ApplicationStatus(activeWindows.First(x => x.HWnd == wnd.HWnd), ApplicationEvents.Closed);
+                activeWindows.RemoveAll(x => x.HWnd == wnd.HWnd);
             }
-            _lastEventWasLaunched = false;
+
+            lastEventWasLaunched = false;
         }
 
         /// <summary>
         /// Add window handle to active windows collection
         /// </summary>
-        private static bool _lastEventWasLaunched;
+        private static bool lastEventWasLaunched;
         private static void WindowActivated(WindowData wnd)
         {
-
-            if (_activeWindows.Any(x => x.HWnd == wnd.HWnd))
-                if ((_lastEventWasLaunched) && _lastHwndLaunched == wnd.HWnd) { }
-                else
-                    ApplicationStatus(_activeWindows.First(x => x.HWnd == wnd.HWnd), ApplicationEvents.Activated);
-            _lastEventWasLaunched = false;
+            if (activeWindows.Any(x => x.HWnd == wnd.HWnd))
+            {
+                if ((!lastEventWasLaunched) && lastHwndLaunched != wnd.HWnd)
+                {
+                    ApplicationStatus(activeWindows.First(x => x.HWnd == wnd.HWnd), ApplicationEvents.Activated);
+                }
+            }
+            lastEventWasLaunched = false;
         }
-
 
     }
 }

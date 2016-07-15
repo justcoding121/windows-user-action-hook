@@ -1,10 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Threading;
 
 namespace EventHook.ConsoleApp.Example
 {
@@ -51,8 +45,6 @@ namespace EventHook.ConsoleApp.Example
             ApplicationWatcher.Stop();
             PrintWatcher.Stop(); 
         }
-
-
 
     }
 }

@@ -22,11 +22,11 @@ namespace EventHook
     public class MouseWatcher
     {
         /*Keyboard*/
-        private static bool _IsRunning { get; set; }
-        private static object _Accesslock = new object();
+        private static bool isRunning { get; set; }
+        private static object accesslock = new object();
 
-        private static AsyncCollection<object> _kQueue;
-        private static MouseHook _mh;
+        private static AsyncCollection<object> mouseQueue;
+        private static MouseHook mouseHook;
 
         public static event EventHandler<MouseEventArgs> OnMouseInput;
 
@@ -35,26 +35,27 @@ namespace EventHook
         /// </summary>
         public static void Start()
         {
-            if (!_IsRunning)
-                lock (_Accesslock)
+            if (!isRunning)
+            {
+                lock (accesslock)
                 {
-                    _kQueue = new AsyncCollection<object>();
+                    mouseQueue = new AsyncCollection<object>();
 
-                    _mh = new MouseHook();
-                    _mh.MouseAction += MListener;
+                    mouseHook = new MouseHook();
+                    mouseHook.MouseAction += MListener;
 
                     //low level hooks need to be registered in the context of a UI thread
                     Task.Factory.StartNew(() => { }).ContinueWith(x =>
                     {
-                        _mh.Start();
+                        mouseHook.Start();
 
                     }, SharedMessagePump.GetTaskScheduler());
 
                     Task.Factory.StartNew(() => ConsumeKeyAsync());
 
-                    _IsRunning = true;
+                    isRunning = true;
                 }
-
+            }
         }
 
         /// <summary>
@@ -62,18 +63,20 @@ namespace EventHook
         /// </summary>
         public static void Stop()
         {
-            if (_IsRunning)
-                lock (_Accesslock)
+            if (isRunning)
+            {
+                lock (accesslock)
                 {
-                    if (_mh != null)
+                    if (mouseHook != null)
                     {
-                        _mh.MouseAction -= MListener;
-                        _mh.Stop();
-                        _mh = null;
+                        mouseHook.MouseAction -= MListener;
+                        mouseHook.Stop();
+                        mouseHook = null;
                     }
-                    _kQueue.Add(false);
-                    _IsRunning = false;
+                    mouseQueue.Add(false);
+                    isRunning = false;
                 }
+            }
         }
 
         /// <summary>
@@ -83,7 +86,7 @@ namespace EventHook
         /// <param name="e"></param>
         private static void MListener(object sender, RawMouseEventArgs e)
         {
-            _kQueue.Add(e);
+            mouseQueue.Add(e);
         }
 
         /// <summary>
@@ -92,11 +95,11 @@ namespace EventHook
         /// <returns></returns>
         private static async Task ConsumeKeyAsync()
         {
-            while (_IsRunning)
+            while (isRunning)
             {
 
                 //blocking here until a key is added to the queue
-                var item = await _kQueue.TakeAsync();
+                var item = await mouseQueue.TakeAsync();
                 if (item is bool) break;
 
                 KListener_KeyDown(item as RawMouseEventArgs);

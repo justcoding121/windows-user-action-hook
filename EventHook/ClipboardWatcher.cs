@@ -3,6 +3,7 @@ using EventHook.Helpers;
 using Nito.AsyncEx;
 using System;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace EventHook
 {
@@ -34,11 +35,11 @@ namespace EventHook
     public class ClipboardWatcher
     {
         /*Clip board monitor*/
-        public static bool _IsRunning;
-        private static object _Accesslock = new object();
+        public static bool isRunning;
+        private static object accesslock = new object();
 
-        private static ClipBoardHook _clip;
-        private static AsyncCollection<object> _clipQueue;
+        private static ClipBoardHook clip;
+        private static AsyncCollection<object> clipQueue;
 
         public static event EventHandler<ClipboardEventArgs> OnClipboardModified;
 
@@ -47,37 +48,37 @@ namespace EventHook
         /// </summary>
         public static void Start()
         {
-            if (!_IsRunning)
-                lock (_Accesslock)
+            if (!isRunning)
+            {
+                lock (accesslock)
                 {
                     try
                     {
-                        _clipQueue = new AsyncCollection<object>();
+                        clipQueue = new AsyncCollection<object>();
 
                         //Low level hooks need to be run in the context of a UI thread
                         Task.Factory.StartNew(() => { }).ContinueWith(x =>
                         {
-                            _clip = new ClipBoardHook();
-                            _clip.RegisterClipboardViewer();
-                            _clip.ClipBoardChanged += ClipboardHandler;
+                            clip = new ClipBoardHook();
+                            clip.RegisterClipboardViewer();
+                            clip.ClipBoardChanged += ClipboardHandler;
 
                         }, SharedMessagePump.GetTaskScheduler());
 
                         Task.Factory.StartNew(() => ClipConsumerAsync());
 
-                        _IsRunning = true;
+                        isRunning = true;
 
                     }
                     catch
                     {
-                        if (_clip != null)
+                        if (clip != null)
                         {
                             Stop();
                         }
-
                     }
                 }
-
+            }
         }
 
         /// <summary>
@@ -85,25 +86,25 @@ namespace EventHook
         /// </summary>
         public static void Stop()
         {
-            if (_IsRunning)
-                lock (_Accesslock)
+            if (isRunning)
+            {
+                lock (accesslock)
                 {
-                    if (_clip != null)
+                    if (clip != null)
                     {
-
                         Task.Factory.StartNew(() => { }).ContinueWith(x =>
                         {
-                            _clip.ClipBoardChanged -= ClipboardHandler;
-                            _clip.UnregisterClipboardViewer();
-                            _clip.Dispose();
+                            clip.ClipBoardChanged -= ClipboardHandler;
+                            clip.UnregisterClipboardViewer();
+                            clip.Dispose();
 
                         }, SharedMessagePump.GetTaskScheduler());
-
                     }
 
-                    _IsRunning = false;
-                    _clipQueue.Add(false);
+                    isRunning = false;
+                    clipQueue.Add(false);
                 }
+            }
 
         }
 
@@ -114,7 +115,7 @@ namespace EventHook
         /// <param name="e"></param>
         private static void ClipboardHandler(object sender, EventArgs e)
         {
-            _clipQueue.Add(sender);
+            clipQueue.Add(sender);
         }
 
         /// <summary>
@@ -123,71 +124,69 @@ namespace EventHook
         /// <returns></returns>
         private static async Task ClipConsumerAsync()
         {
-            while (_IsRunning)
+            while (isRunning)
             {
-                var item = await _clipQueue.TakeAsync();
+                var item = await clipQueue.TakeAsync();
                 if (item is bool) break;
 
                 ClipboardHandler(item);
-
             }
 
         }
 
         /// <summary>
-        /// Actuall handler to invoke user call backs
+        /// Actual handler to invoke user call backs
         /// </summary>
         /// <param name="sender"></param>
         private static void ClipboardHandler(object sender)
         {
-
-            System.Windows.Forms.IDataObject iData = (System.Windows.Forms.DataObject)sender;
+            IDataObject iData = (DataObject)sender;
 
             ClipboardContentTypes format = default(ClipboardContentTypes);
 
             object data = null;
 
             bool validDataType = false;
-            if (iData.GetDataPresent(System.Windows.Forms.DataFormats.Text))
+            if (iData.GetDataPresent(DataFormats.Text))
             {
                 format = ClipboardContentTypes.PlainText;
-                data = iData.GetData(System.Windows.Forms.DataFormats.Text);
+                data = iData.GetData(DataFormats.Text);
                 validDataType = true;
 
             }
-            else if (iData.GetDataPresent(System.Windows.Forms.DataFormats.Rtf))
+            else if (iData.GetDataPresent(DataFormats.Rtf))
             {
                 format = ClipboardContentTypes.RichText;
-                data = iData.GetData(System.Windows.Forms.DataFormats.Rtf);
+                data = iData.GetData(DataFormats.Rtf);
                 validDataType = true;
 
             }
-            else if (iData.GetDataPresent(System.Windows.Forms.DataFormats.CommaSeparatedValue))
+            else if (iData.GetDataPresent(DataFormats.CommaSeparatedValue))
             {
                 format = ClipboardContentTypes.Csv;
-                data = iData.GetData(System.Windows.Forms.DataFormats.CommaSeparatedValue);
+                data = iData.GetData(DataFormats.CommaSeparatedValue);
                 validDataType = true;
 
             }
-            else if (iData.GetDataPresent(System.Windows.Forms.DataFormats.Html))
+            else if (iData.GetDataPresent(DataFormats.Html))
             {
                 format = ClipboardContentTypes.Html;
-                data = iData.GetData(System.Windows.Forms.DataFormats.Html);
+                data = iData.GetData(DataFormats.Html);
                 validDataType = true;
 
             }
 
-            else if (iData.GetDataPresent(System.Windows.Forms.DataFormats.StringFormat))
+            else if (iData.GetDataPresent(DataFormats.StringFormat))
             {
                 format = ClipboardContentTypes.PlainText;
-                data = iData.GetData(System.Windows.Forms.DataFormats.StringFormat);
+                data = iData.GetData(DataFormats.StringFormat);
                 validDataType = true;
 
             }
-            else if (iData.GetDataPresent(System.Windows.Forms.DataFormats.UnicodeText))
+            else if (iData.GetDataPresent(DataFormats.UnicodeText))
             {
                 format = ClipboardContentTypes.UnicodeText;
-                data = iData.GetData(System.Windows.Forms.DataFormats.UnicodeText);
+                data = iData.GetData(DataFormats.UnicodeText);
                 validDataType = true;
 
             }
