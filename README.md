@@ -16,7 +16,7 @@ Kindly report only issues/bugs here . For programming help or questions use [Sta
 
 ## Usage
 
-Install by nuget:
+Install by [nuget](https://www.nuget.org/packages/EventHook)
 
     Install-Package EventHook
 
