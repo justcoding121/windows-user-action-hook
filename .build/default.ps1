@@ -52,7 +52,7 @@ Task Restore-Packages  {
 }
 
 Task Install-MSBuild {
-    if(!(Test-Path "${env:ProgramFiles(x86)}\MSBuild\14.0\Bin\msbuild.exe")) 
+    if(!(Test-Path $MSBuild)) 
 	{ 
 		cinst microsoft-build-tools -y
 	}
