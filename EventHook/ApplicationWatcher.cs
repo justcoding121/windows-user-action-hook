@@ -216,12 +216,8 @@ namespace EventHook
         /// <param name="wnd"></param>
         private static void WindowDestroyed(WindowData wnd)
         {
-            if (activeWindows.Any(x => x.HWnd == wnd.HWnd))
-            {
-                ApplicationStatus(activeWindows.First(x => x.HWnd == wnd.HWnd), ApplicationEvents.Closed);
-                activeWindows.RemoveAll(x => x.HWnd == wnd.HWnd);
-            }
-
+            ApplicationStatus(activeWindows.FirstOrDefault(x => x.HWnd == wnd.HWnd) ?? wnd, ApplicationEvents.Closed);
+            activeWindows.RemoveAll(x => x.HWnd == wnd.HWnd);
             lastEventWasLaunched = false;
         }
 
