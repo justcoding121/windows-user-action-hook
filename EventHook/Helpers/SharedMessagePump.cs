@@ -43,7 +43,7 @@ namespace EventHook.Helpers
                 {
                     Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
                     {
-                        current = TaskScheduler.FromCurrentSynchronizationContext();
+                        Volatile.Write(ref current, TaskScheduler.FromCurrentSynchronizationContext());
                     }
 
                ), DispatcherPriority.Normal);
@@ -52,12 +52,12 @@ namespace EventHook.Helpers
 
                 //we called dispatcher begin invoke to get the Message Pump Sync Context
                 //we check every 10ms until synchronization context is copied
-                while (current == null)
+                while (Volatile.Read(ref current) == null)
                 {
                     Thread.Sleep(10);
                 }
 
-                return current;
+                return Volatile.Read(ref current);
 
             });
 
@@ -67,17 +67,17 @@ namespace EventHook.Helpers
                     //get the mesage handler dummy window created using the UI sync context
                     new Task((e) =>
                     {
-                        msgHandler = new MessageHandler();
+                        Volatile.Write(ref msgHandler, new MessageHandler());
 
                     }, GetTaskScheduler()).Start();
 
                     //wait here until the window is created on UI thread
-                    while (msgHandler == null)
+                    while (Volatile.Read(ref msgHandler) == null)
                     {
                         Thread.Sleep(10);
                     };
 
-                    return msgHandler;
+                    return Volatile.Read(ref msgHandler);
                 });
 
             Initialize();
