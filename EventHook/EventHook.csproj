@@ -77,6 +77,7 @@
     <Compile Include="ApplicationWatcher.cs" />
     <Compile Include="ClipboardWatcher.cs" />
     <Compile Include="Helpers\SharedMessagePump.cs" />
+    <Compile Include="Hooks\WindowHookEx.cs" />
     <Compile Include="KeyboardWatcher.cs" />
     <Compile Include="MouseWatcher.cs" />
     <Compile Include="PrintWatcher.cs" />
