@@ -23,7 +23,7 @@ Install by [nuget](https://www.nuget.org/packages/EventHook)
 ## Sample Code:
 
 ```csharp
-  var eventHookFactory = new EventHookFactory();
+var eventHookFactory = new EventHookFactory();
 
 var keyboardWatcher = eventHookFactory.GetKeyboardWatcher();
 keyboardWatcher.Start();
