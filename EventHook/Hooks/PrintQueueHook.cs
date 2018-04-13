@@ -10,7 +10,7 @@ using Microsoft.Win32.SafeHandles;
 namespace EventHook.Hooks
 {
     /// <summary>
-    ///  //http://www.codeproject.com/Articles/51085/Monitor-jobs-in-a-printer-queue-NET
+    /// http://www.codeproject.com/Articles/51085/Monitor-jobs-in-a-printer-queue-NET
     /// </summary>
     internal class PrintJobChangeEventArgs : EventArgs
     {
@@ -42,27 +42,20 @@ namespace EventHook.Hooks
             get { return _jobInfo; }
         }
 
-        #region private variables
 
         private readonly int _jobId;
         private readonly string _jobName;
         private readonly JOBSTATUS _jobStatus;
         private readonly PrintSystemJobInfo _jobInfo;
 
-        #endregion
     }
 
     internal delegate void PrintJobStatusChanged(object sender, PrintJobChangeEventArgs e);
 
     internal class PrintQueueHook
     {
-        #region Constants
 
         private const int PRINTER_NOTIFY_OPTIONS_REFRESH = 1;
-
-        #endregion
-
-        #region constructor
 
         internal PrintQueueHook(string strSpoolName)
         {
@@ -70,28 +63,18 @@ namespace EventHook.Hooks
             SpoolerName = strSpoolName;
         }
 
-        #endregion
-
-        #region Events
-
         internal event PrintJobStatusChanged OnJobStatusChange;
-
-        #endregion
-
-        #region destructor
 
         ~PrintQueueHook()
         {
             Stop();
         }
 
-        #endregion
-
-        #region StartMonitoring
 
         internal void Start()
         {
             OpenPrinter(SpoolerName, out _printerHandle, 0);
+
             if (_printerHandle != IntPtr.Zero)
             {
                 //We got a valid Printer handle.  Let us register for change notification....
@@ -112,10 +95,6 @@ namespace EventHook.Hooks
             }
         }
 
-        #endregion
-
-        #region StopMonitoring
-
         internal void Stop()
         {
             try
@@ -132,15 +111,10 @@ namespace EventHook.Hooks
             }
         }
 
-        #endregion
-
-        #region Callback Function
-
         internal void PrinterNotifyWaitCallback(object state, bool timedOut)
         {
             if (_printerHandle == IntPtr.Zero) return;
 
-            #region read notification details
 
             _notifyOptions.Count = 1;
             var pdwChange = 0;
@@ -159,11 +133,8 @@ namespace EventHook.Hooks
                                      PRINTER_CHANGES.PRINTER_CHANGE_DELETE_JOB) ||
                                     ((pdwChange & PRINTER_CHANGES.PRINTER_CHANGE_WRITE_JOB) ==
                                      PRINTER_CHANGES.PRINTER_CHANGE_WRITE_JOB);
+
             if (!bJobRelatedChange) return;
-
-            #endregion
-
-            #region populate Notification Information
 
             //Now, let us initialize and populate the Notify Info data
             var info = (PRINTER_NOTIFY_INFO) Marshal.PtrToStructure(pNotifyInfo, typeof (PRINTER_NOTIFY_INFO));
@@ -176,9 +147,6 @@ namespace EventHook.Hooks
                 pData += Marshal.SizeOf(typeof (PRINTER_NOTIFY_INFO_DATA));
             }
 
-            #endregion
-
-            #region iterate through all elements in the data array
 
             for (var i = 0; i < data.Count(); i++)
             {
@@ -214,19 +182,12 @@ namespace EventHook.Hooks
                 }
             }
 
-            #endregion
-
-            #region reset the Event and wait for the next event
 
             _mrEvent.Reset();
             _waitHandle = ThreadPool.RegisterWaitForSingleObject(_mrEvent, PrinterNotifyWaitCallback, _mrEvent, -1, true);
-
-            #endregion
         }
 
-        #endregion
 
-        #region DLL Import Functions
 
         [DllImport("winspool.drv", EntryPoint = "OpenPrinterA", SetLastError = true, CharSet = CharSet.Ansi,
             ExactSpelling = true, CallingConvention = CallingConvention.StdCall)]
@@ -253,16 +214,6 @@ namespace EventHook.Hooks
                 [In] int fwOptions,
                 [In, MarshalAs(UnmanagedType.LPStruct)] PRINTER_NOTIFY_OPTIONS pPrinterNotifyOptions);
 
-        //[DllImport("winspool.drv", EntryPoint = "FindNextPrinterChangeNotification",
-        //    SetLastError = true, CharSet = CharSet.Ansi,
-        //    ExactSpelling = false,
-        //    CallingConvention = CallingConvention.StdCall)]
-        //internal static extern bool FindNextPrinterChangeNotification
-        //    ([In] IntPtr hChangeObject,
-        //        [Out] out int pdwChange,
-        //        [In, MarshalAs(UnmanagedType.LPStruct)] PRINTER_NOTIFY_OPTIONS pPrinterNotifyOptions,
-        //        [Out] out IntPtr lppPrinterNotifyInfo
-        //    );
 
         [DllImport("winspool.drv", EntryPoint = "FindNextPrinterChangeNotification",
                 CallingConvention = CallingConvention.StdCall, SetLastError = true)]
@@ -274,9 +225,6 @@ namespace EventHook.Hooks
                                                                         ref IntPtr ppPrinterNotifyInfo);
 
 
-        #endregion
-
-        #region private variables
 
         private IntPtr _printerHandle = IntPtr.Zero;
         internal string SpoolerName;
@@ -287,6 +235,5 @@ namespace EventHook.Hooks
         private readonly Dictionary<int, string> _objJobDict = new Dictionary<int, string>();
         private PrintQueue _spooler;
 
-        #endregion
     }
 }
