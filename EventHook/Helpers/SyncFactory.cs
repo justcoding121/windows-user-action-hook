@@ -44,10 +44,9 @@ namespace EventHook.Helpers
                     Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
                     {
                         Volatile.Write(ref current, TaskScheduler.FromCurrentSynchronizationContext());
-                    }
-
-               ), DispatcherPriority.Normal);
+                    }), DispatcherPriority.Normal);
                     Dispatcher.Run();
+
                 }).Start();
 
                 //we called dispatcher begin invoke to get the Message Pump Sync Context
