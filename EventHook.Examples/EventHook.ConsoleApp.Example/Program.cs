@@ -27,10 +27,10 @@ namespace EventHook.ConsoleApp.Example
             {
                 Console.WriteLine(string.Format("Clipboard updated with data '{0}' of format {1}", e.Data, e.DataFormat.ToString()));
             };
-
+            var applicationWatcher = new ApplicationWatcher();
             //var applicationWatcher = new ApplicationWatcher();
-            ApplicationWatcher.Start();
-            ApplicationWatcher.OnApplicationWindowChange += (s, e) =>
+            applicationWatcher.Start();
+            applicationWatcher.OnApplicationWindowChange += (s, e) =>
             {
                 Console.WriteLine(string.Format("Application window of '{0}' with the title '{1}' was {2}", e.ApplicationData.AppName, e.ApplicationData.AppTitle, e.Event));
             };
