@@ -76,7 +76,8 @@
   <ItemGroup>
     <Compile Include="ApplicationWatcher.cs" />
     <Compile Include="ClipboardWatcher.cs" />
-    <Compile Include="Helpers\SharedMessagePump.cs" />
+    <Compile Include="EventHookFactory.cs" />
+    <Compile Include="Helpers\SyncFactory.cs" />
     <Compile Include="KeyboardWatcher.cs" />
     <Compile Include="MouseWatcher.cs" />
     <Compile Include="PrintWatcher.cs" />

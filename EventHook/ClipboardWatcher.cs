@@ -41,8 +41,13 @@ namespace EventHook
 
         private  ClipBoardHook clip;
         private  AsyncCollection<object> clipQueue;
+        private SyncFactory factory;
         public  event EventHandler<ClipboardEventArgs> OnClipboardModified;
 
+        internal ClipboardWatcher(SyncFactory factory)
+        {
+            this.factory = factory;
+        }
         /// <summary>
         /// Start watching
         /// </summary>
@@ -65,7 +70,7 @@ namespace EventHook
                     },
                     CancellationToken.None,
                     TaskCreationOptions.None,
-                    SyncFactory.GetTaskScheduler());
+                    factory.GetTaskScheduler()).Wait();
 
                     Task.Factory.StartNew(() => ClipConsumerAsync());
 
@@ -97,7 +102,7 @@ namespace EventHook
                         },
                         CancellationToken.None,
                         TaskCreationOptions.None,
-                        SyncFactory.GetTaskScheduler());
+                        factory.GetTaskScheduler()).Wait();
                     }
 
                     isRunning = false;

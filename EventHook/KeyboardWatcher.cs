@@ -46,8 +46,13 @@ namespace EventHook
         private KeyboardHook keyboardHook;
         private object accesslock = new object();
         private AsyncCollection<object> keyQueue;
+        private SyncFactory factory;
         public event EventHandler<KeyInputEventArgs> OnKeyInput;
 
+        internal KeyboardWatcher(SyncFactory factory)
+        {
+            this.factory = factory;
+        }
         /// <summary>
         /// Start watching
         /// </summary>
@@ -69,7 +74,7 @@ namespace EventHook
                     },
                     CancellationToken.None,
                     TaskCreationOptions.None,
-                    SyncFactory.GetTaskScheduler());
+                    factory.GetTaskScheduler()).Wait();
 
                     Task.Factory.StartNew(() => ConsumeKeyAsync());
 
@@ -100,7 +105,7 @@ namespace EventHook
                         },
                         CancellationToken.None,
                         TaskCreationOptions.None,
-                        SyncFactory.GetTaskScheduler());
+                        factory.GetTaskScheduler()).Wait();
                     }
 
                     keyQueue.Add(false);

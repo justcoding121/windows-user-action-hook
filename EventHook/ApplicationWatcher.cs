@@ -48,20 +48,27 @@ namespace EventHook
     public class ApplicationWatcher
     {
         /*Application history*/
-        private  object accesslock = new object();
-        private  bool isRunning;
+        private object accesslock = new object();
+        private bool isRunning;
 
-        private  AsyncCollection<object> appQueue;
+        private AsyncCollection<object> appQueue;
 
-        private  List<WindowData> activeWindows;
-        private  DateTime prevTimeApp;
+        private List<WindowData> activeWindows;
+        private DateTime prevTimeApp;
 
-        public  event EventHandler<ApplicationEventArgs> OnApplicationWindowChange;
+        public event EventHandler<ApplicationEventArgs> OnApplicationWindowChange;
 
+        private SyncFactory factory;
+        private WindowHook windowHook;
+
+        internal ApplicationWatcher(SyncFactory factory)
+        {
+            this.factory = factory;
+        }
         /// <summary>
         /// Start to watch
         /// </summary>
-        public  void Start()
+        public void Start()
         {
             lock (accesslock)
             {
@@ -69,20 +76,21 @@ namespace EventHook
                 {
                     activeWindows = new List<WindowData> { };
                     prevTimeApp = DateTime.Now;
-
+                   
                     appQueue = new AsyncCollection<object>();
 
                     //This needs to run on UI thread context
                     //So use task factory with the shared UI message pump thread
                     Task.Factory.StartNew(() =>
                     {
-                        WindowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
-                        WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
-                        WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
+                        windowHook = new WindowHook(factory);
+                        windowHook.WindowCreated += new GeneralShellHookEventHandler(WindowCreated);
+                        windowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
+                        windowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
                     },
                     CancellationToken.None,
                     TaskCreationOptions.None,
-                    SyncFactory.GetTaskScheduler());
+                    factory.GetTaskScheduler()).Wait();
 
                     lastEventWasLaunched = false;
                     lastHwndLaunched = IntPtr.Zero;
@@ -97,7 +105,7 @@ namespace EventHook
         /// <summary>
         /// Quit watching
         /// </summary>
-        public  void Stop()
+        public void Stop()
         {
             lock (accesslock)
             {
@@ -108,13 +116,14 @@ namespace EventHook
                     //So use task factory with the shared UI message pump thread
                     Task.Factory.StartNew(() =>
                     {
-                        WindowHook.WindowCreated -= new GeneralShellHookEventHandler(WindowCreated);
-                        WindowHook.WindowDestroyed -= new GeneralShellHookEventHandler(WindowDestroyed);
-                        WindowHook.WindowActivated -= new GeneralShellHookEventHandler(WindowActivated);
+                        windowHook.WindowCreated -= new GeneralShellHookEventHandler(WindowCreated);
+                        windowHook.WindowDestroyed -= new GeneralShellHookEventHandler(WindowDestroyed);
+                        windowHook.WindowActivated -= new GeneralShellHookEventHandler(WindowActivated);
+                        windowHook.Destroy();
                     },
                     CancellationToken.None,
                     TaskCreationOptions.None,
-                    SyncFactory.GetTaskScheduler());
+                    factory.GetTaskScheduler()).Wait();
 
                     appQueue.Add(false);
                     isRunning = false;
@@ -128,7 +137,7 @@ namespace EventHook
         /// </summary>
         /// <param name="shellObject"></param>
         /// <param name="hWnd"></param>
-        private  void WindowCreated(ShellHook shellObject, IntPtr hWnd)
+        private void WindowCreated(ShellHook shellObject, IntPtr hWnd)
         {
             appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
         }
@@ -138,7 +147,7 @@ namespace EventHook
         /// </summary>
         /// <param name="shellObject"></param>
         /// <param name="hWnd"></param>
-        private  void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
+        private void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
         {
             appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 2 });
         }
@@ -148,7 +157,7 @@ namespace EventHook
         /// </summary>
         /// <param name="shellObject"></param>
         /// <param name="hWnd"></param>
-        private  void WindowActivated(ShellHook shellObject, IntPtr hWnd)
+        private void WindowActivated(ShellHook shellObject, IntPtr hWnd)
         {
             appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
         }
@@ -160,7 +169,7 @@ namespace EventHook
         /// Producer-consumer
         /// </summary>
         /// <returns></returns>
-        private  async Task AppConsumer()
+        private async Task AppConsumer()
         {
             while (isRunning)
             {
@@ -188,13 +197,13 @@ namespace EventHook
         /// <summary>
         /// A handle to keep track of last window launched
         /// </summary>
-        private  IntPtr lastHwndLaunched;
+        private IntPtr lastHwndLaunched;
 
         /// <summary>
         /// A window got created
         /// </summary>
         /// <param name="wnd"></param>
-        private  void WindowCreated(WindowData wnd)
+        private void WindowCreated(WindowData wnd)
         {
 
             activeWindows.Add(wnd);
@@ -210,7 +219,7 @@ namespace EventHook
         /// </summary>
         /// <param name="wnd"></param>
         /// <param name="appEvent"></param>
-        private  void ApplicationStatus(WindowData wnd, ApplicationEvents appEvent)
+        private void ApplicationStatus(WindowData wnd, ApplicationEvents appEvent)
         {
             var timeStamp = DateTime.Now;
 
@@ -225,7 +234,7 @@ namespace EventHook
         /// Remove handle from active window collection
         /// </summary>
         /// <param name="wnd"></param>
-        private  void WindowDestroyed(WindowData wnd)
+        private void WindowDestroyed(WindowData wnd)
         {
             ApplicationStatus(activeWindows.FirstOrDefault(x => x.HWnd == wnd.HWnd) ?? wnd, ApplicationEvents.Closed);
             activeWindows.RemoveAll(x => x.HWnd == wnd.HWnd);
@@ -235,8 +244,8 @@ namespace EventHook
         /// <summary>
         /// Add window handle to active windows collection
         /// </summary>
-        private  bool lastEventWasLaunched;
-        private  void WindowActivated(WindowData wnd)
+        private bool lastEventWasLaunched;
+        private void WindowActivated(WindowData wnd)
         {
             if (activeWindows.Any(x => x.HWnd == wnd.HWnd))
             {

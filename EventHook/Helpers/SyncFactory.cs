@@ -11,85 +11,100 @@ namespace EventHook.Helpers
     /// A class to create a dummy message pump if we don't have one
     /// A message pump is required for most of our hooks to succeed
     /// </summary>
-    internal class SyncFactory
+    internal class SyncFactory : IDisposable
     {
-        private bool hasUIThread = false;
+        private  bool hasUIThread = false;
 
-        TaskScheduler scheduler;
-        MessageHandler messageHandler;
+         Lazy<TaskScheduler> scheduler;
+         Lazy<MessageHandler> messageHandler;
+
+        internal SyncFactory()
+        {
+            scheduler = new Lazy<TaskScheduler>(() =>
+            {
+                //if the calling thread is a UI thread then return its synchronization context
+                //no need to create a message pump
+                Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
+                if (dispatcher != null)
+                {
+                    if (SynchronizationContext.Current != null)
+                    {
+                        hasUIThread = true;
+                        return TaskScheduler.FromCurrentSynchronizationContext();
+                    }
+                }
+
+                TaskScheduler current = null;
+
+                //if current task scheduler is null, create a message pump 
+                //http://stackoverflow.com/questions/2443867/message-pump-in-net-windows-service
+                //use async for performance gain!
+                new Task(() =>
+                {
+                    Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
+                    {
+                        Volatile.Write(ref current, TaskScheduler.FromCurrentSynchronizationContext());
+                    }
+
+               ), DispatcherPriority.Normal);
+                    Dispatcher.Run();
+                }).Start();
+
+                //we called dispatcher begin invoke to get the Message Pump Sync Context
+                //we check every 10ms until synchronization context is copied
+                while (Volatile.Read(ref current) == null)
+                {
+                    Thread.Sleep(10);
+                }
+
+                return Volatile.Read(ref current);
+
+            });
+
+            messageHandler = new Lazy<MessageHandler>(() =>
+            {
+                MessageHandler msgHandler = null;
+                //get the mesage handler dummy window created using the UI sync context
+                new Task((e) =>
+                {
+                    Volatile.Write(ref msgHandler, new MessageHandler());
+
+                }, GetTaskScheduler()).Start();
+
+                //wait here until the window is created on UI thread
+                while (Volatile.Read(ref msgHandler) == null)
+                {
+                    Thread.Sleep(10);
+                };
+
+                return Volatile.Read(ref msgHandler);
+            });
+
+            Initialize();
+        }
 
         /// <summary>
-        /// Get the UI task scheduler if exists otherwise create one
+        /// Initialize the required message pump for all the hooks
+        /// </summary>
+        private  void Initialize()
+        {
+            GetTaskScheduler();
+            GetHandle();
+        }
+        /// <summary>
+        /// Get the UI task scheduler
         /// </summary>
         /// <returns></returns>
-        internal TaskScheduler GetTaskScheduler()
+        internal  TaskScheduler GetTaskScheduler()
         {
-            if(scheduler!=null)
-            {
-                return scheduler;
-            }
-
-            //if the calling thread is a UI thread then return its synchronization context
-            //no need to create a message pump
-            Dispatcher dispatcher = Dispatcher.FromThread(Thread.CurrentThread);
-            if (dispatcher != null)
-            {
-                if (SynchronizationContext.Current != null)
-                {
-                    hasUIThread = true;
-                    return TaskScheduler.FromCurrentSynchronizationContext();
-                }
-            }
-
-            TaskScheduler current = null;
-
-            //if current task scheduler is null, create a message pump 
-            //http://stackoverflow.com/questions/2443867/message-pump-in-net-windows-service
-            //use async for performance gain!
-            new Task(() =>
-            {
-                Dispatcher.CurrentDispatcher.BeginInvoke(new Action(() =>
-                {
-                    Volatile.Write(ref current, TaskScheduler.FromCurrentSynchronizationContext());
-                }), DispatcherPriority.Normal);
-                Dispatcher.Run();
-
-            }).Start();
-
-            //we called dispatcher begin invoke to get the Message Pump Sync Context
-            //we check every 10ms until synchronization context is copied
-            while (Volatile.Read(ref current) == null)
-            {
-                Thread.Sleep(10);
-            }
-
-            scheduler = Volatile.Read(ref current);
-            return scheduler;
+            return scheduler.Value;
         }
 
-        internal MessageHandler GetMessageHandler()
-        {        
-            MessageHandler msgHandler = null;
-            //get the mesage handler dummy window created using the UI sync context
-            new Task((e) =>
-            {
-                Volatile.Write(ref msgHandler, new MessageHandler());
-
-            }, GetTaskScheduler()).Start();
-
-            //wait here until the window is created on UI thread
-            while (Volatile.Read(ref msgHandler) == null)
-            {
-                Thread.Sleep(10);
-            };
-
-            return Volatile.Read(ref msgHandler);
-        }
         /// <summary>
         /// Get the handle of the window we created on the UI thread
         /// </summary>
         /// <returns></returns>
-        internal IntPtr GetHandle()
+        internal  IntPtr GetHandle()
         {
             var handle = IntPtr.Zero;
 
@@ -105,28 +120,16 @@ namespace EventHook.Helpers
                 catch { }
             }
 
-            if (messageHandler != null)
-            {
-                return messageHandler.Handle;
-            }
-
-            messageHandler = GetMessageHandler();
-            return messageHandler.Handle;
+            return messageHandler.Value.Handle;
         }
 
-        internal void Destroy()
+        public void Dispose()
         {
-            if(scheduler!=null)
+            if(messageHandler?.Value!=null)
             {
-                scheduler = null;
-            }
-
-            if(messageHandler!=null)
-            {
-                messageHandler.DestroyHandle();
+                messageHandler.Value.DestroyHandle();
             }
         }
-
     }
 
     /// <summary>

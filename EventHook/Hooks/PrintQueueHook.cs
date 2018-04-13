@@ -126,7 +126,10 @@ namespace EventHook.Hooks
                     _printerHandle = IntPtr.Zero;
                 }
             }
-            catch { }
+            catch
+            {
+
+            }
         }
 
         #endregion
@@ -141,11 +144,11 @@ namespace EventHook.Hooks
 
             _notifyOptions.Count = 1;
             var pdwChange = 0;
-            IntPtr pNotifyInfo;
+            IntPtr pNotifyInfo = IntPtr.Zero;
             var bResult = FindNextPrinterChangeNotification(_changeHandle, out pdwChange, _notifyOptions,
-                out pNotifyInfo);
+                ref pNotifyInfo);
             //If the Printer Change Notification Call did not give data, exit code
-            if ((bResult == false) || (((int) pNotifyInfo) == 0)) return;
+            if ((bResult == false) || (pNotifyInfo == IntPtr.Zero)) return;
 
             //If the Change Notification was not relgated to job, exit code
             var bJobRelatedChange = ((pdwChange & PRINTER_CHANGES.PRINTER_CHANGE_ADD_JOB) ==
@@ -250,16 +253,26 @@ namespace EventHook.Hooks
                 [In] int fwOptions,
                 [In, MarshalAs(UnmanagedType.LPStruct)] PRINTER_NOTIFY_OPTIONS pPrinterNotifyOptions);
 
+        //[DllImport("winspool.drv", EntryPoint = "FindNextPrinterChangeNotification",
+        //    SetLastError = true, CharSet = CharSet.Ansi,
+        //    ExactSpelling = false,
+        //    CallingConvention = CallingConvention.StdCall)]
+        //internal static extern bool FindNextPrinterChangeNotification
+        //    ([In] IntPtr hChangeObject,
+        //        [Out] out int pdwChange,
+        //        [In, MarshalAs(UnmanagedType.LPStruct)] PRINTER_NOTIFY_OPTIONS pPrinterNotifyOptions,
+        //        [Out] out IntPtr lppPrinterNotifyInfo
+        //    );
+
         [DllImport("winspool.drv", EntryPoint = "FindNextPrinterChangeNotification",
-            SetLastError = true, CharSet = CharSet.Ansi,
-            ExactSpelling = false,
-            CallingConvention = CallingConvention.StdCall)]
-        internal static extern bool FindNextPrinterChangeNotification
-            ([In] IntPtr hChangeObject,
-                [Out] out int pdwChange,
-                [In, MarshalAs(UnmanagedType.LPStruct)] PRINTER_NOTIFY_OPTIONS pPrinterNotifyOptions,
-                [Out] out IntPtr lppPrinterNotifyInfo
-            );
+                CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool FindNextPrinterChangeNotification([In] IntPtr hChange,
+                                                                       [Out] out int pdwChange,
+                                                                        [In] PRINTER_NOTIFY_OPTIONS
+                                                                            pPrinterNotifyOptions,
+                                                                        ref IntPtr ppPrinterNotifyInfo);
+
 
         #endregion
 

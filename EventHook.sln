@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25123.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{C622ACD2-76FB-4B6D-844D-C0C406C73214}"
 EndProject
@@ -19,6 +19,12 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook.WPF.Example", "EventHook.Examples\EventHook.WPF.Example\EventHook.WPF.Example.csproj", "{41F4FF6F-0E65-439C-9091-BA2C8E25BAE0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventHook", "EventHook\EventHook.csproj", "{3847A7F4-3F6B-4626-AF4C-8FDFBA6165F2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{FC2A6986-DC6C-4ABF-8BA5-FAF29CD15507}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,5 +56,8 @@ Global
 		{17264D8C-CF5A-4032-9E70-090525D574F2} = {C622ACD2-76FB-4B6D-844D-C0C406C73214}
 		{0075830E-89B6-4E6B-9C49-CA377746AB4C} = {C622ACD2-76FB-4B6D-844D-C0C406C73214}
 		{41F4FF6F-0E65-439C-9091-BA2C8E25BAE0} = {C622ACD2-76FB-4B6D-844D-C0C406C73214}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E257FE38-E63D-4F7E-A2BD-C6DD64CF3412}
 	EndGlobalSection
 EndGlobal
