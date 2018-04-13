@@ -36,11 +36,8 @@ namespace EventHook.Helpers
             queue.Enqueue(value);
 
             //wake up the dequeue task with result
-            if (dequeueTask != null 
-                && !dequeueTask.Task.IsCompleted)
-            {
-                dequeueTask.SetResult(true);
-            }
+             dequeueTask?.TrySetResult(true);
+            
         }
 
         /// <summary>
