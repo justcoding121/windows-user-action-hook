@@ -1,6 +1,5 @@
 ﻿using EventHook.Hooks;
 using EventHook.Helpers;
-using Nito.AsyncEx;
 using System;
 using System.Threading.Tasks;
 using System.Threading;
@@ -22,14 +21,15 @@ namespace EventHook
     /// </summary>
     public class MouseWatcher
     {
-        /*Keyboard*/
-        private  bool isRunning { get; set; }
-        private  object accesslock = new object();
+        private object accesslock = new object();
+        private bool isRunning { get; set; }
 
-        private  AsyncCollection<object> mouseQueue;
-        private  MouseHook mouseHook;
         private SyncFactory factory;
-        public  event EventHandler<MouseEventArgs> OnMouseInput;
+        private AsyncQueue<object> mouseQueue;
+        private CancellationTokenSource taskCancellationTokenSource;
+
+        private MouseHook mouseHook;
+        public event EventHandler<MouseEventArgs> OnMouseInput;
 
         internal MouseWatcher(SyncFactory factory)
         {
@@ -38,13 +38,14 @@ namespace EventHook
         /// <summary>
         /// Start watching mouse events
         /// </summary>
-        public  void Start()
+        public void Start()
         {
             lock (accesslock)
             {
                 if (!isRunning)
                 {
-                    mouseQueue = new AsyncCollection<object>();
+                    taskCancellationTokenSource = new CancellationTokenSource();
+                    mouseQueue = new AsyncQueue<object>(taskCancellationTokenSource.Token);
                     //This needs to run on UI thread context
                     //So use task factory with the shared UI message pump thread
                     Task.Factory.StartNew(() =>
@@ -67,7 +68,7 @@ namespace EventHook
         /// <summary>
         /// Stop watching mouse events
         /// </summary>
-        public  void Stop()
+        public void Stop()
         {
             lock (accesslock)
             {
@@ -88,8 +89,9 @@ namespace EventHook
                     factory.GetTaskScheduler()).Wait();
                     }
 
-                    mouseQueue.Add(false);
+                    mouseQueue.Enqueue(false);
                     isRunning = false;
+                    taskCancellationTokenSource.Cancel();
                 }
             }
         }
@@ -99,22 +101,22 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private  void MListener(object sender, RawMouseEventArgs e)
+        private void MListener(object sender, RawMouseEventArgs e)
         {
-            mouseQueue.Add(e);
+            mouseQueue.Enqueue(e);
         }
 
         /// <summary>
         /// Consume mouse events in our producer queue asynchronously
         /// </summary>
         /// <returns></returns>
-        private  async Task ConsumeKeyAsync()
+        private async Task ConsumeKeyAsync()
         {
             while (isRunning)
             {
 
                 //blocking here until a key is added to the queue
-                var item = await mouseQueue.TakeAsync();
+                var item = await mouseQueue.DequeueAsync();
                 if (item is bool) break;
 
                 KListener_KeyDown(item as RawMouseEventArgs);
@@ -126,7 +128,7 @@ namespace EventHook
         /// Invoke user callbacks with the argument
         /// </summary>
         /// <param name="kd"></param>
-        private  void KListener_KeyDown(RawMouseEventArgs kd)
+        private void KListener_KeyDown(RawMouseEventArgs kd)
         {
             OnMouseInput?.Invoke(null, new MouseEventArgs() { Message = kd.Message, Point = kd.Point });
         }

@@ -47,6 +47,13 @@ namespace EventHook.ConsoleApp.Example
 
            
             Console.Read();
+
+            keyboardWatcher.Stop();
+            mouseWatcher.Stop();
+            clipboardWatcher.Stop();
+            applicationWatcher.Stop();
+            printWatcher.Stop();
+
             eventHookFactory.Dispose();
         }
 

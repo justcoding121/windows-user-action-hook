@@ -64,6 +64,13 @@ printWatcher.OnPrintEvent += (s, e) =>
 //waiting here to keep this thread running           
 Console.Read();
 
+//stop watching
+keyboardWatcher.Stop();
+mouseWatcher.Stop();
+clipboardWatcher.Stop();
+applicationWatcher.Stop();
+printWatcher.Stop();
+
 //dispose
 eventHookFactory.Dispose();
 ```

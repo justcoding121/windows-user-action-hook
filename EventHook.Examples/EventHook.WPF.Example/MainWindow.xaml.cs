@@ -9,7 +9,13 @@ namespace EventHook.WPF.Example
     /// </summary>
     public partial class MainWindow : Window
     {
-        EventHookFactory eventHookFactory = new EventHookFactory();
+        private EventHookFactory eventHookFactory = new EventHookFactory();
+
+        private ApplicationWatcher applicationWatcher;
+        private KeyboardWatcher keyboardWatcher;
+        private MouseWatcher mouseWatcher;
+        private ClipboardWatcher clipboardWatcher;
+        private PrintWatcher printWatcher;
 
         public MainWindow()
         {
@@ -57,6 +63,12 @@ namespace EventHook.WPF.Example
 
         private void OnApplicationExit(object sender, EventArgs e)
         {
+            keyboardWatcher.Stop();
+            mouseWatcher.Stop();
+            clipboardWatcher.Stop();
+            applicationWatcher.Stop();
+            printWatcher.Stop();
+
             eventHookFactory.Dispose();
         }
     }

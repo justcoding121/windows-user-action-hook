@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace EventHook
 {
     /// <summary>
-    /// A object holding key information on a particular print event
+    /// An object holding key information on a particular print event
     /// </summary>
     public class PrintEventData
     {
@@ -34,14 +34,14 @@ namespace EventHook
     /// </summary>
     public class PrintWatcher
     {
-        /*Print history*/
+ 
         private bool isRunning { get; set; }
         private object accesslock = new object();
 
-        private ArrayList printers = null;
-        private PrintServer printServer = null;
         private SyncFactory factory;
 
+        private ArrayList printers = null;
+        private PrintServer printServer = null;
         public event EventHandler<PrintEventArgs> OnPrintEvent;
 
         internal PrintWatcher(SyncFactory factory)
