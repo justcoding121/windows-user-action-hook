@@ -3,7 +3,7 @@ using EventHook.Hooks;
 using EventHook.Helpers;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
-
+using System.Threading;
 
 namespace EventHook
 {
@@ -42,59 +42,67 @@ namespace EventHook
     {
 
         /*Keyboard*/
-        private static bool isRunning { get; set; }
-        private static KeyboardHook keyboardHook;
-        private static object accesslock = new object();
-        private static AsyncCollection<object> keyQueue;
-
-        public static event EventHandler<KeyInputEventArgs> OnKeyInput;
+        private  bool isRunning { get; set; }
+        private  KeyboardHook keyboardHook;
+        private  object accesslock = new object();
+        private  AsyncCollection<object> keyQueue;
+        public  event EventHandler<KeyInputEventArgs> OnKeyInput;
 
         /// <summary>
         /// Start watching
         /// </summary>
-        public static void Start()
+        public  void Start()
         {
-            if (!isRunning)
+            lock (accesslock)
             {
-                lock (accesslock)
+                if (!isRunning)
                 {
                     keyQueue = new AsyncCollection<object>();
-
-                    keyboardHook = new KeyboardHook();
-                    keyboardHook.KeyDown += new RawKeyEventHandler(KListener);
-                    keyboardHook.KeyUp += new RawKeyEventHandler(KListener);
-
-                    //low level hooks need to run on the context of a UI thread to hook successfully
-                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                    //This needs to run on UI thread context
+                    //So use task factory with the shared UI message pump thread
+                    Task.Factory.StartNew(() =>
                     {
+                        keyboardHook = new KeyboardHook();
+                        keyboardHook.KeyDown += new RawKeyEventHandler(KListener);
+                        keyboardHook.KeyUp += new RawKeyEventHandler(KListener);
                         keyboardHook.Start();
-
-                    }, SharedMessagePump.GetTaskScheduler());
+                    },
+                    CancellationToken.None,
+                    TaskCreationOptions.None,
+                    SyncFactory.GetTaskScheduler());
 
                     Task.Factory.StartNew(() => ConsumeKeyAsync());
 
                     isRunning = true;
                 }
             }
-     
+
         }
 
         /// <summary>
         /// Stop watching
         /// </summary>
-        public static void Stop()
+        public  void Stop()
         {
-            if (isRunning)
+            lock (accesslock)
             {
-                lock (accesslock)
+                if (isRunning)
                 {
                     if (keyboardHook != null)
                     {
-                        keyboardHook.KeyDown -= new RawKeyEventHandler(KListener);
-                        keyboardHook.Stop();
-                        keyboardHook = null;
+                        //This needs to run on UI thread context
+                        //So use task factory with the shared UI message pump thread
+                        Task.Factory.StartNew(() =>
+                        {
+                            keyboardHook.KeyDown -= new RawKeyEventHandler(KListener);
+                            keyboardHook.Stop();
+                            keyboardHook = null;
+                        },
+                        CancellationToken.None,
+                        TaskCreationOptions.None,
+                        SyncFactory.GetTaskScheduler());
                     }
-
+                   
                     keyQueue.Add(false);
                     isRunning = false;
                 }
@@ -106,16 +114,16 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void KListener(object sender, RawKeyEventArgs e)
+        private  void KListener(object sender, RawKeyEventArgs e)
         {
             keyQueue.Add(new KeyData() { UnicodeCharacter = e.Character, Keyname = e.Key.ToString(), EventType = (KeyEvent)e.EventType });
         }
 
-       /// <summary>
-       /// Consume events from the producer queue asynchronously
-       /// </summary>
-       /// <returns></returns>
-        private static async Task ConsumeKeyAsync()
+        /// <summary>
+        /// Consume events from the producer queue asynchronously
+        /// </summary>
+        /// <returns></returns>
+        private  async Task ConsumeKeyAsync()
         {
             while (isRunning)
             {
@@ -132,7 +140,7 @@ namespace EventHook
         /// Invoke user call backs
         /// </summary>
         /// <param name="kd"></param>
-        private static void KListener_KeyDown(KeyData kd)
+        private  void KListener_KeyDown(KeyData kd)
         {
             OnKeyInput?.Invoke(null, new KeyInputEventArgs() { KeyData = kd });
 

@@ -80,7 +80,7 @@ namespace EventHook
                         WindowHook.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyed);
                         WindowHook.WindowActivated += new GeneralShellHookEventHandler(WindowActivated);
 
-                    }, SharedMessagePump.GetTaskScheduler());
+                    }, SyncFactory.GetTaskScheduler());
 
                     lastEventWasLaunched = false;
                     lastHwndLaunched = IntPtr.Zero;

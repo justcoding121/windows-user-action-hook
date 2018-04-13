@@ -11,14 +11,14 @@ namespace EventHook.Helpers
     /// A class to create a dummy message pump if we don't have one
     /// A message pump is required for most of our hooks to succeed
     /// </summary>
-    internal class SharedMessagePump
+    internal class SyncFactory
     {
         private static bool hasUIThread = false;
 
         static Lazy<TaskScheduler> scheduler;
         static Lazy<MessageHandler> messageHandler;
 
-        static SharedMessagePump()
+        static SyncFactory()
         {
             scheduler = new Lazy<TaskScheduler>(() =>
             {

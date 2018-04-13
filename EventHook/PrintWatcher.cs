@@ -33,22 +33,22 @@ namespace EventHook
     public class PrintWatcher
     {
         /*Print history*/
-        private static bool isRunning;
-        private static object accesslock = new object();
+        private  bool isRunning;
+        private  object accesslock = new object();
 
-        private static ArrayList printers = null;
-        private static PrintServer printServer = null;
+        private  ArrayList printers = null;
+        private  PrintServer printServer = null;
 
-        public static event EventHandler<PrintEventArgs> OnPrintEvent;
+        public  event EventHandler<PrintEventArgs> OnPrintEvent;
 
         /// <summary>
         /// Start watching print events
         /// </summary>
-        public static void Start()
+        public  void Start()
         {
-            if (!isRunning)
+            lock (accesslock)
             {
-                lock (accesslock)
+                if (!isRunning)
                 {
                     printers = new ArrayList();
                     printServer = new PrintServer();
@@ -68,11 +68,11 @@ namespace EventHook
         /// <summary>
         /// Stop watching print events
         /// </summary>
-        public static void Stop()
+        public  void Stop()
         {
-            if (isRunning)
+            lock (accesslock)
             {
-                lock (accesslock)
+                if (isRunning)
                 {
                     if (printers != null)
                     {
@@ -104,7 +104,7 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void pqm_OnJobStatusChange(object sender, PrintJobChangeEventArgs e)
+        private  void pqm_OnJobStatusChange(object sender, PrintJobChangeEventArgs e)
         {
 
             if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING && e.JobInfo != null)
