@@ -66,24 +66,15 @@ namespace EventHook.Hooks
 
                         break;
                     case ShellEvents.HSHELL_WINDOWDESTROYED:
-
-                        if (WindowDestroyed != null)
-                        {
-                            WindowDestroyed(this, m.LParam);
-                        }
-
+                        WindowDestroyed?.Invoke(this, m.LParam);
                         break;
 
-                    case ShellEvents.HSHELL_RUDEAPPACTIVATED:
                     case ShellEvents.HSHELL_WINDOWACTIVATED:
-                        if (WindowActivated != null)
-                        {
-                            WindowActivated(this, m.LParam);
-                        }
+                        WindowActivated?.Invoke(this, m.LParam);
                         break;
                 }
             }
-            Console.WriteLine((ShellEvents)m.WParam);
+
             base.WndProc(ref m);
         }
 

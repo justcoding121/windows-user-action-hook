@@ -53,7 +53,7 @@ namespace EventHook
 
         private AsyncCollection<object> appQueue;
 
-        private List<WindowData> activeWindows;
+        private Dictionary<IntPtr, WindowData> activeWindows;
         private DateTime prevTimeApp;
 
         public event EventHandler<ApplicationEventArgs> OnApplicationWindowChange;
@@ -74,7 +74,7 @@ namespace EventHook
             {
                 if (!isRunning)
                 {
-                    activeWindows = new List<WindowData> { };
+                    activeWindows = new Dictionary<IntPtr, WindowData>();
                     prevTimeApp = DateTime.Now;
                    
                     appQueue = new AsyncCollection<object>();
@@ -206,13 +206,46 @@ namespace EventHook
         private void WindowCreated(WindowData wnd)
         {
 
-            activeWindows.Add(wnd);
+            activeWindows.Add(wnd.HWnd, wnd);
             ApplicationStatus(wnd, ApplicationEvents.Launched);
 
             lastEventWasLaunched = true;
             lastHwndLaunched = wnd.HWnd;
 
         }
+
+        /// <summary>
+        /// Add window handle to active windows collection
+        /// </summary>
+        private bool lastEventWasLaunched;
+        private void WindowActivated(WindowData wnd)
+        {
+            if (activeWindows.ContainsKey(wnd.HWnd))
+            {
+                if (!lastEventWasLaunched && lastHwndLaunched != wnd.HWnd)
+                {
+                    ApplicationStatus(activeWindows[wnd.HWnd], ApplicationEvents.Activated);
+                }
+            }
+            lastEventWasLaunched = false;
+        }
+
+        /// <summary>
+        /// Remove handle from active window collection
+        /// </summary>
+        /// <param name="wnd"></param>
+        private void WindowDestroyed(WindowData wnd)
+        {
+            if(activeWindows.ContainsKey(wnd.HWnd))
+            {
+                ApplicationStatus(activeWindows[wnd.HWnd], ApplicationEvents.Closed);
+                activeWindows.Remove(wnd.HWnd);
+            }
+           
+            lastEventWasLaunched = false;
+        }
+
+      
 
         /// <summary>
         /// invoke user call back
@@ -229,33 +262,5 @@ namespace EventHook
 
             OnApplicationWindowChange?.Invoke(null, new ApplicationEventArgs() { ApplicationData = wnd, Event = appEvent });
         }
-
-        /// <summary>
-        /// Remove handle from active window collection
-        /// </summary>
-        /// <param name="wnd"></param>
-        private void WindowDestroyed(WindowData wnd)
-        {
-            ApplicationStatus(activeWindows.FirstOrDefault(x => x.HWnd == wnd.HWnd) ?? wnd, ApplicationEvents.Closed);
-            activeWindows.RemoveAll(x => x.HWnd == wnd.HWnd);
-            lastEventWasLaunched = false;
-        }
-
-        /// <summary>
-        /// Add window handle to active windows collection
-        /// </summary>
-        private bool lastEventWasLaunched;
-        private void WindowActivated(WindowData wnd)
-        {
-            if (activeWindows.Any(x => x.HWnd == wnd.HWnd))
-            {
-                if ((!lastEventWasLaunched) && lastHwndLaunched != wnd.HWnd)
-                {
-                    ApplicationStatus(activeWindows.First(x => x.HWnd == wnd.HWnd), ApplicationEvents.Activated);
-                }
-            }
-            lastEventWasLaunched = false;
-        }
-
     }
 }
