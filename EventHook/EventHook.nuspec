@@ -10,11 +10,6 @@
     <licenseUrl>https://github.com/titanium007/Windows-User-Action-Hook/blob/master/LICENSE</licenseUrl>
     <authors>titanium007</authors>
     <owners></owners>
-    <dependencies>
-		<group targetFramework="net45">
-		 <dependency id="Nito.AsyncEx" version="3.0.1"  />
-		</group>
-    </dependencies>
   </metadata>
   <files>
     <file src="bin\$configuration$\EventHook.dll" target="lib\net45" />

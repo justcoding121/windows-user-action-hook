@@ -13,7 +13,13 @@ namespace EventHook.WinForms.Example
 {
     public partial class MainForm : Form
     {
-        EventHookFactory eventHookFactory = new EventHookFactory();
+        private EventHookFactory eventHookFactory = new EventHookFactory();
+
+        private ApplicationWatcher applicationWatcher;
+        private KeyboardWatcher keyboardWatcher;
+        private MouseWatcher mouseWatcher;
+        private ClipboardWatcher clipboardWatcher;
+        private PrintWatcher printWatcher;
 
         public MainForm()
         {
@@ -60,6 +66,12 @@ namespace EventHook.WinForms.Example
 
         private void OnApplicationExit(object sender, EventArgs e)
         {
+            keyboardWatcher.Stop();
+            mouseWatcher.Stop();
+            clipboardWatcher.Stop();
+            applicationWatcher.Stop();
+            printWatcher.Stop();
+
             eventHookFactory.Dispose();
         }
     }

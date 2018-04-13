@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using EventHook.Hooks;
 using EventHook.Helpers;
-using Nito.AsyncEx;
 using System.Threading.Tasks;
 using System.Threading;
 
@@ -47,24 +45,25 @@ namespace EventHook
     /// </summary>
     public class ApplicationWatcher
     {
-        /*Application history*/
         private object accesslock = new object();
         private bool isRunning;
 
-        private AsyncCollection<object> appQueue;
+        private SyncFactory factory;
+        private AsyncQueue<object> appQueue;
+        private CancellationTokenSource taskCancellationTokenSource;
 
         private Dictionary<IntPtr, WindowData> activeWindows;
         private DateTime prevTimeApp;
 
         public event EventHandler<ApplicationEventArgs> OnApplicationWindowChange;
 
-        private SyncFactory factory;
         private WindowHook windowHook;
 
         internal ApplicationWatcher(SyncFactory factory)
         {
             this.factory = factory;
         }
+
         /// <summary>
         /// Start to watch
         /// </summary>
@@ -76,8 +75,9 @@ namespace EventHook
                 {
                     activeWindows = new Dictionary<IntPtr, WindowData>();
                     prevTimeApp = DateTime.Now;
-                   
-                    appQueue = new AsyncCollection<object>();
+
+                    var taskCancellationTokenSource = new CancellationTokenSource();
+                    appQueue = new AsyncQueue<object>(taskCancellationTokenSource.Token);
 
                     //This needs to run on UI thread context
                     //So use task factory with the shared UI message pump thread
@@ -111,7 +111,6 @@ namespace EventHook
             {
                 if (isRunning)
                 {
-
                     //This needs to run on UI thread context
                     //So use task factory with the shared UI message pump thread
                     Task.Factory.StartNew(() =>
@@ -125,8 +124,9 @@ namespace EventHook
                     TaskCreationOptions.None,
                     factory.GetTaskScheduler()).Wait();
 
-                    appQueue.Add(false);
+                    appQueue.Enqueue(false);
                     isRunning = false;
+                    taskCancellationTokenSource.Cancel();
                 }
             }
 
@@ -139,7 +139,7 @@ namespace EventHook
         /// <param name="hWnd"></param>
         private void WindowCreated(ShellHook shellObject, IntPtr hWnd)
         {
-            appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 0 });
+            appQueue.Enqueue(new WindowData() { HWnd = hWnd, EventType = 0 });
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace EventHook
         /// <param name="hWnd"></param>
         private void WindowDestroyed(ShellHook shellObject, IntPtr hWnd)
         {
-            appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 2 });
+            appQueue.Enqueue(new WindowData() { HWnd = hWnd, EventType = 2 });
         }
 
         /// <summary>
@@ -159,7 +159,7 @@ namespace EventHook
         /// <param name="hWnd"></param>
         private void WindowActivated(ShellHook shellObject, IntPtr hWnd)
         {
-            appQueue.Add(new WindowData() { HWnd = hWnd, EventType = 1 });
+            appQueue.Enqueue(new WindowData() { HWnd = hWnd, EventType = 1 });
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace EventHook
             while (isRunning)
             {
                 //blocking here until a key is added to the queue
-                var item = await appQueue.TakeAsync();
+                var item = await appQueue.DequeueAsync();
                 if (item is bool) break;
 
                 var wnd = (WindowData)item;
@@ -236,16 +236,16 @@ namespace EventHook
         /// <param name="wnd"></param>
         private void WindowDestroyed(WindowData wnd)
         {
-            if(activeWindows.ContainsKey(wnd.HWnd))
+            if (activeWindows.ContainsKey(wnd.HWnd))
             {
                 ApplicationStatus(activeWindows[wnd.HWnd], ApplicationEvents.Closed);
                 activeWindows.Remove(wnd.HWnd);
             }
-           
+
             lastEventWasLaunched = false;
         }
 
-      
+
 
         /// <summary>
         /// invoke user call back

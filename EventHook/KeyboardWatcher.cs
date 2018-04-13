@@ -2,7 +2,6 @@
 using EventHook.Hooks;
 using EventHook.Helpers;
 using System.Threading.Tasks;
-using Nito.AsyncEx;
 using System.Threading;
 
 namespace EventHook
@@ -40,13 +39,14 @@ namespace EventHook
     /// </summary>
     public class KeyboardWatcher
     {
-
-        /*Keyboard*/
         private bool isRunning { get; set; }
-        private KeyboardHook keyboardHook;
         private object accesslock = new object();
-        private AsyncCollection<object> keyQueue;
+
         private SyncFactory factory;
+        private CancellationTokenSource taskCancellationTokenSource;
+        private AsyncQueue<object> keyQueue;
+
+        private KeyboardHook keyboardHook;
         public event EventHandler<KeyInputEventArgs> OnKeyInput;
 
         internal KeyboardWatcher(SyncFactory factory)
@@ -62,7 +62,9 @@ namespace EventHook
             {
                 if (!isRunning)
                 {
-                    keyQueue = new AsyncCollection<object>();
+                    taskCancellationTokenSource = new CancellationTokenSource();
+                    keyQueue = new AsyncQueue<object>(taskCancellationTokenSource.Token);
+
                     //This needs to run on UI thread context
                     //So use task factory with the shared UI message pump thread
                     Task.Factory.StartNew(() =>
@@ -108,8 +110,9 @@ namespace EventHook
                         factory.GetTaskScheduler()).Wait();
                     }
 
-                    keyQueue.Add(false);
+                    keyQueue.Enqueue(false);
                     isRunning = false;
+                    taskCancellationTokenSource.Cancel();
                 }
             }
         }
@@ -121,7 +124,7 @@ namespace EventHook
         /// <param name="e"></param>
         private void KListener(object sender, RawKeyEventArgs e)
         {
-            keyQueue.Add(new KeyData() { UnicodeCharacter = e.Character, Keyname = e.Key.ToString(), EventType = (KeyEvent)e.EventType });
+            keyQueue.Enqueue(new KeyData() { UnicodeCharacter = e.Character, Keyname = e.Key.ToString(), EventType = (KeyEvent)e.EventType });
         }
 
         /// <summary>
@@ -134,7 +137,7 @@ namespace EventHook
             {
 
                 //blocking here until a key is added to the queue
-                var item = await keyQueue.TakeAsync();
+                var item = await keyQueue.DequeueAsync();
                 if (item is bool) break;
 
                 KListener_KeyDown((KeyData)item);
@@ -148,7 +151,6 @@ namespace EventHook
         private void KListener_KeyDown(KeyData kd)
         {
             OnKeyInput?.Invoke(null, new KeyInputEventArgs() { KeyData = kd });
-
         }
 
     }

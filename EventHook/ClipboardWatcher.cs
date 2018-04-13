@@ -1,6 +1,5 @@
 ﻿using EventHook.Hooks;
 using EventHook.Helpers;
-using Nito.AsyncEx;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -35,31 +34,34 @@ namespace EventHook
     /// </summary>
     public class ClipboardWatcher
     {
-        /*Clip board monitor*/
-        public  bool isRunning;
-        private  object accesslock = new object();
+        private object accesslock = new object();
+        public bool isRunning;
 
-        private  ClipBoardHook clip;
-        private  AsyncCollection<object> clipQueue;
         private SyncFactory factory;
-        public  event EventHandler<ClipboardEventArgs> OnClipboardModified;
+        private AsyncQueue<object> clipQueue;
+        private CancellationTokenSource taskCancellationTokenSource;
+
+        private ClipBoardHook clip;
+        public event EventHandler<ClipboardEventArgs> OnClipboardModified;
 
         internal ClipboardWatcher(SyncFactory factory)
         {
             this.factory = factory;
         }
+
         /// <summary>
         /// Start watching
         /// </summary>
-        public  void Start()
+        public void Start()
         {
 
             lock (accesslock)
             {
                 if (!isRunning)
                 {
-                    clipQueue = new AsyncCollection<object>();
-                    
+                    taskCancellationTokenSource = new CancellationTokenSource();
+                    clipQueue = new AsyncQueue<object>(taskCancellationTokenSource.Token);
+
                     //This needs to run on UI thread context
                     //So use task factory with the shared UI message pump thread
                     Task.Factory.StartNew(() =>
@@ -83,7 +85,7 @@ namespace EventHook
         /// <summary>
         /// Stop watching
         /// </summary>
-        public  void Stop()
+        public void Stop()
         {
 
             lock (accesslock)
@@ -106,7 +108,8 @@ namespace EventHook
                     }
 
                     isRunning = false;
-                    clipQueue.Add(false);
+                    clipQueue.Enqueue(false);
+                    taskCancellationTokenSource.Cancel();
                 }
             }
 
@@ -117,20 +120,20 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private  void ClipboardHandler(object sender, EventArgs e)
+        private void ClipboardHandler(object sender, EventArgs e)
         {
-            clipQueue.Add(sender);
+            clipQueue.Enqueue(sender);
         }
 
         /// <summary>
         /// Consume event from producer queue asynchronously
         /// </summary>
         /// <returns></returns>
-        private  async Task ClipConsumerAsync()
+        private async Task ClipConsumerAsync()
         {
             while (isRunning)
             {
-                var item = await clipQueue.TakeAsync();
+                var item = await clipQueue.DequeueAsync();
                 if (item is bool) break;
 
                 ClipboardHandler(item);
@@ -142,7 +145,7 @@ namespace EventHook
         /// Actual handler to invoke user call backs
         /// </summary>
         /// <param name="sender"></param>
-        private  void ClipboardHandler(object sender)
+        private void ClipboardHandler(object sender)
         {
             IDataObject iData = (DataObject)sender;
 
