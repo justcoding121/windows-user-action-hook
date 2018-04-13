@@ -114,7 +114,7 @@ namespace EventHook
                     },
                     CancellationToken.None,
                     TaskCreationOptions.None,
-                    factory.GetTaskScheduler()).Wait();
+                    factory.GetTaskScheduler());
                 }
             }
         }

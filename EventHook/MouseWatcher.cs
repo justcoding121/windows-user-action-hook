@@ -84,9 +84,9 @@ namespace EventHook
                             mouseHook.Stop();
                             mouseHook = null;
                         },
-                    CancellationToken.None,
-                    TaskCreationOptions.None,
-                    factory.GetTaskScheduler()).Wait();
+                        CancellationToken.None,
+                        TaskCreationOptions.None,
+                        factory.GetTaskScheduler());
                     }
 
                     mouseQueue.Enqueue(false);
