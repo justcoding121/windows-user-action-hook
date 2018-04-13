@@ -3,6 +3,7 @@ using EventHook.Helpers;
 using Nito.AsyncEx;
 using System;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace EventHook
 {
@@ -22,34 +23,34 @@ namespace EventHook
     public class MouseWatcher
     {
         /*Keyboard*/
-        private static bool isRunning { get; set; }
-        private static object accesslock = new object();
+        private  bool isRunning { get; set; }
+        private  object accesslock = new object();
 
-        private static AsyncCollection<object> mouseQueue;
-        private static MouseHook mouseHook;
-
-        public static event EventHandler<MouseEventArgs> OnMouseInput;
+        private  AsyncCollection<object> mouseQueue;
+        private  MouseHook mouseHook;
+        public  event EventHandler<MouseEventArgs> OnMouseInput;
 
         /// <summary>
         /// Start watching mouse events
         /// </summary>
-        public static void Start()
+        public  void Start()
         {
-            if (!isRunning)
+            lock (accesslock)
             {
-                lock (accesslock)
+                if (!isRunning)
                 {
                     mouseQueue = new AsyncCollection<object>();
-
-                    mouseHook = new MouseHook();
-                    mouseHook.MouseAction += MListener;
-
-                    //low level hooks need to be registered in the context of a UI thread
-                    Task.Factory.StartNew(() => { }).ContinueWith(x =>
+                    //This needs to run on UI thread context
+                    //So use task factory with the shared UI message pump thread
+                    Task.Factory.StartNew(() =>
                     {
+                        mouseHook = new MouseHook();
+                        mouseHook.MouseAction += MListener;
                         mouseHook.Start();
-
-                    }, SharedMessagePump.GetTaskScheduler());
+                    },
+                    CancellationToken.None,
+                    TaskCreationOptions.None,
+                    SyncFactory.GetTaskScheduler());
 
                     Task.Factory.StartNew(() => ConsumeKeyAsync());
 
@@ -61,18 +62,27 @@ namespace EventHook
         /// <summary>
         /// Stop watching mouse events
         /// </summary>
-        public static void Stop()
+        public  void Stop()
         {
-            if (isRunning)
+            lock (accesslock)
             {
-                lock (accesslock)
+                if (isRunning)
                 {
                     if (mouseHook != null)
                     {
-                        mouseHook.MouseAction -= MListener;
-                        mouseHook.Stop();
-                        mouseHook = null;
+                        //This needs to run on UI thread context
+                        //So use task factory with the shared UI message pump thread
+                        Task.Factory.StartNew(() =>
+                        {
+                            mouseHook.MouseAction -= MListener;
+                            mouseHook.Stop();
+                            mouseHook = null;
+                        },
+                    CancellationToken.None,
+                    TaskCreationOptions.None,
+                    SyncFactory.GetTaskScheduler());
                     }
+
                     mouseQueue.Add(false);
                     isRunning = false;
                 }
@@ -84,7 +94,7 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private static void MListener(object sender, RawMouseEventArgs e)
+        private  void MListener(object sender, RawMouseEventArgs e)
         {
             mouseQueue.Add(e);
         }
@@ -93,7 +103,7 @@ namespace EventHook
         /// Consume mouse events in our producer queue asynchronously
         /// </summary>
         /// <returns></returns>
-        private static async Task ConsumeKeyAsync()
+        private  async Task ConsumeKeyAsync()
         {
             while (isRunning)
             {
@@ -111,7 +121,7 @@ namespace EventHook
         /// Invoke user callbacks with the argument
         /// </summary>
         /// <param name="kd"></param>
-        private static void KListener_KeyDown(RawMouseEventArgs kd)
+        private  void KListener_KeyDown(RawMouseEventArgs kd)
         {
             OnMouseInput?.Invoke(null, new MouseEventArgs() { Message = kd.Message, Point = kd.Point });
         }

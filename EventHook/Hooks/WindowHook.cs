@@ -4,7 +4,7 @@ using System;
 namespace EventHook.Hooks
 {
     ///<summary>One window event to many application wide listeners</summary>
-    internal static class WindowHook
+    internal class WindowHook
     {
         /// <summary>
         /// A top-level, unowned window has been created. The window exists when the system calls this hook.
@@ -22,11 +22,11 @@ namespace EventHook.Hooks
 
         private static ShellHook sh;
 
-        static WindowHook()
+        public WindowHook()
         {
             if (sh == null)
             {
-                sh = new ShellHook(SharedMessagePump.GetHandle());
+                sh = new ShellHook(SyncFactory.GetHandle());
 
                 sh.WindowCreated += new GeneralShellHookEventHandler(WindowCreatedEvent);
                 sh.WindowDestroyed += new GeneralShellHookEventHandler(WindowDestroyedEvent);
