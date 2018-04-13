@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 namespace EventHook.Helpers
 {
     /// <summary>
-    /// A concurrent queue facilitating async without locking
+    /// A concurrent queue facilitating async dequeue
+    /// Since our consumer is always single threaded no locking is needed
     /// </summary>
     /// <typeparam name="T"></typeparam>
     internal class AsyncQueue<T>
@@ -19,66 +20,54 @@ namespace EventHook.Helpers
         /// <summary>
         /// Backing queue
         /// </summary>
-        ConcurrentQueue<TaskResult> queue = new ConcurrentQueue<TaskResult>();
+        ConcurrentQueue<T> queue = new ConcurrentQueue<T>();
 
         /// <summary>
         /// Keeps a list of pending Dequeue tasks in FIFO order
         /// </summary>
-        ConcurrentQueue<TaskCompletionSource<TaskResult>> dequeueTasks 
-            = new ConcurrentQueue<TaskCompletionSource<TaskResult>>();
+        ConcurrentQueue<TaskCompletionSource<T>> dequeueTasks
+            = new ConcurrentQueue<TaskCompletionSource<T>>();
 
+        /// <summary>
+        /// Assumes a single threaded producer!
+        /// </summary>
+        /// <param name="value"></param>
         internal void Enqueue(T value)
         {
-            queue.Enqueue(new TaskResult() { success = true, Data = value });
+            queue.Enqueue(value);
 
             //Set the earlist waiting Dequeue task 
-            TaskCompletionSource<TaskResult> task;
-            if(dequeueTasks.TryDequeue(out task))
+            TaskCompletionSource<T> task;
+
+            if (dequeueTasks.TryDequeue(out task))
             {
-                TaskResult result;
-                //if dequeue failed it means another Task picked up the data
-                //set the result to false for this Task so that it will be retried
-                //otherwise return the result
-                if(queue.TryDequeue(out result))
-                {
-                    task.SetResult(result);
-                }
-                else
-                {
-                    task.SetResult(new TaskResult() { success = false });
-                }
-             
+                //return the result
+                T result;
+                queue.TryDequeue(out result);
+                task.SetResult(result);
             }
 
-        }
 
-        internal async Task<T> DequeueAsync()
-        {
-            TaskResult result;
-            queue.TryDequeue(out result);
-
-            //try until we get a result
-            while (result == null || !result.success)
-            {
-                var tcs = new TaskCompletionSource<TaskResult>();
-                //cancel the task if cancellation token was invoked
-                //will throw exception on await below if task was running when cancelled
-                taskCancellationToken.Register(() => tcs.TrySetCanceled());
-
-                dequeueTasks.Enqueue(tcs);
-                result = await tcs.Task;
-            }
-
-            return result.Data;
         }
 
         /// <summary>
-        /// To keep the dequeue result status
+        /// Assumes a single threaded consumer!
         /// </summary>
-        internal class TaskResult
+        /// <returns></returns>
+        internal async Task<T> DequeueAsync()
         {
-            internal bool success { get; set; }
-            internal T Data { get; set; }
+            T result;
+
+            queue.TryDequeue(out result);
+
+            var tcs = new TaskCompletionSource<T>();
+            taskCancellationToken.Register(() => tcs.TrySetCanceled());
+
+            dequeueTasks.Enqueue(tcs);
+            result = await tcs.Task;
+
+            return result;
         }
+
     }
 }

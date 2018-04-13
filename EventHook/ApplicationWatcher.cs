@@ -76,7 +76,7 @@ namespace EventHook
                     activeWindows = new Dictionary<IntPtr, WindowData>();
                     prevTimeApp = DateTime.Now;
 
-                    var taskCancellationTokenSource = new CancellationTokenSource();
+                    taskCancellationTokenSource = new CancellationTokenSource();
                     appQueue = new AsyncQueue<object>(taskCancellationTokenSource.Token);
 
                     //This needs to run on UI thread context
