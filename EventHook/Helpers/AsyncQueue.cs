@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 namespace EventHook.Helpers
 {
     /// <summary>
-    /// A concurrent queue facilitating async dequeue
-    /// Since our consumer is always single threaded no locking is needed
+    /// A concurrent queue facilitating async dequeue with minimal locking
+    /// Assumes single/multi-threaded producer and a single-threaded consumer
     /// </summary>
     /// <typeparam name="T"></typeparam>
     internal class AsyncQueue<T>
@@ -25,10 +25,10 @@ namespace EventHook.Helpers
         /// <summary>
         /// Keeps any pending Dequeue task to wake up once data arrives
         /// </summary>
-        TaskCompletionSource<T> dequeueTask;
+        TaskCompletionSource<bool> dequeueTask;
 
         /// <summary>
-        /// Assumes a single threaded producer!
+        /// Supports multi-threaded producers
         /// </summary>
         /// <param name="value"></param>
         internal void Enqueue(T value)
@@ -39,15 +39,12 @@ namespace EventHook.Helpers
             if (dequeueTask != null 
                 && !dequeueTask.Task.IsCompleted)
             {
-                T result;
-                queue.TryDequeue(out result);
-                dequeueTask.SetResult(result);
+                dequeueTask.SetResult(true);
             }
-
         }
 
         /// <summary>
-        /// Assumes a single threaded consumer!
+        /// Assumes a single-threaded consumer!
         /// </summary>
         /// <returns></returns>
         internal async Task<T> DequeueAsync()
@@ -60,11 +57,12 @@ namespace EventHook.Helpers
                 return result;
             }
 
-            dequeueTask = new TaskCompletionSource<T>();
+            dequeueTask = new TaskCompletionSource<bool>();
             taskCancellationToken.Register(() => dequeueTask.TrySetCanceled());
-            result = await dequeueTask.Task;
+            await dequeueTask.Task;
             dequeueTask = null;
 
+            queue.TryDequeue(out result);
             return result;
         }
 
