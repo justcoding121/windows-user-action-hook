@@ -57,7 +57,6 @@ namespace EventHook.Helpers
             dequeueTask = new TaskCompletionSource<bool>();
             taskCancellationToken.Register(() => dequeueTask.TrySetCanceled());
             await dequeueTask.Task;
-            dequeueTask = null;
 
             queue.TryDequeue(out result);
             return result;
