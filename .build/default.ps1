@@ -23,6 +23,8 @@ if(!$Configuration) { $Configuration = "Release" }
 if(!$Version) { $Version = $env:APPVEYOR_BUILD_VERSION }
 if(!$Version) { $Version = "1.0.$BuildNumber" }
 
+if($Branch -eq "beta" ) { $Version = "$Version-beta" }
+
 Import-Module "$Here\Common" -DisableNameChecking
 
 $NuGet = Join-Path $SolutionRoot ".nuget\nuget.exe"
