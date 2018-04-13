@@ -51,21 +51,23 @@ namespace EventHook.WinForms.Example
             };
 
 
-            printWatcher.Start();
-            printWatcher.OnPrintEvent += (s, e) =>
-            {
-                Debug.WriteLine(string.Format("Printer '{0}' currently printing {1} pages.", e.EventData.PrinterName, e.EventData.Pages));
-            };
+            //printWatcher.Start();
+            //printWatcher.OnPrintEvent += (s, e) =>
+            //{
+            //    Debug.WriteLine(string.Format("Printer '{0}' currently printing {1} pages.", e.EventData.PrinterName, e.EventData.Pages));
+            //};
+
+            keyboardWatcher.Stop();
+            mouseWatcher.Stop();
+            clipboardWatcher.Stop();
+            applicationWatcher.Stop();
+            //printWatcher.Stop();
 
         }
 
         private void OnApplicationExit(object sender, EventArgs e)
         {
-            keyboardWatcher.Stop();
-            mouseWatcher.Stop();
-            clipboardWatcher.Stop();
-            applicationWatcher.Stop();
-            printWatcher.Stop();
+           
         }
     }
 }

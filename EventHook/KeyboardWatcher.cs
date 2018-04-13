@@ -42,16 +42,16 @@ namespace EventHook
     {
 
         /*Keyboard*/
-        private  bool isRunning { get; set; }
-        private  KeyboardHook keyboardHook;
-        private  object accesslock = new object();
-        private  AsyncCollection<object> keyQueue;
-        public  event EventHandler<KeyInputEventArgs> OnKeyInput;
+        private bool isRunning { get; set; }
+        private KeyboardHook keyboardHook;
+        private object accesslock = new object();
+        private AsyncCollection<object> keyQueue;
+        public event EventHandler<KeyInputEventArgs> OnKeyInput;
 
         /// <summary>
         /// Start watching
         /// </summary>
-        public  void Start()
+        public void Start()
         {
             lock (accesslock)
             {
@@ -82,7 +82,7 @@ namespace EventHook
         /// <summary>
         /// Stop watching
         /// </summary>
-        public  void Stop()
+        public void Stop()
         {
             lock (accesslock)
             {
@@ -102,7 +102,7 @@ namespace EventHook
                         TaskCreationOptions.None,
                         SyncFactory.GetTaskScheduler());
                     }
-                   
+
                     keyQueue.Add(false);
                     isRunning = false;
                 }
@@ -114,7 +114,7 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private  void KListener(object sender, RawKeyEventArgs e)
+        private void KListener(object sender, RawKeyEventArgs e)
         {
             keyQueue.Add(new KeyData() { UnicodeCharacter = e.Character, Keyname = e.Key.ToString(), EventType = (KeyEvent)e.EventType });
         }
@@ -123,7 +123,7 @@ namespace EventHook
         /// Consume events from the producer queue asynchronously
         /// </summary>
         /// <returns></returns>
-        private  async Task ConsumeKeyAsync()
+        private async Task ConsumeKeyAsync()
         {
             while (isRunning)
             {
@@ -140,7 +140,7 @@ namespace EventHook
         /// Invoke user call backs
         /// </summary>
         /// <param name="kd"></param>
-        private  void KListener_KeyDown(KeyData kd)
+        private void KListener_KeyDown(KeyData kd)
         {
             OnKeyInput?.Invoke(null, new KeyInputEventArgs() { KeyData = kd });
 

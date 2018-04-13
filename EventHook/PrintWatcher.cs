@@ -4,6 +4,8 @@ using System.Printing;
 using EventHook.Hooks;
 using EventHook.Helpers;
 using EventHook.Hooks.Library;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace EventHook
 {
@@ -33,34 +35,41 @@ namespace EventHook
     public class PrintWatcher
     {
         /*Print history*/
-        private  bool isRunning;
-        private  object accesslock = new object();
+        private bool isRunning;
+        private object accesslock = new object();
 
-        private  ArrayList printers = null;
-        private  PrintServer printServer = null;
+        private ArrayList printers = null;
+        private PrintServer printServer = null;
 
-        public  event EventHandler<PrintEventArgs> OnPrintEvent;
+        public event EventHandler<PrintEventArgs> OnPrintEvent;
 
         /// <summary>
         /// Start watching print events
         /// </summary>
-        public  void Start()
+        public void Start()
         {
             lock (accesslock)
             {
                 if (!isRunning)
                 {
-                    printers = new ArrayList();
-                    printServer = new PrintServer();
-                    foreach (var pq in printServer.GetPrintQueues())
+                    Task.Factory.StartNew(() =>
                     {
+                        printers = new ArrayList();
+                        printServer = new PrintServer();
+                        foreach (var pq in printServer.GetPrintQueues())
+                        {
 
-                        var pqm = new PrintQueueHook(pq.Name);
-                        pqm.OnJobStatusChange += pqm_OnJobStatusChange;
-                        pqm.Start();
-                        printers.Add(pqm);
-                    }
-                    isRunning = true;
+                            var pqm = new PrintQueueHook(pq.Name);
+                            pqm.OnJobStatusChange += pqm_OnJobStatusChange;
+                            pqm.Start();
+                            printers.Add(pqm);
+                        }
+                        isRunning = true;
+                    },
+                    CancellationToken.None,
+                    TaskCreationOptions.None,
+                    SyncFactory.GetTaskScheduler());
+
                 }
             }
         }
@@ -68,33 +77,39 @@ namespace EventHook
         /// <summary>
         /// Stop watching print events
         /// </summary>
-        public  void Stop()
+        public void Stop()
         {
             lock (accesslock)
             {
                 if (isRunning)
                 {
-                    if (printers != null)
+                    Task.Factory.StartNew(() =>
                     {
-                        foreach (PrintQueueHook pqm in printers)
+                        if (printers != null)
                         {
-                            pqm.OnJobStatusChange -= pqm_OnJobStatusChange;
+                            foreach (PrintQueueHook pqm in printers)
+                            {
+                                pqm.OnJobStatusChange -= pqm_OnJobStatusChange;
 
-                            try
-                            {
-                                pqm.Stop();
+                                try
+                                {
+                                    pqm.Stop();
+                                }
+                                catch
+                                {
+                                    //ignored intentionally
+                                    //Not sure why but it throws error
+                                    //not a bug deal since we a stopping it anyway
+                                }
                             }
-                            catch
-                            {
-                                //ignored intentionally
-                                //Not sure why but it throws error
-                                //not a bug deal since we a stopping it anyway
-                            }
+                            printers.Clear();
                         }
-                        printers.Clear();
-                    }
-                    printers = null;
-                    isRunning = false;
+                        printers = null;
+                        isRunning = false;
+                    },
+                    CancellationToken.None,
+                    TaskCreationOptions.None,
+                    SyncFactory.GetTaskScheduler());
                 }
             }
         }
@@ -104,7 +119,7 @@ namespace EventHook
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private  void pqm_OnJobStatusChange(object sender, PrintJobChangeEventArgs e)
+        private void pqm_OnJobStatusChange(object sender, PrintJobChangeEventArgs e)
         {
 
             if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING && e.JobInfo != null)
