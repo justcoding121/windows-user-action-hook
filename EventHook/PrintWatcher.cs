@@ -35,14 +35,19 @@ namespace EventHook
     public class PrintWatcher
     {
         /*Print history*/
-        private bool isRunning;
+        private bool isRunning { get; set; }
         private object accesslock = new object();
 
         private ArrayList printers = null;
         private PrintServer printServer = null;
+        private SyncFactory factory;
 
         public event EventHandler<PrintEventArgs> OnPrintEvent;
 
+        internal PrintWatcher(SyncFactory factory)
+        {
+            this.factory = factory;
+        }
         /// <summary>
         /// Start watching print events
         /// </summary>
@@ -54,22 +59,22 @@ namespace EventHook
                 {
                     Task.Factory.StartNew(() =>
                     {
+
+                        isRunning = true;
                         printers = new ArrayList();
                         printServer = new PrintServer();
                         foreach (var pq in printServer.GetPrintQueues())
                         {
-
                             var pqm = new PrintQueueHook(pq.Name);
                             pqm.OnJobStatusChange += pqm_OnJobStatusChange;
                             pqm.Start();
                             printers.Add(pqm);
                         }
-                        isRunning = true;
+
                     },
                     CancellationToken.None,
                     TaskCreationOptions.None,
-                    SyncFactory.GetTaskScheduler());
-
+                    factory.GetTaskScheduler()).Wait();
                 }
             }
         }
@@ -109,7 +114,7 @@ namespace EventHook
                     },
                     CancellationToken.None,
                     TaskCreationOptions.None,
-                    SyncFactory.GetTaskScheduler());
+                    factory.GetTaskScheduler()).Wait();
                 }
             }
         }
@@ -122,7 +127,8 @@ namespace EventHook
         private void pqm_OnJobStatusChange(object sender, PrintJobChangeEventArgs e)
         {
 
-            if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING && e.JobInfo != null)
+            if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING 
+                && e.JobInfo != null)
             {
                 var hWnd = WindowHelper.GetActiveWindowHandle();
                 var appTitle = WindowHelper.GetWindowText(hWnd);
@@ -139,7 +145,7 @@ namespace EventHook
 
                 };
 
-                OnPrintEvent?.Invoke(null, new PrintEventArgs() { EventData = printEvent });
+                Task.Run(()=>OnPrintEvent?.Invoke(null, new PrintEventArgs() { EventData = printEvent }));
             }
         }
     }

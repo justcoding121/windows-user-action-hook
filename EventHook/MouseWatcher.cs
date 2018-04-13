@@ -28,8 +28,13 @@ namespace EventHook
 
         private  AsyncCollection<object> mouseQueue;
         private  MouseHook mouseHook;
+        private SyncFactory factory;
         public  event EventHandler<MouseEventArgs> OnMouseInput;
 
+        internal MouseWatcher(SyncFactory factory)
+        {
+            this.factory = factory;
+        }
         /// <summary>
         /// Start watching mouse events
         /// </summary>
@@ -50,7 +55,7 @@ namespace EventHook
                     },
                     CancellationToken.None,
                     TaskCreationOptions.None,
-                    SyncFactory.GetTaskScheduler());
+                    factory.GetTaskScheduler()).Wait();
 
                     Task.Factory.StartNew(() => ConsumeKeyAsync());
 
@@ -80,7 +85,7 @@ namespace EventHook
                         },
                     CancellationToken.None,
                     TaskCreationOptions.None,
-                    SyncFactory.GetTaskScheduler());
+                    factory.GetTaskScheduler()).Wait();
                     }
 
                     mouseQueue.Add(false);

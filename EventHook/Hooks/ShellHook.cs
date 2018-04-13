@@ -74,6 +74,7 @@ namespace EventHook.Hooks
 
                         break;
 
+                    case ShellEvents.HSHELL_RUDEAPPACTIVATED:
                     case ShellEvents.HSHELL_WINDOWACTIVATED:
                         if (WindowActivated != null)
                         {
@@ -82,6 +83,7 @@ namespace EventHook.Hooks
                         break;
                 }
             }
+            Console.WriteLine((ShellEvents)m.WParam);
             base.WndProc(ref m);
         }
 
