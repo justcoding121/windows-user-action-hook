@@ -23,10 +23,9 @@ namespace EventHook.Helpers
         ConcurrentQueue<T> queue = new ConcurrentQueue<T>();
 
         /// <summary>
-        /// Keeps a list of pending Dequeue tasks in FIFO order
+        /// Keeps any pending Dequeue task to wake up once data arrives
         /// </summary>
-        ConcurrentQueue<TaskCompletionSource<T>> dequeueTasks
-            = new ConcurrentQueue<TaskCompletionSource<T>>();
+        TaskCompletionSource<T> dequeueTask;
 
         /// <summary>
         /// Assumes a single threaded producer!
@@ -36,17 +35,14 @@ namespace EventHook.Helpers
         {
             queue.Enqueue(value);
 
-            //Set the earlist waiting Dequeue task 
-            TaskCompletionSource<T> task;
-
-            if (dequeueTasks.TryDequeue(out task))
+            //wake up the dequeue task with result
+            if (dequeueTask != null 
+                && !dequeueTask.Task.IsCompleted)
             {
-                //return the result
                 T result;
                 queue.TryDequeue(out result);
-                task.SetResult(result);
+                dequeueTask.SetResult(result);
             }
-
 
         }
 
@@ -57,14 +53,17 @@ namespace EventHook.Helpers
         internal async Task<T> DequeueAsync()
         {
             T result;
-
             queue.TryDequeue(out result);
 
-            var tcs = new TaskCompletionSource<T>();
-            taskCancellationToken.Register(() => tcs.TrySetCanceled());
+            if (result != null)
+            {
+                return result;
+            }
 
-            dequeueTasks.Enqueue(tcs);
-            result = await tcs.Task;
+            dequeueTask = new TaskCompletionSource<T>();
+            taskCancellationToken.Register(() => dequeueTask.TrySetCanceled());
+            result = await dequeueTask.Task;
+            dequeueTask = null;
 
             return result;
         }
