@@ -20,7 +20,9 @@ namespace EventHook.Hooks
         WM_MOUSEMOVE = 0x0200,
         WM_MOUSEWHEEL = 0x020A,
         WM_RBUTTONDOWN = 0x0204,
-        WM_RBUTTONUP = 0x0205
+        WM_RBUTTONUP = 0x0205,
+        WM_WHEELBUTTONDOWN = 0x207,
+        WM_WHEELBUTTONUP = 0x208,
     }
 
     [StructLayout(LayoutKind.Sequential)]
