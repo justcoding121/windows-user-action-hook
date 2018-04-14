@@ -1,12 +1,16 @@
-﻿using EventHook.Helpers;
-using System;
+﻿using System;
+using EventHook.Helpers;
 
 namespace EventHook
 {
-
     public class EventHookFactory : IDisposable
     {
-        private SyncFactory syncFactory = new SyncFactory();
+        private readonly SyncFactory syncFactory = new SyncFactory();
+
+        public void Dispose()
+        {
+            syncFactory.Dispose();
+        }
 
         public ApplicationWatcher GetApplicationWatcher()
         {
@@ -31,11 +35,6 @@ namespace EventHook
         public PrintWatcher GetPrintWatcher()
         {
             return new PrintWatcher(syncFactory);
-        }
-
-        public void Dispose()
-        {
-            syncFactory.Dispose();
         }
     }
 }

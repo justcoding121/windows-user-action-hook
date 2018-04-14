@@ -22,7 +22,7 @@ namespace EventHook.Hooks
         WM_RBUTTONDOWN = 0x0204,
         WM_RBUTTONUP = 0x0205,
         WM_WHEELBUTTONDOWN = 0x207,
-        WM_WHEELBUTTONUP = 0x208,
+        WM_WHEELBUTTONUP = 0x208
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -45,15 +45,17 @@ namespace EventHook.Hooks
     internal class MouseHook
     {
         private const int WH_MOUSE_LL = 14;
+        private static IntPtr _hookId = IntPtr.Zero;
 
         private readonly LowLevelMouseProc Proc;
-        private static IntPtr _hookId = IntPtr.Zero;
-        internal event EventHandler<RawMouseEventArgs> MouseAction = delegate { };
 
         internal MouseHook()
         {
             Proc = HookCallback;
         }
+
+        internal event EventHandler<RawMouseEventArgs> MouseAction = delegate { };
+
         internal void Start()
         {
             _hookId = SetHook(Proc);
@@ -67,20 +69,26 @@ namespace EventHook.Hooks
         private static IntPtr SetHook(LowLevelMouseProc proc)
         {
             var hook = SetWindowsHookEx(WH_MOUSE_LL, proc, GetModuleHandle("user32"), 0);
-            if (hook == IntPtr.Zero) throw new Win32Exception();
+            if (hook == IntPtr.Zero)
+            {
+                throw new Win32Exception();
+            }
+
             return hook;
         }
 
         private IntPtr HookCallback(
             int nCode, IntPtr wParam, IntPtr lParam)
         {
-
             MSLLHOOKSTRUCT hookStruct;
-            if (nCode < 0) return CallNextHookEx(_hookId, nCode, wParam, lParam);
+            if (nCode < 0)
+            {
+                return CallNextHookEx(_hookId, nCode, wParam, lParam);
+            }
 
             hookStruct = (MSLLHOOKSTRUCT)Marshal.PtrToStructure(lParam, typeof(MSLLHOOKSTRUCT));
 
-            MouseAction(null, new RawMouseEventArgs() { Message = (MouseMessages)wParam, Point = hookStruct.pt });
+            MouseAction(null, new RawMouseEventArgs { Message = (MouseMessages)wParam, Point = hookStruct.pt });
 
             return CallNextHookEx(_hookId, nCode, wParam, lParam);
         }
@@ -101,6 +109,5 @@ namespace EventHook.Hooks
         private static extern IntPtr GetModuleHandle(string lpModuleName);
 
         private delegate IntPtr LowLevelMouseProc(int nCode, IntPtr wParam, IntPtr lParam);
-
     }
 }

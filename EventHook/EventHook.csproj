@@ -65,7 +65,7 @@
     <Compile Include="ApplicationWatcher.cs" />
     <Compile Include="ClipboardWatcher.cs" />
     <Compile Include="EventHookFactory.cs" />
-    <Compile Include="Helpers\AsyncQueue.cs" />
+    <Compile Include="Helpers\AsyncConcurrentQueue.cs" />
     <Compile Include="Helpers\SyncFactory.cs" />
     <Compile Include="KeyboardWatcher.cs" />
     <Compile Include="MouseWatcher.cs" />

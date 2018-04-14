@@ -1,13 +1,13 @@
-﻿using EventHook.Hooks;
-using EventHook.Helpers;
-using System;
-using System.Threading.Tasks;
+﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
+using EventHook.Helpers;
+using EventHook.Hooks;
 
 namespace EventHook
 {
     /// <summary>
-    /// Event argument to pass data through user callbacks
+    ///     Event argument to pass data through user callbacks
     /// </summary>
     public class MouseEventArgs : EventArgs
     {
@@ -16,27 +16,30 @@ namespace EventHook
     }
 
     /// <summary>
-    /// Wraps low level mouse hook
-    /// Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks
+    ///     Wraps low level mouse hook
+    ///     Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed
+    ///     user callbacks
     /// </summary>
     public class MouseWatcher
     {
-        private object accesslock = new object();
-        private bool isRunning { get; set; }
+        private readonly object accesslock = new object();
 
-        private SyncFactory factory;
-        private AsyncQueue<object> mouseQueue;
-        private CancellationTokenSource taskCancellationTokenSource;
+        private readonly SyncFactory factory;
 
         private MouseHook mouseHook;
-        public event EventHandler<MouseEventArgs> OnMouseInput;
+        private AsyncConcurrentQueue<object> mouseQueue;
+        private CancellationTokenSource taskCancellationTokenSource;
 
         internal MouseWatcher(SyncFactory factory)
         {
             this.factory = factory;
         }
+
+        private bool isRunning { get; set; }
+        public event EventHandler<MouseEventArgs> OnMouseInput;
+
         /// <summary>
-        /// Start watching mouse events
+        ///     Start watching mouse events
         /// </summary>
         public void Start()
         {
@@ -45,18 +48,18 @@ namespace EventHook
                 if (!isRunning)
                 {
                     taskCancellationTokenSource = new CancellationTokenSource();
-                    mouseQueue = new AsyncQueue<object>(taskCancellationTokenSource.Token);
+                    mouseQueue = new AsyncConcurrentQueue<object>(taskCancellationTokenSource.Token);
                     //This needs to run on UI thread context
                     //So use task factory with the shared UI message pump thread
                     Task.Factory.StartNew(() =>
-                    {
-                        mouseHook = new MouseHook();
-                        mouseHook.MouseAction += MListener;
-                        mouseHook.Start();
-                    },
-                    CancellationToken.None,
-                    TaskCreationOptions.None,
-                    factory.GetTaskScheduler()).Wait();
+                        {
+                            mouseHook = new MouseHook();
+                            mouseHook.MouseAction += MListener;
+                            mouseHook.Start();
+                        },
+                        CancellationToken.None,
+                        TaskCreationOptions.None,
+                        factory.GetTaskScheduler()).Wait();
 
                     Task.Factory.StartNew(() => ConsumeKeyAsync());
 
@@ -66,7 +69,7 @@ namespace EventHook
         }
 
         /// <summary>
-        /// Stop watching mouse events
+        ///     Stop watching mouse events
         /// </summary>
         public void Stop()
         {
@@ -79,14 +82,14 @@ namespace EventHook
                         //This needs to run on UI thread context
                         //So use task factory with the shared UI message pump thread
                         Task.Factory.StartNew(() =>
-                        {
-                            mouseHook.MouseAction -= MListener;
-                            mouseHook.Stop();
-                            mouseHook = null;
-                        },
-                        CancellationToken.None,
-                        TaskCreationOptions.None,
-                        factory.GetTaskScheduler());
+                            {
+                                mouseHook.MouseAction -= MListener;
+                                mouseHook.Stop();
+                                mouseHook = null;
+                            },
+                            CancellationToken.None,
+                            TaskCreationOptions.None,
+                            factory.GetTaskScheduler());
                     }
 
                     mouseQueue.Enqueue(false);
@@ -97,7 +100,7 @@ namespace EventHook
         }
 
         /// <summary>
-        /// Add mouse event to our producer queue
+        ///     Add mouse event to our producer queue
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -107,30 +110,31 @@ namespace EventHook
         }
 
         /// <summary>
-        /// Consume mouse events in our producer queue asynchronously
+        ///     Consume mouse events in our producer queue asynchronously
         /// </summary>
         /// <returns></returns>
         private async Task ConsumeKeyAsync()
         {
             while (isRunning)
             {
-
                 //blocking here until a key is added to the queue
                 var item = await mouseQueue.DequeueAsync();
-                if (item is bool) break;
+                if (item is bool)
+                {
+                    break;
+                }
 
                 KListener_KeyDown(item as RawMouseEventArgs);
-
             }
         }
 
         /// <summary>
-        /// Invoke user callbacks with the argument
+        ///     Invoke user callbacks with the argument
         /// </summary>
         /// <param name="kd"></param>
         private void KListener_KeyDown(RawMouseEventArgs kd)
         {
-            OnMouseInput?.Invoke(null, new MouseEventArgs() { Message = kd.Message, Point = kd.Point });
+            OnMouseInput?.Invoke(null, new MouseEventArgs { Message = kd.Message, Point = kd.Point });
         }
     }
 }

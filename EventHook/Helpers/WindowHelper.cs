@@ -6,40 +6,45 @@ using EventHook.Hooks.Library;
 namespace EventHook.Helpers
 {
     /// <summary>
-    /// A helper class to get window names/handles etc
+    ///     A helper class to get window names/handles etc
     /// </summary>
     internal class WindowHelper
     {
         /// <summary>
-        /// Get the handle of current acitive window on screen if any
+        ///     Get the handle of current acitive window on screen if any
         /// </summary>
         /// <returns></returns>
         internal static IntPtr GetActiveWindowHandle()
         {
             try
             {
-                return (IntPtr) User32.GetForegroundWindow();
+                return (IntPtr)User32.GetForegroundWindow();
             }
             catch (Exception)
             {
                 // ignored
             }
+
             return IntPtr.Zero;
         }
 
         /// <summary>
-        /// The the application exe path of this window
+        ///     The the application exe path of this window
         /// </summary>
         /// <param name="hWnd">window handle</param>
         /// <returns></returns>
         internal static string GetAppPath(IntPtr hWnd)
         {
-            if (hWnd == IntPtr.Zero) return null;
+            if (hWnd == IntPtr.Zero)
+            {
+                return null;
+            }
+
             try
             {
                 uint pid;
                 User32.GetWindowThreadProcessId(hWnd, out pid);
-                var proc = Process.GetProcessById((int) pid);
+                var proc = Process.GetProcessById((int)pid);
                 return proc.MainModule.FileName;
             }
             catch
@@ -47,8 +52,9 @@ namespace EventHook.Helpers
                 return null;
             }
         }
+
         /// <summary>
-        /// Get the title text of this window
+        ///     Get the title text of this window
         /// </summary>
         /// <param name="hWnd">widow handle</param>
         /// <returns></returns>
@@ -56,7 +62,7 @@ namespace EventHook.Helpers
         {
             try
             {
-                var length = User32.GetWindowTextLength(hWnd);
+                int length = User32.GetWindowTextLength(hWnd);
                 var sb = new StringBuilder(length + 1);
                 User32.GetWindowText(hWnd, sb, sb.Capacity);
                 return sb.ToString();
@@ -68,13 +74,17 @@ namespace EventHook.Helpers
         }
 
         /// <summary>
-        /// Get the application description file attribute from path of an executable file
+        ///     Get the application description file attribute from path of an executable file
         /// </summary>
         /// <param name="appPath"></param>
         /// <returns></returns>
         internal static string GetAppDescription(string appPath)
         {
-            if (appPath == null) return null;
+            if (appPath == null)
+            {
+                return null;
+            }
+
             try
             {
                 return FileVersionInfo.GetVersionInfo(appPath).FileDescription;
