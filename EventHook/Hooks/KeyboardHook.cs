@@ -53,6 +53,7 @@ namespace EventHook.Hooks
 
         //http://stackoverflow.com/questions/6193711/call-has-been-made-on-garbage-collected-delegate-in-c
         private readonly InterceptKeys.LowLevelKeyboardProc _hookProcDelegateToAvoidGC;
+
         /// <summary>
         ///     Creates global keyboard listener.
         /// </summary>
@@ -128,19 +129,21 @@ namespace EventHook.Hooks
         private IntPtr LowLevelKeyboardProc(int nCode, UIntPtr wParam, IntPtr lParam)
         {
             if (nCode >= 0)
-                if (wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_KEYDOWN ||
-                    wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_KEYUP ||
-                    wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_SYSKEYDOWN ||
-                    wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_SYSKEYUP)
+            {
+                if (wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_KEYDOWN ||
+                    wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_KEYUP ||
+                    wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_SYSKEYDOWN ||
+                    wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_SYSKEYUP)
                 {
                     // Captures the character(s) pressed only on WM_KEYDOWN
-                    var chars = InterceptKeys.VkCodeToString((uint) Marshal.ReadInt32(lParam),
-                        (wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_KEYDOWN ||
-                         wParam.ToUInt32() == (int) InterceptKeys.KeyEvent.WM_SYSKEYDOWN));
+                    string chars = InterceptKeys.VkCodeToString((uint)Marshal.ReadInt32(lParam),
+                        wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_KEYDOWN ||
+                        wParam.ToUInt32() == (int)InterceptKeys.KeyEvent.WM_SYSKEYDOWN);
 
-                    _hookedKeyboardCallbackAsync.BeginInvoke((InterceptKeys.KeyEvent) wParam.ToUInt32(),
+                    _hookedKeyboardCallbackAsync.BeginInvoke((InterceptKeys.KeyEvent)wParam.ToUInt32(),
                         Marshal.ReadInt32(lParam), chars, null, null);
                 }
+            }
 
             return InterceptKeys.CallNextHookEx(_hookId, nCode, wParam, lParam);
         }
@@ -164,25 +167,37 @@ namespace EventHook.Hooks
                 // KeyDown events
                 case InterceptKeys.KeyEvent.WM_KEYDOWN:
                     if (KeyDown != null)
+                    {
                         _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyDown), this,
                             new RawKeyEventArgs(vkCode, false, character, 0));
+                    }
+
                     break;
                 case InterceptKeys.KeyEvent.WM_SYSKEYDOWN:
                     if (KeyDown != null)
+                    {
                         _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyDown), this,
                             new RawKeyEventArgs(vkCode, true, character, 0));
+                    }
+
                     break;
 
                 // KeyUp events
                 case InterceptKeys.KeyEvent.WM_KEYUP:
                     if (KeyUp != null)
+                    {
                         _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyUp), this,
                             new RawKeyEventArgs(vkCode, false, character, 1));
+                    }
+
                     break;
                 case InterceptKeys.KeyEvent.WM_SYSKEYUP:
                     if (KeyUp != null)
+                    {
                         _dispatcher.BeginInvoke(new RawKeyEventHandler(KeyUp), this,
                             new RawKeyEventArgs(vkCode, true, character, 1));
+                    }
+
                     break;
             }
         }
@@ -261,6 +276,31 @@ namespace EventHook.Hooks
     /// </summary>
     internal static class InterceptKeys
     {
+        internal static int WH_KEYBOARD_LL = 13;
+
+        internal static IntPtr SetHook(LowLevelKeyboardProc proc)
+        {
+            using (var curProcess = Process.GetCurrentProcess())
+            using (var curModule = curProcess.MainModule)
+            {
+                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
+            }
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod,
+            uint dwThreadId);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        internal static extern bool UnhookWindowsHookEx(IntPtr hhk);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, UIntPtr wParam, IntPtr lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern IntPtr GetModuleHandle(string lpModuleName);
+
         internal delegate IntPtr LowLevelKeyboardProc(int nCode, UIntPtr wParam, IntPtr lParam);
 
         /// <summary>
@@ -289,30 +329,6 @@ namespace EventHook.Hooks
             WM_SYSKEYDOWN = 260
         }
 
-        internal static int WH_KEYBOARD_LL = 13;
-
-        internal static IntPtr SetHook(LowLevelKeyboardProc proc)
-        {
-            using (var curProcess = Process.GetCurrentProcess())
-            using (var curModule = curProcess.MainModule)
-            {
-                return SetWindowsHookEx(WH_KEYBOARD_LL, proc, GetModuleHandle(curModule.ModuleName), 0);
-            }
-        }
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern IntPtr SetWindowsHookEx(int idHook, LowLevelKeyboardProc lpfn, IntPtr hMod, uint dwThreadId);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool UnhookWindowsHookEx(IntPtr hhk);
-
-        [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern IntPtr CallNextHookEx(IntPtr hhk, int nCode, UIntPtr wParam, IntPtr lParam);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        internal static extern IntPtr GetModuleHandle(string lpModuleName);
-
         #region Convert VKCode to string
 
         // Note: Sometimes single VKCode represents multiple chars, thus string. 
@@ -321,7 +337,8 @@ namespace EventHook.Hooks
 
         [DllImport("user32.dll")]
         private static extern int ToUnicodeEx(uint wVirtKey, uint wScanCode, byte[] lpKeyState,
-            [Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
+            [Out] [MarshalAs(UnmanagedType.LPWStr)]
+            StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
 
         [DllImport("user32.dll")]
         private static extern bool GetKeyboardState(byte[] lpKeyState);
@@ -363,15 +380,15 @@ namespace EventHook.Hooks
 
             var bKeyState = new byte[255];
             bool bKeyStateStatus;
-            var isDead = false;
+            bool isDead = false;
 
             // Gets the current windows window handle, threadID, processID
             var currentHWnd = GetForegroundWindow();
             uint currentProcessId;
-            var currentWindowThreadId = GetWindowThreadProcessId(currentHWnd, out currentProcessId);
+            uint currentWindowThreadId = GetWindowThreadProcessId(currentHWnd, out currentProcessId);
 
             // This programs Thread ID
-            var thisProgramThreadId = GetCurrentThreadId();
+            uint thisProgramThreadId = GetCurrentThreadId();
 
             // Attach to active thread so we can get that keyboard state
             if (AttachThreadInput(thisProgramThreadId, currentWindowThreadId, true))
@@ -390,22 +407,27 @@ namespace EventHook.Hooks
 
             // On failure we return empty string.
             if (!bKeyStateStatus)
+            {
                 return "";
+            }
 
             // Gets the layout of keyboard
             var hkl = GetKeyboardLayout(currentWindowThreadId);
 
             // Maps the virtual keycode
-            var lScanCode = MapVirtualKeyEx(vkCode, 0, hkl);
+            uint lScanCode = MapVirtualKeyEx(vkCode, 0, hkl);
 
             // Keyboard state goes inconsistent if this is not in place. In other words, we need to call above commands in UP events also.
             if (!isKeyDown)
+            {
                 return "";
+            }
 
             // Converts the VKCode to unicode
-            var relevantKeyCountInBuffer = ToUnicodeEx(vkCode, lScanCode, bKeyState, sbString, sbString.Capacity, 0, hkl);
+            int relevantKeyCountInBuffer =
+                ToUnicodeEx(vkCode, lScanCode, bKeyState, sbString, sbString.Capacity, 0, hkl);
 
-            var ret = string.Empty;
+            string ret = string.Empty;
 
             switch (relevantKeyCountInBuffer)
             {
@@ -449,7 +471,7 @@ namespace EventHook.Hooks
             _lastScanCode = lScanCode;
             _lastVkCode = vkCode;
             _lastIsDead = isDead;
-            _lastKeyState = (byte[]) bKeyState.Clone();
+            _lastKeyState = (byte[])bKeyState.Clone();
 
             return ret;
         }

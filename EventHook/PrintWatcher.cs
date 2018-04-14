@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Printing;
-using EventHook.Hooks;
-using EventHook.Helpers;
-using EventHook.Hooks.Library;
 using System.Threading;
 using System.Threading.Tasks;
+using EventHook.Helpers;
+using EventHook.Hooks;
+using EventHook.Hooks.Library;
 
 namespace EventHook
 {
     /// <summary>
-    /// An object holding key information on a particular print event
+    ///     An object holding key information on a particular print event
     /// </summary>
     public class PrintEventData
     {
@@ -22,7 +22,7 @@ namespace EventHook
     }
 
     /// <summary>
-    /// An argument passed along user call backs
+    ///     An argument passed along user call backs
     /// </summary>
     public class PrintEventArgs : EventArgs
     {
@@ -30,26 +30,27 @@ namespace EventHook
     }
 
     /// <summary>
-    /// A class that wraps around printServer object
+    ///     A class that wraps around printServer object
     /// </summary>
     public class PrintWatcher
     {
- 
-        private bool isRunning { get; set; }
-        private object accesslock = new object();
+        private readonly object accesslock = new object();
 
-        private SyncFactory factory;
+        private readonly SyncFactory factory;
 
-        private ArrayList printers = null;
-        private PrintServer printServer = null;
-        public event EventHandler<PrintEventArgs> OnPrintEvent;
+        private ArrayList printers;
+        private PrintServer printServer;
 
         internal PrintWatcher(SyncFactory factory)
         {
             this.factory = factory;
         }
+
+        private bool isRunning { get; set; }
+        public event EventHandler<PrintEventArgs> OnPrintEvent;
+
         /// <summary>
-        /// Start watching print events
+        ///     Start watching print events
         /// </summary>
         public void Start()
         {
@@ -58,29 +59,27 @@ namespace EventHook
                 if (!isRunning)
                 {
                     Task.Factory.StartNew(() =>
-                    {
-
-                        isRunning = true;
-                        printers = new ArrayList();
-                        printServer = new PrintServer();
-                        foreach (var pq in printServer.GetPrintQueues())
                         {
-                            var pqm = new PrintQueueHook(pq.Name);
-                            pqm.OnJobStatusChange += pqm_OnJobStatusChange;
-                            pqm.Start();
-                            printers.Add(pqm);
-                        }
-
-                    },
-                    CancellationToken.None,
-                    TaskCreationOptions.None,
-                    factory.GetTaskScheduler()).Wait();
+                            isRunning = true;
+                            printers = new ArrayList();
+                            printServer = new PrintServer();
+                            foreach (var pq in printServer.GetPrintQueues())
+                            {
+                                var pqm = new PrintQueueHook(pq.Name);
+                                pqm.OnJobStatusChange += pqm_OnJobStatusChange;
+                                pqm.Start();
+                                printers.Add(pqm);
+                            }
+                        },
+                        CancellationToken.None,
+                        TaskCreationOptions.None,
+                        factory.GetTaskScheduler()).Wait();
                 }
             }
         }
 
         /// <summary>
-        /// Stop watching print events
+        ///     Stop watching print events
         /// </summary>
         public void Stop()
         {
@@ -89,63 +88,62 @@ namespace EventHook
                 if (isRunning)
                 {
                     Task.Factory.StartNew(() =>
-                    {
-                        if (printers != null)
                         {
-                            foreach (PrintQueueHook pqm in printers)
+                            if (printers != null)
                             {
-                                pqm.OnJobStatusChange -= pqm_OnJobStatusChange;
+                                foreach (PrintQueueHook pqm in printers)
+                                {
+                                    pqm.OnJobStatusChange -= pqm_OnJobStatusChange;
 
-                                try
-                                {
-                                    pqm.Stop();
+                                    try
+                                    {
+                                        pqm.Stop();
+                                    }
+                                    catch
+                                    {
+                                        //ignored intentionally
+                                        //Not sure why but it throws error
+                                        //not a bug deal since we a stopping it anyway
+                                    }
                                 }
-                                catch
-                                {
-                                    //ignored intentionally
-                                    //Not sure why but it throws error
-                                    //not a bug deal since we a stopping it anyway
-                                }
+
+                                printers.Clear();
                             }
-                            printers.Clear();
-                        }
-                        printers = null;
-                        isRunning = false;
-                    },
-                    CancellationToken.None,
-                    TaskCreationOptions.None,
-                    factory.GetTaskScheduler());
+
+                            printers = null;
+                            isRunning = false;
+                        },
+                        CancellationToken.None,
+                        TaskCreationOptions.None,
+                        factory.GetTaskScheduler());
                 }
             }
         }
 
         /// <summary>
-        /// Invoke user callback as soon as a relevent event is fired
+        ///     Invoke user callback as soon as a relevent event is fired
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void pqm_OnJobStatusChange(object sender, PrintJobChangeEventArgs e)
         {
-
-            if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING 
+            if ((e.JobStatus & JOBSTATUS.JOB_STATUS_SPOOLING) == JOBSTATUS.JOB_STATUS_SPOOLING
                 && e.JobInfo != null)
             {
                 var hWnd = WindowHelper.GetActiveWindowHandle();
-                var appTitle = WindowHelper.GetWindowText(hWnd);
-                var appName = WindowHelper.GetAppDescription(WindowHelper.GetAppPath(hWnd));
+                string appTitle = WindowHelper.GetWindowText(hWnd);
+                string appName = WindowHelper.GetAppDescription(WindowHelper.GetAppPath(hWnd));
 
-                var printEvent = new PrintEventData()
+                var printEvent = new PrintEventData
                 {
-
                     JobName = e.JobInfo.JobName,
                     JobSize = e.JobInfo.JobSize,
                     EventDateTime = DateTime.Now,
                     Pages = e.JobInfo.NumberOfPages,
                     PrinterName = ((PrintQueueHook)sender).SpoolerName
-
                 };
 
-                Task.Run(()=>OnPrintEvent?.Invoke(null, new PrintEventArgs() { EventData = printEvent }));
+                Task.Run(() => OnPrintEvent?.Invoke(null, new PrintEventArgs { EventData = printEvent }));
             }
         }
     }

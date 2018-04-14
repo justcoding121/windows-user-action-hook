@@ -4,7 +4,6 @@ using System.Runtime.InteropServices;
 
 namespace EventHook.Hooks.Library
 {
-
     #region RECT struct
 
     [StructLayout(LayoutKind.Sequential)]
@@ -23,10 +22,7 @@ namespace EventHook.Hooks.Library
             this.bottom = bottom;
         }
 
-        internal Rectangle Rect
-        {
-            get { return new Rectangle(left, top, right - left, bottom - top); }
-        }
+        internal Rectangle Rect => new Rectangle(left, top, right - left, bottom - top);
 
         internal static RECT FromXywh(int x, int y, int width, int height)
         {

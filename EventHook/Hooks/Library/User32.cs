@@ -25,7 +25,7 @@ namespace EventHook.Hooks.Library
         internal static extern bool ChangeClipboardChain(
             IntPtr hWndRemove, // handle to window to remove
             IntPtr hWndNewNext // handle to next window
-            );
+        );
 
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern int SendMessage(IntPtr hwnd, int wMsg, IntPtr wParam, IntPtr lParam);

@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Forms;
 using EventHook.Hooks.Library;
-using System.Threading;
 
 /// <summary>
 /// https://github.com/MrksKwsnck/Wlipper
@@ -43,19 +43,19 @@ namespace EventHook.Hooks
             //
             Exception threadEx = null;
             var staThread = new Thread(
-             delegate()
-             {
-                 try
-                 {
-                     var iData = Clipboard.GetDataObject();
-                     ClipBoardChanged(iData, new EventArgs());
-                 }
+                delegate()
+                {
+                    try
+                    {
+                        var iData = Clipboard.GetDataObject();
+                        ClipBoardChanged(iData, new EventArgs());
+                    }
 
-                 catch (Exception ex)
-                 {
-                     threadEx = ex;
-                 }
-             });
+                    catch (Exception ex)
+                    {
+                        threadEx = ex;
+                    }
+                });
 
             staThread.SetApartmentState(ApartmentState.STA);
             staThread.Start();
@@ -119,6 +119,7 @@ namespace EventHook.Hooks
                     {
                         User32.SendMessage(_clipboardViewerNext, m.Msg, m.WParam, m.LParam);
                     }
+
                     break;
 
                 default:

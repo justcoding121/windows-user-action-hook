@@ -5,9 +5,8 @@ using EventHook.Hooks.Library;
 namespace EventHook.Hooks
 {
     /// <summary>
-    /// //https://github.com/lemkepf/ClipHub/blob/master/ClipHub/ClipHub/Code/Helpers/ShellHook.cs
+    ///     //https://github.com/lemkepf/ClipHub/blob/master/ClipHub/ClipHub/Code/Helpers/ShellHook.cs
     /// </summary>
-    /// 
     internal delegate void GeneralShellHookEventHandler(ShellHook sender, IntPtr hWnd);
 
     internal sealed class ShellHook : NativeWindow
@@ -56,7 +55,7 @@ namespace EventHook.Hooks
         {
             if (m.Msg == _wmShellHook)
             {
-                switch ((ShellEvents) m.WParam)
+                switch ((ShellEvents)m.WParam)
                 {
                     case ShellEvents.HSHELL_WINDOWCREATED:
                         if (IsAppWindow(m.LParam))
@@ -93,6 +92,7 @@ namespace EventHook.Hooks
             {
                 OnWindowCreated(hWnd);
             }
+
             return true;
         }
 
@@ -106,19 +106,26 @@ namespace EventHook.Hooks
 
         private static bool IsAppWindow(IntPtr hWnd)
         {
-            if ((GetWindowLong(hWnd, (int) GWLIndex.GWL_STYLE) & (int) WindowStyle.WS_SYSMENU) == 0) return false;
+            if ((GetWindowLong(hWnd, (int)GWLIndex.GWL_STYLE) & (int)WindowStyle.WS_SYSMENU) == 0)
+            {
+                return false;
+            }
 
             if (User32.IsWindowVisible(hWnd))
             {
-                if ((GetWindowLong(hWnd, (int) GWLIndex.GWL_EXSTYLE) & (int) WindowStyleEx.WS_EX_TOOLWINDOW) != 0)
+                if ((GetWindowLong(hWnd, (int)GWLIndex.GWL_EXSTYLE) & (int)WindowStyleEx.WS_EX_TOOLWINDOW) != 0)
+                {
                     return false;
-                var hwndOwner = User32.GetWindow(hWnd, (int) GetWindowContstants.GW_OWNER);
-                return ((GetWindowLong(hwndOwner, (int) GWLIndex.GWL_STYLE) &
-                         ((int) WindowStyle.WS_VISIBLE | (int) WindowStyle.WS_CLIPCHILDREN)) !=
-                        ((int) WindowStyle.WS_VISIBLE | (int) WindowStyle.WS_CLIPCHILDREN)) ||
-                       (GetWindowLong(hwndOwner, (int) GWLIndex.GWL_EXSTYLE) & (int) WindowStyleEx.WS_EX_TOOLWINDOW) !=
+                }
+
+                var hwndOwner = User32.GetWindow(hWnd, (int)GetWindowContstants.GW_OWNER);
+                return (GetWindowLong(hwndOwner, (int)GWLIndex.GWL_STYLE) &
+                        ((int)WindowStyle.WS_VISIBLE | (int)WindowStyle.WS_CLIPCHILDREN)) !=
+                       ((int)WindowStyle.WS_VISIBLE | (int)WindowStyle.WS_CLIPCHILDREN) ||
+                       (GetWindowLong(hwndOwner, (int)GWLIndex.GWL_EXSTYLE) & (int)WindowStyleEx.WS_EX_TOOLWINDOW) !=
                        0;
             }
+
             return false;
         }
 
@@ -128,6 +135,7 @@ namespace EventHook.Hooks
             {
                 return User32.GetWindowLong(hWnd, nIndex);
             }
+
             return User32.GetWindowLongPtr(hWnd, nIndex);
         }
 
