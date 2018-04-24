@@ -17,10 +17,10 @@ namespace EventHook.Helpers
         private readonly ConcurrentQueue<T> queue = new ConcurrentQueue<T>();
 
         /// <summary>
-        ///     Keeps any pending Dequeue task to wake up once data arrives
+        ///     Wake up any pending dequeue task
         /// </summary>
         private TaskCompletionSource<bool> dequeueTask;
-
+        private SemaphoreSlim @dequeueTaskLock = new SemaphoreSlim(1);
         private CancellationToken taskCancellationToken;
 
         internal AsyncConcurrentQueue(CancellationToken taskCancellationToken)
@@ -36,8 +36,11 @@ namespace EventHook.Helpers
         {
             queue.Enqueue(value);
 
-            //wake up the dequeue task with result
-            dequeueTask?.TrySetResult(true);
+            //signal 
+            dequeueTaskLock.Wait();
+            dequeueTask.TrySetResult(true);
+            dequeueTaskLock.Release();
+
         }
 
         /// <summary>
@@ -54,10 +57,13 @@ namespace EventHook.Helpers
                 return result;
             }
 
+            await dequeueTaskLock.WaitAsync();
             dequeueTask = new TaskCompletionSource<bool>();
+            dequeueTaskLock.Release();
+
             taskCancellationToken.Register(() => dequeueTask.TrySetCanceled());
             await dequeueTask.Task;
-
+            
             queue.TryDequeue(out result);
             return result;
         }
