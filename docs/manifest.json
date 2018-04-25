@@ -1,0 +1,329 @@
+{
+  "homepages": [],
+  "source_base_path": "C:/Work/Repositories/Windows-User-Action-Hook",
+  "xrefmap": "xrefmap.yml",
+  "files": [
+    {
+      "type": "Resource",
+      "output": {
+        "resource": {
+          "relative_path": "index.json"
+        }
+      },
+      "is_incremental": false
+    },
+    {
+      "type": "Conceptual",
+      "source_relative_path": "README.md",
+      "output": {
+        ".html": {
+          "relative_path": "README.html",
+          "hash": "YRUDU8p28lJluW2o1PZLsg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.ApplicationEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.ApplicationEventArgs.html",
+          "hash": "eGVLvp82IzeNXESqgq8I+Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.ApplicationEvents.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.ApplicationEvents.html",
+          "hash": "eduWxKyF1De54/CHLxQo1Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.ApplicationWatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.ApplicationWatcher.html",
+          "hash": "SYLWIXPnC0aHddFlRGLAIA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.ClipboardContentTypes.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.ClipboardContentTypes.html",
+          "hash": "pDUjDqPWlxxIWMxFeip9ig=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.ClipboardEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.ClipboardEventArgs.html",
+          "hash": "BoVUpbdpipaa94iVWIZIEA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.ClipboardWatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.ClipboardWatcher.html",
+          "hash": "LtkpNfpbbHCp9uZ7lHnvaQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.EventHookFactory.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.EventHookFactory.html",
+          "hash": "h10/e2ES4uQDrUEjbMPZ7g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.Hooks.MouseMessages.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.Hooks.MouseMessages.html",
+          "hash": "SXL0GTo0FlslmYdSsXsmpw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.Hooks.POINT.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.Hooks.POINT.html",
+          "hash": "h4Js/2qLKnLSSeEq5aiQ/Q=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.Hooks.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.Hooks.html",
+          "hash": "uPw6Yjsx0VUI6hM/+8oi5g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.KeyData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.KeyData.html",
+          "hash": "4jmDNVQlFOUvJzOY7G6wiw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.KeyEvent.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.KeyEvent.html",
+          "hash": "RHPTRykOlM+kfqAux/Lr7A=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.KeyInputEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.KeyInputEventArgs.html",
+          "hash": "xCoR64jYtrg7BhkHcRYkAQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.KeyboardWatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.KeyboardWatcher.html",
+          "hash": "ooWDRM3Ig3pAFDOfWOfrpQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.MouseEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.MouseEventArgs.html",
+          "hash": "u0CzFNHENnnbrCVNy3JIaA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.MouseWatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.MouseWatcher.html",
+          "hash": "Rk/O4+yponH4Df8GqFMA/g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.PrintEventArgs.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.PrintEventArgs.html",
+          "hash": "CujYrFC4CxLFfV6RCIH0XA=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.PrintEventData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.PrintEventData.html",
+          "hash": "ZPLvhKlKKAXwJDUV+Xvn/g=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.PrintWatcher.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.PrintWatcher.html",
+          "hash": "A1F7e91WobAOt0uZPRYHJg=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.WindowData.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.WindowData.html",
+          "hash": "7jF44FbddbRuh5/IOOH4jw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "ManagedReference",
+      "source_relative_path": "obj/api/EventHook.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/EventHook.html",
+          "hash": "1w6OOoA8q2ql9gRiOVL9WQ=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    },
+    {
+      "type": "Toc",
+      "source_relative_path": "obj/api/toc.yml",
+      "output": {
+        ".html": {
+          "relative_path": "api/toc.html",
+          "hash": "fpQX63rZfVSSOd2l4OLOUw=="
+        }
+      },
+      "is_incremental": false,
+      "version": ""
+    }
+  ],
+  "incremental_info": [
+    {
+      "status": {
+        "can_incremental": true,
+        "incrementalPhase": "build"
+      },
+      "processors": {
+        "TocDocumentProcessor": {
+          "can_incremental": false,
+          "details": "Processor TocDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
+          "incrementalPhase": "build"
+        },
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build"
+        },
+        "ConceptualDocumentProcessor": {
+          "can_incremental": true,
+          "incrementalPhase": "build"
+        }
+      }
+    },
+    {
+      "status": {
+        "can_incremental": false,
+        "details": "Cannot support incremental post processing, the reason is: should not trace intermediate info.",
+        "incrementalPhase": "postProcessing"
+      },
+      "processors": {}
+    }
+  ],
+  "version_info": {},
+  "groups": [
+    {
+      "xrefmap": "xrefmap.yml"
+    }
+  ]
+}
