@@ -6,7 +6,7 @@ A one stop library for global windows user actions such mouse, keyboard, clipboa
 
 Kindly report only issues/bugs here . For programming help or questions use [StackOverflow](http://stackoverflow.com/questions/tagged/windows-user-action-hook) with the tag EventHook or Windows-User-Action-Hook.
 
-* [API Documentation](http://justcoding121.github.io/Windows-User-Action-Hook/api/EventHook.html)
+* [API Documentation](https://justcoding121.github.io/Windows-User-Action-Hook/api/EventHook.html)
 
 ## Supported Events
 
