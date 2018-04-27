@@ -1,6 +1,6 @@
 {
   "homepages": [],
-  "source_base_path": "C:/Work/SourceTree/Windows-User-Action-Hook",
+  "source_base_path": "C:/projects/windows-user-action-hook/.build",
   "xrefmap": "xrefmap.yml",
   "files": [
     {
@@ -13,24 +13,12 @@
       "is_incremental": false
     },
     {
-      "type": "Conceptual",
-      "source_relative_path": "README.md",
-      "output": {
-        ".html": {
-          "relative_path": "README.html",
-          "hash": "Rff3xck5knY5+7Mfkk53ww=="
-        }
-      },
-      "is_incremental": false,
-      "version": ""
-    },
-    {
       "type": "ManagedReference",
       "source_relative_path": "obj/api/EventHook.ApplicationEventArgs.yml",
       "output": {
         ".html": {
           "relative_path": "api/EventHook.ApplicationEventArgs.html",
-          "hash": "5gKBXHO9Udd8Uia7dLKYAQ=="
+          "hash": "UJ732LDtW3ETwu1VNW/b2A=="
         }
       },
       "is_incremental": false,
@@ -42,7 +30,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.ApplicationEvents.html",
-          "hash": "qKZWXlAssLRX5vy8oDTGzw=="
+          "hash": "9px/w+Xi98JvhcOKcqq0ng=="
         }
       },
       "is_incremental": false,
@@ -54,7 +42,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.ApplicationWatcher.html",
-          "hash": "s+bVlTBHC4R2ZrJn4+a1jw=="
+          "hash": "WdTHZmmNia4jpJAmG9ElwQ=="
         }
       },
       "is_incremental": false,
@@ -66,7 +54,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.ClipboardContentTypes.html",
-          "hash": "XJ33Qgc++4K8ruDiDOXx3g=="
+          "hash": "VwewLZrE1rUxyUI9vEIpaw=="
         }
       },
       "is_incremental": false,
@@ -78,7 +66,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.ClipboardEventArgs.html",
-          "hash": "E/bu1KpsLErkir/t1z7ipw=="
+          "hash": "dvwLh8q7bAOtk2OSk3LTDA=="
         }
       },
       "is_incremental": false,
@@ -90,7 +78,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.ClipboardWatcher.html",
-          "hash": "hXUDVb2PRd0UlD0htRTH6A=="
+          "hash": "6/cMqETHiJ94kMe+RCzvlQ=="
         }
       },
       "is_incremental": false,
@@ -102,7 +90,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.EventHookFactory.html",
-          "hash": "oA0MgWTTpy7+xJJ5G9a2XQ=="
+          "hash": "NfsilHh222rgLmYAd94Gww=="
         }
       },
       "is_incremental": false,
@@ -114,7 +102,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.Hooks.MouseMessages.html",
-          "hash": "ILvW6X7ZcyomZdkEkFmEQg=="
+          "hash": "BUpE91jCYb5jjihSRnWG6g=="
         }
       },
       "is_incremental": false,
@@ -126,7 +114,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.Hooks.POINT.html",
-          "hash": "lXCnvMQ4kpbCP1Z8WRDAXw=="
+          "hash": "flEK3ZosTvD5446UJoqgXA=="
         }
       },
       "is_incremental": false,
@@ -138,7 +126,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.Hooks.html",
-          "hash": "jD3K2Hy2h+VUPkqpqFFDhQ=="
+          "hash": "EJ3HRGM3Ip6b97gAIMfj2g=="
         }
       },
       "is_incremental": false,
@@ -150,7 +138,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.KeyData.html",
-          "hash": "OYuNv0ofhZHTTx+9V/49FQ=="
+          "hash": "NcNgaAcbaTUeiQGtysicwQ=="
         }
       },
       "is_incremental": false,
@@ -162,7 +150,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.KeyEvent.html",
-          "hash": "eg56BLWXT0JwvzS+Gira8g=="
+          "hash": "mtzHL1U2FE/ITc8w6tFskg=="
         }
       },
       "is_incremental": false,
@@ -174,7 +162,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.KeyInputEventArgs.html",
-          "hash": "GRDRL8GqxGQDygV8G6LLYg=="
+          "hash": "gvdDw992431xga4DcTKSOA=="
         }
       },
       "is_incremental": false,
@@ -186,7 +174,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.KeyboardWatcher.html",
-          "hash": "s8rp090MgPiFoqbOem/UcQ=="
+          "hash": "qHXSLKt5zHoMieguchRZZQ=="
         }
       },
       "is_incremental": false,
@@ -198,7 +186,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.MouseEventArgs.html",
-          "hash": "SJ2pOWgsUVK+8tXzblX1ww=="
+          "hash": "lmQ3GJYX+tiF8O8wV6OfTA=="
         }
       },
       "is_incremental": false,
@@ -210,7 +198,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.MouseWatcher.html",
-          "hash": "QIClpQWV6ZwmYuv+qmsAmg=="
+          "hash": "HhDwgw1keZD3N9AcTgiJ8A=="
         }
       },
       "is_incremental": false,
@@ -222,7 +210,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.PrintEventArgs.html",
-          "hash": "viRahxhfZdzOCERW6VHPig=="
+          "hash": "81XQr93kti7JW+eEkTEN1A=="
         }
       },
       "is_incremental": false,
@@ -234,7 +222,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.PrintEventData.html",
-          "hash": "Ja2RpsYiawBJSCBLeh/VsA=="
+          "hash": "jMfChmeSYPWiwwnZZFHcrg=="
         }
       },
       "is_incremental": false,
@@ -246,7 +234,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.PrintWatcher.html",
-          "hash": "7hZoyjwJQMwOG2SyosRNvw=="
+          "hash": "kvvIoDxaKKKL6zhKwbHekQ=="
         }
       },
       "is_incremental": false,
@@ -258,7 +246,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.WindowData.html",
-          "hash": "reutbbRNcekpzmu7q+0SwA=="
+          "hash": "uNMPVgyyh1ggm/SzkA5oqA=="
         }
       },
       "is_incremental": false,
@@ -270,7 +258,7 @@
       "output": {
         ".html": {
           "relative_path": "api/EventHook.html",
-          "hash": "ghMWMe/p4aZn6lOibpDikg=="
+          "hash": "H16JxTKqut2jAUkOlmnH7A=="
         }
       },
       "is_incremental": false,
@@ -297,17 +285,13 @@
         "incrementalPhase": "build"
       },
       "processors": {
+        "ManagedReferenceDocumentProcessor": {
+          "can_incremental": false,
+          "incrementalPhase": "build"
+        },
         "TocDocumentProcessor": {
           "can_incremental": false,
           "details": "Processor TocDocumentProcessor cannot suppport incremental build because the processor doesn't implement ISupportIncrementalDocumentProcessor interface.",
-          "incrementalPhase": "build"
-        },
-        "ConceptualDocumentProcessor": {
-          "can_incremental": false,
-          "incrementalPhase": "build"
-        },
-        "ManagedReferenceDocumentProcessor": {
-          "can_incremental": false,
           "incrementalPhase": "build"
         }
       }

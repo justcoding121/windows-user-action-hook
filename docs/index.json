@@ -1,78 +1,68 @@
 {
-  "api/EventHook.PrintEventData.html": {
-    "href": "api/EventHook.PrintEventData.html",
-    "title": "Class PrintEventData | EventHook",
-    "keywords": "Class PrintEventData An object holding key information on a particular print event Inheritance Object PrintEventData Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class PrintEventData Properties EventDateTime Declaration public DateTime EventDateTime { get; set; } Property Value Type Description DateTime JobName Declaration public string JobName { get; set; } Property Value Type Description String JobSize Declaration public int? JobSize { get; set; } Property Value Type Description Nullable < Int32 > Pages Declaration public int? Pages { get; set; } Property Value Type Description Nullable < Int32 > PrinterName Declaration public string PrinterName { get; set; } Property Value Type Description String"
-  },
-  "api/EventHook.ApplicationWatcher.html": {
-    "href": "api/EventHook.ApplicationWatcher.html",
-    "title": "Class ApplicationWatcher | EventHook",
-    "keywords": "Class ApplicationWatcher A wrapper around shell hook to hook application window change events Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks Inheritance Object ApplicationWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class ApplicationWatcher Methods Start() Start to watch Declaration public void Start() Stop() Quit watching Declaration public void Stop() Events OnApplicationWindowChange Declaration public event EventHandler<ApplicationEventArgs> OnApplicationWindowChange Event Type Type Description EventHandler < ApplicationEventArgs >"
-  },
-  "api/EventHook.html": {
-    "href": "api/EventHook.html",
-    "title": "Namespace EventHook | EventHook",
-    "keywords": "Namespace EventHook Classes ApplicationEventArgs An event argument object send to user ApplicationWatcher A wrapper around shell hook to hook application window change events Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks ClipboardEventArgs An argument send to user ClipboardWatcher Wraps around clipboardHook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks EventHookFactory KeyboardWatcher Wraps low level keyboard hook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks KeyData Key data KeyInputEventArgs Key press data MouseEventArgs Event argument to pass data through user callbacks MouseWatcher Wraps low level mouse hook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks PrintEventArgs An argument passed along user call backs PrintEventData An object holding key information on a particular print event PrintWatcher A class that wraps around printServer object WindowData An object that holds information on application event Enums ApplicationEvents An enum for the type of application event ClipboardContentTypes Type of clipboard content KeyEvent Key press event type"
-  },
-  "api/EventHook.ClipboardWatcher.html": {
-    "href": "api/EventHook.ClipboardWatcher.html",
-    "title": "Class ClipboardWatcher | EventHook",
-    "keywords": "Class ClipboardWatcher Wraps around clipboardHook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks Inheritance Object ClipboardWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class ClipboardWatcher Fields isRunning Declaration public bool isRunning Field Value Type Description Boolean Methods Start() Start watching Declaration public void Start() Stop() Stop watching Declaration public void Stop() Events OnClipboardModified Declaration public event EventHandler<ClipboardEventArgs> OnClipboardModified Event Type Type Description EventHandler < ClipboardEventArgs >"
-  },
-  "api/EventHook.MouseWatcher.html": {
-    "href": "api/EventHook.MouseWatcher.html",
-    "title": "Class MouseWatcher | EventHook",
-    "keywords": "Class MouseWatcher Wraps low level mouse hook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks Inheritance Object MouseWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class MouseWatcher Methods Start() Start watching mouse events Declaration public void Start() Stop() Stop watching mouse events Declaration public void Stop() Events OnMouseInput Declaration public event EventHandler<MouseEventArgs> OnMouseInput Event Type Type Description EventHandler < MouseEventArgs >"
-  },
-  "api/EventHook.MouseEventArgs.html": {
-    "href": "api/EventHook.MouseEventArgs.html",
-    "title": "Class MouseEventArgs | EventHook",
-    "keywords": "Class MouseEventArgs Event argument to pass data through user callbacks Inheritance Object EventArgs MouseEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class MouseEventArgs : EventArgs Properties Message Declaration public MouseMessages Message { get; set; } Property Value Type Description MouseMessages Point Declaration public POINT Point { get; set; } Property Value Type Description POINT"
-  },
-  "api/EventHook.Hooks.html": {
-    "href": "api/EventHook.Hooks.html",
-    "title": "Namespace EventHook.Hooks | EventHook",
-    "keywords": "Namespace EventHook.Hooks Structs POINT Enums MouseMessages"
-  },
-  "api/EventHook.Hooks.POINT.html": {
-    "href": "api/EventHook.Hooks.POINT.html",
-    "title": "Struct POINT | EventHook",
-    "keywords": "Struct POINT Inherited Members ValueType.Equals(Object) ValueType.GetHashCode() ValueType.ToString() Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetType() Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public struct POINT Fields x Declaration public readonly int x Field Value Type Description Int32 y Declaration public readonly int y Field Value Type Description Int32"
-  },
-  "api/EventHook.ClipboardEventArgs.html": {
-    "href": "api/EventHook.ClipboardEventArgs.html",
-    "title": "Class ClipboardEventArgs | EventHook",
-    "keywords": "Class ClipboardEventArgs An argument send to user Inheritance Object EventArgs ClipboardEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class ClipboardEventArgs : EventArgs Properties Data Declaration public object Data { get; set; } Property Value Type Description Object DataFormat Declaration public ClipboardContentTypes DataFormat { get; set; } Property Value Type Description ClipboardContentTypes"
-  },
-  "api/EventHook.EventHookFactory.html": {
-    "href": "api/EventHook.EventHookFactory.html",
-    "title": "Class EventHookFactory | EventHook",
-    "keywords": "Class EventHookFactory Inheritance Object EventHookFactory Implements IDisposable Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class EventHookFactory : IDisposable Methods Dispose() Declaration public void Dispose() GetApplicationWatcher() Declaration public ApplicationWatcher GetApplicationWatcher() Returns Type Description ApplicationWatcher GetClipboardWatcher() Declaration public ClipboardWatcher GetClipboardWatcher() Returns Type Description ClipboardWatcher GetKeyboardWatcher() Declaration public KeyboardWatcher GetKeyboardWatcher() Returns Type Description KeyboardWatcher GetMouseWatcher() Declaration public MouseWatcher GetMouseWatcher() Returns Type Description MouseWatcher GetPrintWatcher() Declaration public PrintWatcher GetPrintWatcher() Returns Type Description PrintWatcher Implements System.IDisposable"
-  },
-  "api/EventHook.PrintWatcher.html": {
-    "href": "api/EventHook.PrintWatcher.html",
-    "title": "Class PrintWatcher | EventHook",
-    "keywords": "Class PrintWatcher A class that wraps around printServer object Inheritance Object PrintWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class PrintWatcher Methods Start() Start watching print events Declaration public void Start() Stop() Stop watching print events Declaration public void Stop() Events OnPrintEvent Declaration public event EventHandler<PrintEventArgs> OnPrintEvent Event Type Type Description EventHandler < PrintEventArgs >"
+  "api/EventHook.ApplicationEventArgs.html": {
+    "href": "api/EventHook.ApplicationEventArgs.html",
+    "title": "Class ApplicationEventArgs | EventHook",
+    "keywords": "Class ApplicationEventArgs An event argument object send to user Inheritance Object EventArgs ApplicationEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class ApplicationEventArgs : EventArgs Properties ApplicationData Declaration public WindowData ApplicationData { get; set; } Property Value Type Description WindowData Event Declaration public ApplicationEvents Event { get; set; } Property Value Type Description ApplicationEvents"
   },
   "api/EventHook.ApplicationEvents.html": {
     "href": "api/EventHook.ApplicationEvents.html",
     "title": "Enum ApplicationEvents | EventHook",
     "keywords": "Enum ApplicationEvents An enum for the type of application event Namespace : EventHook Assembly : EventHook.dll Syntax public enum ApplicationEvents Fields Name Description Activated Closed Launched"
   },
+  "api/EventHook.ApplicationWatcher.html": {
+    "href": "api/EventHook.ApplicationWatcher.html",
+    "title": "Class ApplicationWatcher | EventHook",
+    "keywords": "Class ApplicationWatcher A wrapper around shell hook to hook application window change events Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks Inheritance Object ApplicationWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class ApplicationWatcher Methods Start() Start to watch Declaration public void Start() Stop() Quit watching Declaration public void Stop() Events OnApplicationWindowChange Declaration public event EventHandler<ApplicationEventArgs> OnApplicationWindowChange Event Type Type Description EventHandler < ApplicationEventArgs >"
+  },
   "api/EventHook.ClipboardContentTypes.html": {
     "href": "api/EventHook.ClipboardContentTypes.html",
     "title": "Enum ClipboardContentTypes | EventHook",
     "keywords": "Enum ClipboardContentTypes Type of clipboard content Namespace : EventHook Assembly : EventHook.dll Syntax public enum ClipboardContentTypes Fields Name Description Csv Html PlainText RichText UnicodeText"
   },
+  "api/EventHook.ClipboardEventArgs.html": {
+    "href": "api/EventHook.ClipboardEventArgs.html",
+    "title": "Class ClipboardEventArgs | EventHook",
+    "keywords": "Class ClipboardEventArgs An argument send to user Inheritance Object EventArgs ClipboardEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class ClipboardEventArgs : EventArgs Properties Data Declaration public object Data { get; set; } Property Value Type Description Object DataFormat Declaration public ClipboardContentTypes DataFormat { get; set; } Property Value Type Description ClipboardContentTypes"
+  },
+  "api/EventHook.ClipboardWatcher.html": {
+    "href": "api/EventHook.ClipboardWatcher.html",
+    "title": "Class ClipboardWatcher | EventHook",
+    "keywords": "Class ClipboardWatcher Wraps around clipboardHook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks Inheritance Object ClipboardWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class ClipboardWatcher Fields isRunning Declaration public bool isRunning Field Value Type Description Boolean Methods Start() Start watching Declaration public void Start() Stop() Stop watching Declaration public void Stop() Events OnClipboardModified Declaration public event EventHandler<ClipboardEventArgs> OnClipboardModified Event Type Type Description EventHandler < ClipboardEventArgs >"
+  },
+  "api/EventHook.EventHookFactory.html": {
+    "href": "api/EventHook.EventHookFactory.html",
+    "title": "Class EventHookFactory | EventHook",
+    "keywords": "Class EventHookFactory Inheritance Object EventHookFactory Implements IDisposable Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class EventHookFactory : IDisposable Methods Dispose() Declaration public void Dispose() GetApplicationWatcher() Declaration public ApplicationWatcher GetApplicationWatcher() Returns Type Description ApplicationWatcher GetClipboardWatcher() Declaration public ClipboardWatcher GetClipboardWatcher() Returns Type Description ClipboardWatcher GetKeyboardWatcher() Declaration public KeyboardWatcher GetKeyboardWatcher() Returns Type Description KeyboardWatcher GetMouseWatcher() Declaration public MouseWatcher GetMouseWatcher() Returns Type Description MouseWatcher GetPrintWatcher() Declaration public PrintWatcher GetPrintWatcher() Returns Type Description PrintWatcher Implements System.IDisposable"
+  },
+  "api/EventHook.Hooks.html": {
+    "href": "api/EventHook.Hooks.html",
+    "title": "Namespace EventHook.Hooks | EventHook",
+    "keywords": "Namespace EventHook.Hooks Structs POINT Enums MouseMessages"
+  },
+  "api/EventHook.Hooks.MouseMessages.html": {
+    "href": "api/EventHook.Hooks.MouseMessages.html",
+    "title": "Enum MouseMessages | EventHook",
+    "keywords": "Enum MouseMessages Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public enum MouseMessages Fields Name Description WM_LBUTTONDOWN WM_LBUTTONUP WM_MOUSEMOVE WM_MOUSEWHEEL WM_RBUTTONDOWN WM_RBUTTONUP WM_WHEELBUTTONDOWN WM_WHEELBUTTONUP"
+  },
+  "api/EventHook.Hooks.POINT.html": {
+    "href": "api/EventHook.Hooks.POINT.html",
+    "title": "Struct POINT | EventHook",
+    "keywords": "Struct POINT Inherited Members ValueType.Equals(Object) ValueType.GetHashCode() ValueType.ToString() Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetType() Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public struct POINT Fields x Declaration public readonly int x Field Value Type Description Int32 y Declaration public readonly int y Field Value Type Description Int32"
+  },
+  "api/EventHook.html": {
+    "href": "api/EventHook.html",
+    "title": "Namespace EventHook | EventHook",
+    "keywords": "Namespace EventHook Classes ApplicationEventArgs An event argument object send to user ApplicationWatcher A wrapper around shell hook to hook application window change events Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks ClipboardEventArgs An argument send to user ClipboardWatcher Wraps around clipboardHook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks EventHookFactory KeyboardWatcher Wraps low level keyboard hook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks KeyData Key data KeyInputEventArgs Key press data MouseEventArgs Event argument to pass data through user callbacks MouseWatcher Wraps low level mouse hook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks PrintEventArgs An argument passed along user call backs PrintEventData An object holding key information on a particular print event PrintWatcher A class that wraps around printServer object WindowData An object that holds information on application event Enums ApplicationEvents An enum for the type of application event ClipboardContentTypes Type of clipboard content KeyEvent Key press event type"
+  },
+  "api/EventHook.KeyboardWatcher.html": {
+    "href": "api/EventHook.KeyboardWatcher.html",
+    "title": "Class KeyboardWatcher | EventHook",
+    "keywords": "Class KeyboardWatcher Wraps low level keyboard hook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks Inheritance Object KeyboardWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class KeyboardWatcher Methods Start() Start watching Declaration public void Start() Stop() Stop watching Declaration public void Stop() Events OnKeyInput Declaration public event EventHandler<KeyInputEventArgs> OnKeyInput Event Type Type Description EventHandler < KeyInputEventArgs >"
+  },
   "api/EventHook.KeyData.html": {
     "href": "api/EventHook.KeyData.html",
     "title": "Class KeyData | EventHook",
     "keywords": "Class KeyData Key data Inheritance Object KeyData Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class KeyData Fields EventType Declaration public KeyEvent EventType Field Value Type Description KeyEvent Keyname Declaration public string Keyname Field Value Type Description String UnicodeCharacter Declaration public string UnicodeCharacter Field Value Type Description String"
-  },
-  "api/EventHook.ApplicationEventArgs.html": {
-    "href": "api/EventHook.ApplicationEventArgs.html",
-    "title": "Class ApplicationEventArgs | EventHook",
-    "keywords": "Class ApplicationEventArgs An event argument object send to user Inheritance Object EventArgs ApplicationEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class ApplicationEventArgs : EventArgs Properties ApplicationData Declaration public WindowData ApplicationData { get; set; } Property Value Type Description WindowData Event Declaration public ApplicationEvents Event { get; set; } Property Value Type Description ApplicationEvents"
   },
   "api/EventHook.KeyEvent.html": {
     "href": "api/EventHook.KeyEvent.html",
@@ -84,29 +74,34 @@
     "title": "Class KeyInputEventArgs | EventHook",
     "keywords": "Class KeyInputEventArgs Key press data Inheritance Object EventArgs KeyInputEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class KeyInputEventArgs : EventArgs Properties KeyData Declaration public KeyData KeyData { get; set; } Property Value Type Description KeyData"
   },
-  "README.html": {
-    "href": "README.html",
-    "title": "Windows User Action Hook | EventHook",
-    "keywords": "Windows User Action Hook A one stop library for global windows user actions such mouse, keyboard, clipboard, & print events Kindly report only issues/bugs here . For programming help or questions use StackOverflow with the tag EventHook or Windows-User-Action-Hook. API Documentation Supported Events Keyboard events Mouse events clipboard events application events print events Usage Install by nuget Install-Package EventHook Sample Code: var eventHookFactory = new EventHookFactory(); var keyboardWatcher = eventHookFactory.GetKeyboardWatcher(); keyboardWatcher.Start(); keyboardWatcher.OnKeyInput += (s, e) => { Console.WriteLine(string.Format(\"Key {0} event of key {1}\", e.KeyData.EventType, e.KeyData.Keyname)); }; var mouseWatcher = eventHookFactory.GetMouseWatcher(); mouseWatcher.Start(); mouseWatcher.OnMouseInput += (s, e) => { Console.WriteLine(string.Format(\"Mouse event {0} at point {1},{2}\", e.Message.ToString(), e.Point.x, e.Point.y)); }; var clipboardWatcher = eventHookFactory.GetClipboardWatcher(); clipboardWatcher.Start(); clipboardWatcher.OnClipboardModified += (s, e) => { Console.WriteLine(string.Format(\"Clipboard updated with data '{0}' of format {1}\", e.Data, e.DataFormat.ToString())); }; var applicationWatcher = eventHookFactory.GetApplicationWatcher(); applicationWatcher.Start(); applicationWatcher.OnApplicationWindowChange += (s, e) => { Console.WriteLine(string.Format(\"Application window of '{0}' with the title '{1}' was {2}\", e.ApplicationData.AppName, e.ApplicationData.AppTitle, e.Event)); }; var printWatcher = eventHookFactory.GetPrintWatcher(); printWatcher.Start(); printWatcher.OnPrintEvent += (s, e) => { Console.WriteLine(string.Format(\"Printer '{0}' currently printing {1} pages.\", e.EventData.PrinterName, e.EventData.Pages)); }; //waiting here to keep this thread running Console.Read(); //stop watching keyboardWatcher.Stop(); mouseWatcher.Stop(); clipboardWatcher.Stop(); applicationWatcher.Stop(); printWatcher.Stop(); //dispose eventHookFactory.Dispose();"
+  "api/EventHook.MouseEventArgs.html": {
+    "href": "api/EventHook.MouseEventArgs.html",
+    "title": "Class MouseEventArgs | EventHook",
+    "keywords": "Class MouseEventArgs Event argument to pass data through user callbacks Inheritance Object EventArgs MouseEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class MouseEventArgs : EventArgs Properties Message Declaration public MouseMessages Message { get; set; } Property Value Type Description MouseMessages Point Declaration public POINT Point { get; set; } Property Value Type Description POINT"
   },
-  "api/EventHook.WindowData.html": {
-    "href": "api/EventHook.WindowData.html",
-    "title": "Class WindowData | EventHook",
-    "keywords": "Class WindowData An object that holds information on application event Inheritance Object WindowData Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class WindowData Fields EventType Declaration public int EventType Field Value Type Description Int32 HWnd Declaration public IntPtr HWnd Field Value Type Description IntPtr Properties AppName Declaration public string AppName { get; set; } Property Value Type Description String AppPath Declaration public string AppPath { get; set; } Property Value Type Description String AppTitle Declaration public string AppTitle { get; set; } Property Value Type Description String"
-  },
-  "api/EventHook.KeyboardWatcher.html": {
-    "href": "api/EventHook.KeyboardWatcher.html",
-    "title": "Class KeyboardWatcher | EventHook",
-    "keywords": "Class KeyboardWatcher Wraps low level keyboard hook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks Inheritance Object KeyboardWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class KeyboardWatcher Methods Start() Start watching Declaration public void Start() Stop() Stop watching Declaration public void Stop() Events OnKeyInput Declaration public event EventHandler<KeyInputEventArgs> OnKeyInput Event Type Type Description EventHandler < KeyInputEventArgs >"
-  },
-  "api/EventHook.Hooks.MouseMessages.html": {
-    "href": "api/EventHook.Hooks.MouseMessages.html",
-    "title": "Enum MouseMessages | EventHook",
-    "keywords": "Enum MouseMessages Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public enum MouseMessages Fields Name Description WM_LBUTTONDOWN WM_LBUTTONUP WM_MOUSEMOVE WM_MOUSEWHEEL WM_RBUTTONDOWN WM_RBUTTONUP WM_WHEELBUTTONDOWN WM_WHEELBUTTONUP"
+  "api/EventHook.MouseWatcher.html": {
+    "href": "api/EventHook.MouseWatcher.html",
+    "title": "Class MouseWatcher | EventHook",
+    "keywords": "Class MouseWatcher Wraps low level mouse hook Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed user callbacks Inheritance Object MouseWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class MouseWatcher Methods Start() Start watching mouse events Declaration public void Start() Stop() Stop watching mouse events Declaration public void Stop() Events OnMouseInput Declaration public event EventHandler<MouseEventArgs> OnMouseInput Event Type Type Description EventHandler < MouseEventArgs >"
   },
   "api/EventHook.PrintEventArgs.html": {
     "href": "api/EventHook.PrintEventArgs.html",
     "title": "Class PrintEventArgs | EventHook",
     "keywords": "Class PrintEventArgs An argument passed along user call backs Inheritance Object EventArgs PrintEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class PrintEventArgs : EventArgs Properties EventData Declaration public PrintEventData EventData { get; set; } Property Value Type Description PrintEventData"
+  },
+  "api/EventHook.PrintEventData.html": {
+    "href": "api/EventHook.PrintEventData.html",
+    "title": "Class PrintEventData | EventHook",
+    "keywords": "Class PrintEventData An object holding key information on a particular print event Inheritance Object PrintEventData Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class PrintEventData Properties EventDateTime Declaration public DateTime EventDateTime { get; set; } Property Value Type Description DateTime JobName Declaration public string JobName { get; set; } Property Value Type Description String JobSize Declaration public int? JobSize { get; set; } Property Value Type Description Nullable < Int32 > Pages Declaration public int? Pages { get; set; } Property Value Type Description Nullable < Int32 > PrinterName Declaration public string PrinterName { get; set; } Property Value Type Description String"
+  },
+  "api/EventHook.PrintWatcher.html": {
+    "href": "api/EventHook.PrintWatcher.html",
+    "title": "Class PrintWatcher | EventHook",
+    "keywords": "Class PrintWatcher A class that wraps around printServer object Inheritance Object PrintWatcher Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class PrintWatcher Methods Start() Start watching print events Declaration public void Start() Stop() Stop watching print events Declaration public void Stop() Events OnPrintEvent Declaration public event EventHandler<PrintEventArgs> OnPrintEvent Event Type Type Description EventHandler < PrintEventArgs >"
+  },
+  "api/EventHook.WindowData.html": {
+    "href": "api/EventHook.WindowData.html",
+    "title": "Class WindowData | EventHook",
+    "keywords": "Class WindowData An object that holds information on application event Inheritance Object WindowData Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class WindowData Fields EventType Declaration public int EventType Field Value Type Description Int32 HWnd Declaration public IntPtr HWnd Field Value Type Description IntPtr Properties AppName Declaration public string AppName { get; set; } Property Value Type Description String AppPath Declaration public string AppPath { get; set; } Property Value Type Description String AppTitle Declaration public string AppTitle { get; set; } Property Value Type Description String"
   }
 }
