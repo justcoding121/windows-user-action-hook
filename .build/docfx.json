@@ -3,8 +3,8 @@
     {
       "src": [
         {
-		 "files": [ "EventHook.Docs.sln"],
-          "src": ""
+	 "files": [ "EventHook.Docs.sln"],
+         "src": "../"
         }
       ],
       "dest": "obj/api"
@@ -31,7 +31,7 @@
       "_appTitle": "EventHook",
       "_enableSearch": true
     },
-    "dest": "docs",
+    "dest": "../docs",
     "xrefService": [ "https://xref.docs.microsoft.com/query?uid={uid}" ]
   }
 }
