@@ -104,7 +104,11 @@ Uses a producer-consumer pattern to improve performance and to avoid operating s
 user callbacks</p>
 </section>
       <h4><a class="xref" href="EventHook.EventHookFactory.html">EventHookFactory</a></h4>
-      <section></section>
+      <section><p>A factory class core to the management of various watchers 
+that all shares the same synchronization objects.
+Use this class to get instances of differant watchers.
+This factory instance should be disposed only after all watchers it have been unsubscribed.</p>
+</section>
       <h4><a class="xref" href="EventHook.KeyboardWatcher.html">KeyboardWatcher</a></h4>
       <section><p>Wraps low level keyboard hook
 Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed
