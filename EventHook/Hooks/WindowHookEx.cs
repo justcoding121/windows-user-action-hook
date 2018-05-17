@@ -68,7 +68,7 @@
         void EventRemove(ref EventHandler<WindowEventArgs> handler, EventHandler<WindowEventArgs> user,
             WindowEvent @event) {
             lock (this.hooks) {
-                if (handler - user == null) {
+                if (handler != null && handler - user == null) {
                     if (!UnhookWinEvent(this.hooks[@event]))
                         throw new Win32Exception();
                     bool existed = this.hooks.Remove(@event);
