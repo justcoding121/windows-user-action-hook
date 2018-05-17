@@ -110,7 +110,7 @@
 
         void ReleaseUnmanagedResources(bool disposing) {
             lock (this.hooks) {
-                Debug.Assert(this.hooks.Count == 0 || disposing, "Somebody forgot to dispose the hook. "
+                Debug.Assert(!Environment.HasShutdownStarted && (this.hooks.Count == 0 || disposing), "Somebody forgot to dispose the hook. "
                     + "That will cause heap corruption, because the hook handler "
                     + "will be disposed before hooking is disabled by the code below.");
                 foreach (IntPtr hook in this.hooks.Values) {
