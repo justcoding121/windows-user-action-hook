@@ -5,12 +5,10 @@
     using System.ComponentModel;
     using System.Diagnostics;
     using System.Runtime.InteropServices;
-    using System.Threading;
 
     /// <summary>
-    /// Track global window focus.
+    /// Track events across all windows
     /// </summary>
-    /// <remarks>https://msdn.microsoft.com/en-us/library/windows/desktop/ms644977%28v=vs.85%29.aspx?f=255&amp;MSPPError=-2147217396</remarks>
     public sealed class WindowHookEx: IDisposable
     {
         readonly WinEventProc proc;
@@ -23,7 +21,7 @@
             this.proc = this.Hook;
         }
 
-        volatile EventHandler<WindowEventArgs> activated;
+        EventHandler<WindowEventArgs> activated;
         /// <summary>
         /// Occurs when a window is about to be activated
         /// </summary>
@@ -32,19 +30,25 @@
             remove => this.EventRemove(ref this.activated, value, WindowEvent.ForegroundChanged);
         }
 
-        volatile EventHandler<WindowEventArgs> minimized;
+        EventHandler<WindowEventArgs> minimized;
+        /// <summary>
+        /// Occurs when a window is about to be minimized
+        /// </summary>
         public event EventHandler<WindowEventArgs> Minimized {
             add => this.EventAdd(ref this.minimized, value, WindowEvent.Minimized);
             remove => this.EventRemove(ref this.minimized, value, WindowEvent.Minimized);
         }
 
-        volatile EventHandler<WindowEventArgs> unminimized;
+        EventHandler<WindowEventArgs> unminimized;
+        /// <summary>
+        /// Occurs when a window is about to be restored from minimized state
+        /// </summary>
         public event EventHandler<WindowEventArgs> Unminimized {
             add => this.EventAdd(ref this.unminimized, value, WindowEvent.Unmiminized);
             remove => this.EventRemove(ref this.unminimized, value, WindowEvent.Unmiminized);
         }
 
-        volatile EventHandler<WindowEventArgs> textChanged;
+        EventHandler<WindowEventArgs> textChanged;
         /// <summary>
         /// Occurs when window's text is changed
         /// </summary>
@@ -108,6 +112,7 @@
             return hookID;
         }
 
+        // ReSharper disable once ParameterOnlyUsedForPreconditionCheck.Local
         void ReleaseUnmanagedResources(bool disposing) {
             lock (this.hooks) {
                 Debug.Assert(!Environment.HasShutdownStarted && (this.hooks.Count == 0 || disposing), "Somebody forgot to dispose the hook. "
@@ -140,6 +145,7 @@
             this.ReleaseUnmanagedResources(disposing: false);
         }
 
+        #region Native API
         [DllImport("user32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         static extern IntPtr SetWinEventHook(WindowEvent hookMin, WindowEvent hookMax,
             IntPtr moduleHandle,
@@ -148,7 +154,6 @@
         [Flags]
         enum HookFlags: int
         {
-            None = 0,
             OutOfContext = 0,
         }
 
@@ -168,6 +173,7 @@
             IntPtr hwnd,
             int @object, int child,
             int threadID, int timestampMs);
+        #endregion
     }
 
     public class WindowEventArgs
