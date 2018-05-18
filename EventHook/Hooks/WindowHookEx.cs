@@ -138,6 +138,7 @@
         /// <inheritdoc />
         public void Dispose() {
             this.ReleaseUnmanagedResources(disposing: true);
+            this.activated = this.minimized = this.unminimized = this.textChanged = null;
             GC.SuppressFinalize(this);
         }
 
