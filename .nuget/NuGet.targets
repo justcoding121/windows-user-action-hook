@@ -25,12 +25,12 @@
         -->
     </ItemGroup>
 
-    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT'">
+    <PropertyGroup Condition=" '$(OS)' == 'Windows_NT' AND '$(NuGetToolsPath)' == '' ">
         <!-- Windows specific commands -->
         <NuGetToolsPath>$([System.IO.Path]::Combine($(SolutionDir), ".nuget"))</NuGetToolsPath>
     </PropertyGroup>
 
-    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT'">
+    <PropertyGroup Condition=" '$(OS)' != 'Windows_NT' AND '$(NuGetToolsPath)' == '' ">
         <!-- We need to launch nuget.exe with the mono command if we're not on windows -->
         <NuGetToolsPath>$(SolutionDir).nuget</NuGetToolsPath>
     </PropertyGroup>
@@ -61,8 +61,10 @@
         <PaddedSolutionDir Condition=" '$(OS)' == 'Windows_NT'">"$(SolutionDir) "</PaddedSolutionDir>
         <PaddedSolutionDir Condition=" '$(OS)' != 'Windows_NT' ">"$(SolutionDir)"</PaddedSolutionDir>
 
+        <PackageInstallDir Condition=" '$(PackageInstallDir)' == '' ">$(PaddedSolutionDir)</PackageInstallDir>
+
         <!-- Commands -->
-        <RestoreCommand>$(NuGetCommand) install "$(PackagesConfig)" -source "$(PackageSources)"  $(NonInteractiveSwitch) $(RequireConsentSwitch) -solutionDir $(PaddedSolutionDir)</RestoreCommand>
+        <RestoreCommand>$(NuGetCommand) install "$(PackagesConfig)" -source "$(PackageSources)"  $(NonInteractiveSwitch) $(RequireConsentSwitch) -solutionDir $(PackageInstallDir)</RestoreCommand>
         <BuildCommand>$(NuGetCommand) pack "$(ProjectPath)" -Properties "Configuration=$(Configuration);Platform=$(Platform)" $(NonInteractiveSwitch) -OutputDirectory "$(PackageOutputDir)" -symbols</BuildCommand>
 
         <!-- We need to ensure packages are restored prior to assembly resolve -->
