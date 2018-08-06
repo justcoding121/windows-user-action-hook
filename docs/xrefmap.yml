@@ -357,24 +357,24 @@ references:
   commentId: F:EventHook.Hooks.MouseMessages.WM_WHEELBUTTONUP
   fullName: EventHook.Hooks.MouseMessages.WM_WHEELBUTTONUP
   nameWithType: MouseMessages.WM_WHEELBUTTONUP
-- uid: EventHook.Hooks.POINT
-  name: POINT
-  href: api/EventHook.Hooks.POINT.html
-  commentId: T:EventHook.Hooks.POINT
-  fullName: EventHook.Hooks.POINT
-  nameWithType: POINT
-- uid: EventHook.Hooks.POINT.x
+- uid: EventHook.Hooks.Point
+  name: Point
+  href: api/EventHook.Hooks.Point.html
+  commentId: T:EventHook.Hooks.Point
+  fullName: EventHook.Hooks.Point
+  nameWithType: Point
+- uid: EventHook.Hooks.Point.x
   name: x
-  href: api/EventHook.Hooks.POINT.html#EventHook_Hooks_POINT_x
-  commentId: F:EventHook.Hooks.POINT.x
-  fullName: EventHook.Hooks.POINT.x
-  nameWithType: POINT.x
-- uid: EventHook.Hooks.POINT.y
+  href: api/EventHook.Hooks.Point.html#EventHook_Hooks_Point_x
+  commentId: F:EventHook.Hooks.Point.x
+  fullName: EventHook.Hooks.Point.x
+  nameWithType: Point.x
+- uid: EventHook.Hooks.Point.y
   name: y
-  href: api/EventHook.Hooks.POINT.html#EventHook_Hooks_POINT_y
-  commentId: F:EventHook.Hooks.POINT.y
-  fullName: EventHook.Hooks.POINT.y
-  nameWithType: POINT.y
+  href: api/EventHook.Hooks.Point.html#EventHook_Hooks_Point_y
+  commentId: F:EventHook.Hooks.Point.y
+  fullName: EventHook.Hooks.Point.y
+  nameWithType: Point.y
 - uid: EventHook.KeyboardWatcher
   name: KeyboardWatcher
   href: api/EventHook.KeyboardWatcher.html
