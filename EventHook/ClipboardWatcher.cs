@@ -8,7 +8,7 @@ using EventHook.Hooks;
 namespace EventHook
 {
     /// <summary>
-    ///     Type of clipboard content
+    ///     Type of clipboard content.
     /// </summary>
     public enum ClipboardContentTypes
     {
@@ -20,7 +20,7 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     An argument send to user
+    ///     An argument send to user.
     /// </summary>
     public class ClipboardEventArgs : EventArgs
     {
@@ -29,9 +29,9 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     Wraps around clipboardHook
+    ///     Wraps around clipboardHook.
     ///     Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed
-    ///     user callbacks
+    ///     user callbacks.
     /// </summary>
     public class ClipboardWatcher
     {

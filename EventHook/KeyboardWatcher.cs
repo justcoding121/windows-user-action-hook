@@ -7,7 +7,7 @@ using EventHook.Hooks;
 namespace EventHook
 {
     /// <summary>
-    ///     Key press data
+    ///     Key press data.
     /// </summary>
     public class KeyInputEventArgs : EventArgs
     {
@@ -15,7 +15,7 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     Key data
+    ///     Key data.
     /// </summary>
     public class KeyData
     {
@@ -25,7 +25,7 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     Key press event type
+    ///     Key press event type.
     /// </summary>
     public enum KeyEvent
     {
@@ -34,9 +34,9 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     Wraps low level keyboard hook
+    ///     Wraps low level keyboard hook.
     ///     Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed
-    ///     user callbacks
+    ///     user callbacks.
     /// </summary>
     public class KeyboardWatcher
     {

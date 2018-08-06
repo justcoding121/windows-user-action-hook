@@ -10,7 +10,7 @@ using EventHook.Hooks.Library;
 namespace EventHook
 {
     /// <summary>
-    ///     An object holding key information on a particular print event
+    ///     An object holding key information on a particular print event.
     /// </summary>
     public class PrintEventData
     {
@@ -22,7 +22,7 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     An argument passed along user call backs
+    ///     An argument passed along user call backs.
     /// </summary>
     public class PrintEventArgs : EventArgs
     {
@@ -30,7 +30,7 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     A class that wraps around printServer object
+    ///     A class that wraps around printServer object.
     /// </summary>
     public class PrintWatcher
     {

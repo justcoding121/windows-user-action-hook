@@ -10,9 +10,12 @@ namespace EventHook.Hooks
     internal class RawMouseEventArgs : EventArgs
     {
         internal MouseMessages Message { get; set; }
-        internal POINT Point { get; set; }
+        internal Point Point { get; set; }
     }
 
+    /// <summary>
+    /// The mouse messages.
+    /// </summary>
     public enum MouseMessages
     {
         WM_LBUTTONDOWN = 0x0201,
@@ -25,8 +28,11 @@ namespace EventHook.Hooks
         WM_WHEELBUTTONUP = 0x208
     }
 
+    /// <summary>
+    /// The point co-ordinate.
+    /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct POINT
+    public struct Point
     {
         public readonly int x;
         public readonly int y;
@@ -35,7 +41,7 @@ namespace EventHook.Hooks
     [StructLayout(LayoutKind.Sequential)]
     internal struct MSLLHOOKSTRUCT
     {
-        internal POINT pt;
+        internal Point pt;
         internal readonly uint mouseData;
         internal readonly uint flags;
         internal readonly uint time;

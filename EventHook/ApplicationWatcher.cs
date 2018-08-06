@@ -8,7 +8,7 @@ using EventHook.Hooks;
 namespace EventHook
 {
     /// <summary>
-    ///     An enum for the type of application event
+    ///     An enum for the type of application event.
     /// </summary>
     public enum ApplicationEvents
     {
@@ -18,7 +18,7 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     An object that holds information on application event
+    ///     An object that holds information on application event.
     /// </summary>
     public class WindowData
     {
@@ -31,7 +31,7 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     An event argument object send to user
+    ///     An event argument object send to user.
     /// </summary>
     public class ApplicationEventArgs : EventArgs
     {
@@ -40,9 +40,9 @@ namespace EventHook
     }
 
     /// <summary>
-    ///     A wrapper around shell hook to hook application window change events
+    ///     A wrapper around shell hook to hook application window change events.
     ///     Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed
-    ///     user callbacks
+    ///     user callbacks.
     /// </summary>
     public class ApplicationWatcher
     {

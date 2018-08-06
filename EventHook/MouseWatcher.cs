@@ -7,18 +7,18 @@ using EventHook.Hooks;
 namespace EventHook
 {
     /// <summary>
-    ///     Event argument to pass data through user callbacks
+    ///     Event argument to pass data through user callbacks.
     /// </summary>
     public class MouseEventArgs : EventArgs
     {
         public MouseMessages Message { get; set; }
-        public POINT Point { get; set; }
+        public Point Point { get; set; }
     }
 
     /// <summary>
-    ///     Wraps low level mouse hook
+    ///     Wraps low level mouse hook.
     ///     Uses a producer-consumer pattern to improve performance and to avoid operating system forcing unhook on delayed
-    ///     user callbacks
+    ///     user callbacks.
     /// </summary>
     public class MouseWatcher
     {

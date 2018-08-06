@@ -177,6 +177,9 @@
         #endregion
     }
 
+    /// <summary>
+    /// The window event arguments.
+    /// </summary>
     public class WindowEventArgs
     {
         public WindowEventArgs(IntPtr handle) {
