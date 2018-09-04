@@ -16,7 +16,7 @@ Kindly report only issues/bugs here . For programming help or questions use [Sta
 * application events
 * print events
 
-### Development Enviroment
+### Development enviroment
 
 * Visual Studio 2017
 
