@@ -8,7 +8,7 @@ Kindly report only issues/bugs here . For programming help or questions use [Sta
 
 * [API Documentation](https://justcoding121.github.io/Windows-User-Action-Hook/api/EventHook.html)
 
-## Supported Events
+### Supported Events
 
 * Keyboard events
 * Mouse events
@@ -16,13 +16,17 @@ Kindly report only issues/bugs here . For programming help or questions use [Sta
 * application events
 * print events
 
-## Usage
+### Development enviroment
+
+* Visual Studio 2017
+
+### Usage
 
 Install by [nuget](https://www.nuget.org/packages/EventHook)
 
     Install-Package EventHook
 
-## Sample Code:
+### Sample Code:
 
 ```csharp
 using (var eventHookFactory = new EventHookFactory())
