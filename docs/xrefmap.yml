@@ -357,6 +357,18 @@ references:
   commentId: F:EventHook.Hooks.MouseMessages.WM_WHEELBUTTONUP
   fullName: EventHook.Hooks.MouseMessages.WM_WHEELBUTTONUP
   nameWithType: MouseMessages.WM_WHEELBUTTONUP
+- uid: EventHook.Hooks.MouseMessages.WM_XBUTTONDOWN
+  name: WM_XBUTTONDOWN
+  href: api/EventHook.Hooks.MouseMessages.html#EventHook_Hooks_MouseMessages_WM_XBUTTONDOWN
+  commentId: F:EventHook.Hooks.MouseMessages.WM_XBUTTONDOWN
+  fullName: EventHook.Hooks.MouseMessages.WM_XBUTTONDOWN
+  nameWithType: MouseMessages.WM_XBUTTONDOWN
+- uid: EventHook.Hooks.MouseMessages.WM_XBUTTONUP
+  name: WM_XBUTTONUP
+  href: api/EventHook.Hooks.MouseMessages.html#EventHook_Hooks_MouseMessages_WM_XBUTTONUP
+  commentId: F:EventHook.Hooks.MouseMessages.WM_XBUTTONUP
+  fullName: EventHook.Hooks.MouseMessages.WM_XBUTTONUP
+  nameWithType: MouseMessages.WM_XBUTTONUP
 - uid: EventHook.Hooks.Point
   name: Point
   href: api/EventHook.Hooks.Point.html
@@ -493,6 +505,19 @@ references:
   isSpec: "True"
   fullName: EventHook.MouseEventArgs.Message
   nameWithType: MouseEventArgs.Message
+- uid: EventHook.MouseEventArgs.MouseData
+  name: MouseData
+  href: api/EventHook.MouseEventArgs.html#EventHook_MouseEventArgs_MouseData
+  commentId: P:EventHook.MouseEventArgs.MouseData
+  fullName: EventHook.MouseEventArgs.MouseData
+  nameWithType: MouseEventArgs.MouseData
+- uid: EventHook.MouseEventArgs.MouseData*
+  name: MouseData
+  href: api/EventHook.MouseEventArgs.html#EventHook_MouseEventArgs_MouseData_
+  commentId: Overload:EventHook.MouseEventArgs.MouseData
+  isSpec: "True"
+  fullName: EventHook.MouseEventArgs.MouseData
+  nameWithType: MouseEventArgs.MouseData
 - uid: EventHook.MouseEventArgs.Point
   name: Point
   href: api/EventHook.MouseEventArgs.html#EventHook_MouseEventArgs_Point
