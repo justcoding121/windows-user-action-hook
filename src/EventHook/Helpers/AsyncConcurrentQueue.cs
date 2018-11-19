@@ -38,7 +38,7 @@ namespace EventHook.Helpers
 
             //signal 
             dequeueTaskLock.Wait();
-            dequeueTask.TrySetResult(true);
+            dequeueTask?.TrySetResult(true);
             dequeueTaskLock.Release();
 
         }
