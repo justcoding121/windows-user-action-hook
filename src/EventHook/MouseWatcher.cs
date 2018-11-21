@@ -13,6 +13,7 @@ namespace EventHook
     {
         public MouseMessages Message { get; set; }
         public Point Point { get; set; }
+        public uint MouseData { get; set; }
     }
 
     /// <summary>
@@ -134,7 +135,7 @@ namespace EventHook
         /// <param name="kd"></param>
         private void KListener_KeyDown(RawMouseEventArgs kd)
         {
-            OnMouseInput?.Invoke(null, new MouseEventArgs { Message = kd.Message, Point = kd.Point });
+            OnMouseInput?.Invoke(null, new MouseEventArgs { Message = kd.Message, Point = kd.Point, MouseData = kd.MouseData });
         }
     }
 }

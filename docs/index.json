@@ -42,12 +42,12 @@
   "api/EventHook.Hooks.MouseMessages.html": {
     "href": "api/EventHook.Hooks.MouseMessages.html",
     "title": "Enum MouseMessages | EventHook",
-    "keywords": "Enum MouseMessages The mouse messages. Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public enum MouseMessages Fields Name Description WM_LBUTTONDOWN WM_LBUTTONUP WM_MOUSEMOVE WM_MOUSEWHEEL WM_RBUTTONDOWN WM_RBUTTONUP WM_WHEELBUTTONDOWN WM_WHEELBUTTONUP"
+    "keywords": "Enum MouseMessages The mouse messages. Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public enum MouseMessages Fields Name Description WM_LBUTTONDOWN WM_LBUTTONUP WM_MOUSEMOVE WM_MOUSEWHEEL WM_RBUTTONDOWN WM_RBUTTONUP WM_WHEELBUTTONDOWN WM_WHEELBUTTONUP WM_XBUTTONDOWN WM_XBUTTONUP"
   },
   "api/EventHook.Hooks.Point.html": {
     "href": "api/EventHook.Hooks.Point.html",
     "title": "Struct Point | EventHook",
-    "keywords": "Struct Point The point co-ordinate. Inherited Members ValueType.Equals(Object) ValueType.GetHashCode() ValueType.ToString() Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetType() Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public struct Point Fields x Declaration public readonly int x Field Value Type Description Int32 y Declaration public readonly int y Field Value Type Description Int32"
+    "keywords": "Struct Point The point co-ordinate. Inherited Members ValueType.Equals(Object) ValueType.GetHashCode() ValueType.ToString() Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetType() Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public struct Point Fields x Declaration public readonly int x Field Value Type Description System.Int32 y Declaration public readonly int y Field Value Type Description System.Int32"
   },
   "api/EventHook.html": {
     "href": "api/EventHook.html",
@@ -77,7 +77,7 @@
   "api/EventHook.MouseEventArgs.html": {
     "href": "api/EventHook.MouseEventArgs.html",
     "title": "Class MouseEventArgs | EventHook",
-    "keywords": "Class MouseEventArgs Event argument to pass data through user callbacks. Inheritance Object EventArgs MouseEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class MouseEventArgs : EventArgs Properties Message Declaration public MouseMessages Message { get; set; } Property Value Type Description MouseMessages Point Declaration public Point Point { get; set; } Property Value Type Description Point"
+    "keywords": "Class MouseEventArgs Event argument to pass data through user callbacks. Inheritance Object EventArgs MouseEventArgs Inherited Members EventArgs.Empty Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class MouseEventArgs : EventArgs Properties Message Declaration public MouseMessages Message { get; set; } Property Value Type Description MouseMessages MouseData Declaration public uint MouseData { get; set; } Property Value Type Description UInt32 Point Declaration public Point Point { get; set; } Property Value Type Description Point"
   },
   "api/EventHook.MouseWatcher.html": {
     "href": "api/EventHook.MouseWatcher.html",
@@ -92,7 +92,7 @@
   "api/EventHook.PrintEventData.html": {
     "href": "api/EventHook.PrintEventData.html",
     "title": "Class PrintEventData | EventHook",
-    "keywords": "Class PrintEventData An object holding key information on a particular print event. Inheritance Object PrintEventData Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class PrintEventData Properties EventDateTime Declaration public DateTime EventDateTime { get; set; } Property Value Type Description DateTime JobName Declaration public string JobName { get; set; } Property Value Type Description String JobSize Declaration public int? JobSize { get; set; } Property Value Type Description Nullable < Int32 > Pages Declaration public int? Pages { get; set; } Property Value Type Description Nullable < Int32 > PrinterName Declaration public string PrinterName { get; set; } Property Value Type Description String"
+    "keywords": "Class PrintEventData An object holding key information on a particular print event. Inheritance Object PrintEventData Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class PrintEventData Properties EventDateTime Declaration public DateTime EventDateTime { get; set; } Property Value Type Description DateTime JobName Declaration public string JobName { get; set; } Property Value Type Description String JobSize Declaration public int? JobSize { get; set; } Property Value Type Description Nullable < System.Int32 > Pages Declaration public int? Pages { get; set; } Property Value Type Description Nullable < System.Int32 > PrinterName Declaration public string PrinterName { get; set; } Property Value Type Description String"
   },
   "api/EventHook.PrintWatcher.html": {
     "href": "api/EventHook.PrintWatcher.html",
@@ -102,6 +102,6 @@
   "api/EventHook.WindowData.html": {
     "href": "api/EventHook.WindowData.html",
     "title": "Class WindowData | EventHook",
-    "keywords": "Class WindowData An object that holds information on application event. Inheritance Object WindowData Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class WindowData Fields EventType Declaration public int EventType Field Value Type Description Int32 HWnd Declaration public IntPtr HWnd Field Value Type Description IntPtr Properties AppName Declaration public string AppName { get; set; } Property Value Type Description String AppPath Declaration public string AppPath { get; set; } Property Value Type Description String AppTitle Declaration public string AppTitle { get; set; } Property Value Type Description String"
+    "keywords": "Class WindowData An object that holds information on application event. Inheritance Object WindowData Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook Assembly : EventHook.dll Syntax public class WindowData Fields EventType Declaration public int EventType Field Value Type Description System.Int32 HWnd Declaration public IntPtr HWnd Field Value Type Description IntPtr Properties AppName Declaration public string AppName { get; set; } Property Value Type Description String AppPath Declaration public string AppPath { get; set; } Property Value Type Description String AppTitle Declaration public string AppTitle { get; set; } Property Value Type Description String"
   }
 }

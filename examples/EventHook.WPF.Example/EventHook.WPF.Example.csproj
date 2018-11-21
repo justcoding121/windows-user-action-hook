@@ -95,7 +95,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\EventHook\EventHook.csproj">
+    <ProjectReference Include="..\..\src\EventHook\EventHook.csproj">
       <Project>{3847a7f4-3f6b-4626-af4c-8fdfba6165f2}</Project>
       <Name>EventHook</Name>
     </ProjectReference>

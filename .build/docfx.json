@@ -4,7 +4,7 @@
       "src": [
         {
 	 "files": [ "EventHook.Docs.sln"],
-         "src": "../"
+         "src": "../src/"
         }
       ],
       "dest": "obj/api"
