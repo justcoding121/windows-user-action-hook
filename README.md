@@ -1,5 +1,7 @@
 ## Windows User Action Hook
 
+### Note: This Project is no longer maintained. Any pull requests for fixes are welcome.
+
 A one stop library for global windows user actions such mouse, keyboard, clipboard, &amp; print events
 
 <a href="https://ci.appveyor.com/project/justcoding121/windows-user-action-hook">![Build Status](https://ci.appveyor.com/api/projects/status/htea647ukrgg4qcl?svg=true)</a>
