@@ -1,6 +1,6 @@
 ## Windows User Action Hook
 
-### Note: This Project is no longer maintained. Any pull requests for fixes are welcome.
+### Note: This Project is no longer maintained. 
 
 A one stop library for global windows user actions such mouse, keyboard, clipboard, &amp; print events
 
