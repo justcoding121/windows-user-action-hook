@@ -144,6 +144,12 @@ namespace EventHook
             {
                 //blocking here until a key is added to the queue
                 var item = await keyQueue.DequeueAsync();
+
+                if (item is null)
+                {
+                    continue;
+                }
+
                 if (item is bool)
                 {
                     break;

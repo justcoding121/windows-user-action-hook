@@ -132,6 +132,12 @@ namespace EventHook
             while (isRunning)
             {
                 var item = await clipQueue.DequeueAsync();
+
+                if (item is null)
+                {
+                    continue;
+                }
+
                 if (item is bool)
                 {
                     break;
