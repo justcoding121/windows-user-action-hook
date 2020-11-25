@@ -37,7 +37,7 @@
   "api/EventHook.Hooks.html": {
     "href": "api/EventHook.Hooks.html",
     "title": "Namespace EventHook.Hooks | EventHook",
-    "keywords": "Namespace EventHook.Hooks Structs Point The point co-ordinate. Enums MouseMessages The mouse messages."
+    "keywords": "Namespace EventHook.Hooks Classes WindowEventArgs The window event arguments. WindowHookEx Track events across all windows Structs Point The point co-ordinate. Enums MouseMessages The mouse messages."
   },
   "api/EventHook.Hooks.MouseMessages.html": {
     "href": "api/EventHook.Hooks.MouseMessages.html",
@@ -48,6 +48,16 @@
     "href": "api/EventHook.Hooks.Point.html",
     "title": "Struct Point | EventHook",
     "keywords": "Struct Point The point co-ordinate. Inherited Members ValueType.Equals(Object) ValueType.GetHashCode() ValueType.ToString() Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetType() Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public struct Point Fields x Declaration public readonly int x Field Value Type Description Int32 y Declaration public readonly int y Field Value Type Description Int32"
+  },
+  "api/EventHook.Hooks.WindowEventArgs.html": {
+    "href": "api/EventHook.Hooks.WindowEventArgs.html",
+    "title": "Class WindowEventArgs | EventHook",
+    "keywords": "Class WindowEventArgs The window event arguments. Inheritance Object WindowEventArgs Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public class WindowEventArgs Constructors WindowEventArgs(IntPtr) Declaration public WindowEventArgs(IntPtr handle) Parameters Type Name Description IntPtr handle Properties Handle Declaration public IntPtr Handle { get; } Property Value Type Description IntPtr"
+  },
+  "api/EventHook.Hooks.WindowHookEx.html": {
+    "href": "api/EventHook.Hooks.WindowHookEx.html",
+    "title": "Class WindowHookEx | EventHook",
+    "keywords": "Class WindowHookEx Track events across all windows Inheritance Object WindowHookEx Implements IDisposable Inherited Members Object.ToString() Object.Equals(Object) Object.Equals(Object, Object) Object.ReferenceEquals(Object, Object) Object.GetHashCode() Object.GetType() Object.MemberwiseClone() Namespace : EventHook.Hooks Assembly : EventHook.dll Syntax public sealed class WindowHookEx : IDisposable Constructors WindowHookEx() Must be called from UI thread Declaration public WindowHookEx() Methods Dispose() Declaration public void Dispose() Finalize() Declaration protected void Finalize() Events Activated Occurs when a window is about to be activated Declaration public event EventHandler<WindowEventArgs> Activated Event Type Type Description EventHandler < WindowEventArgs > Minimized Occurs when a window is about to be minimized Declaration public event EventHandler<WindowEventArgs> Minimized Event Type Type Description EventHandler < WindowEventArgs > TextChanged Occurs when window's text is changed Declaration public event EventHandler<WindowEventArgs> TextChanged Event Type Type Description EventHandler < WindowEventArgs > Unminimized Occurs when a window is about to be restored from minimized state Declaration public event EventHandler<WindowEventArgs> Unminimized Event Type Type Description EventHandler < WindowEventArgs > Implements System.IDisposable"
   },
   "api/EventHook.html": {
     "href": "api/EventHook.html",
